@@ -2,11 +2,9 @@ package iot
 
 import (
 	"errors"
-	"fmt"
 	"net"
 	"net/http"
 	"net/url"
-	"strings"
 )
 
 // Tuner holds Devices found during a network scan.
@@ -43,35 +41,6 @@ func Probe(client *http.Client, ip net.IP, prs ...ProbeRequest) (Device, error) 
 	}
 
 	return nil, nil
-}
-
-// ScanError holds an IP address scanning error.
-type ScanError struct {
-	ip  net.IP
-	err error
-}
-
-// Error implements the error interface for ScanError.
-func (se ScanError) Error() string {
-	return fmt.Sprintf("%s: %v\n", se.ip, se.err)
-}
-
-// ScanErrors represents a ScanError collection.
-type ScanErrors []*ScanError
-
-// Empty means that there are no errors.
-func (se ScanErrors) Empty() bool {
-	return len(se) == 0
-}
-
-// Error implements the error interface for ScanErrors.
-func (se ScanErrors) Error() string {
-	var s strings.Builder
-	for _, e := range se {
-		s.WriteString(e.Error())
-	}
-
-	return s.String()
 }
 
 // ScanResult represents the outcome of an IP address scan operation.
