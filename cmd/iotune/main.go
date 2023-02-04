@@ -12,23 +12,24 @@ import (
 	"github.com/Stowify/IoTune/internal/network"
 )
 
-const defaultConfig = "config.json"
+const defaultPath = "config.json"
 
 var (
 	driver string
-	config string
+	path   string
 	prober iot.Prober
+	config iot.Config
 )
 
 func init() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
-	// Flag declaration
-	flag.StringVar(&driver, "d", shelly.Driver, "The IoT driver name. Default is "+shelly.Driver)
-	flag.StringVar(&config, "c", defaultConfig, "The configuration file path. Default is "+defaultConfig)
+	// Flag setup
+	flag.StringVar(&driver, "drv", shelly.Driver, "IoT driver name (default "+shelly.Driver+")")
+	flag.StringVar(&path, "cfg", defaultPath, "Location of the config file (default "+defaultPath+")")
 	flag.Usage = func() {
-		fmt.Println("Usage:")
-		fmt.Printf("%s [-d <driver>] [-c %s]\n", os.Args[0], defaultConfig)
+		fmt.Printf("Usage: %s [OPTIONS]\n\n", os.Args[0])
+		fmt.Printf("%s [-drv <driver>] [-cfg %s]\n", os.Args[0], defaultPath)
 	}
 	flag.Parse()
 }
@@ -37,11 +38,12 @@ func main() {
 	switch driver {
 	case shelly.Driver:
 		prober = &shelly.Prober{}
+		config = &shelly.Config{}
 	default:
 		log.Fatalf("unknown driver: %s", driver)
 	}
 
-	f, err := os.Open(config)
+	f, err := os.Open(path)
 	defer func(f *os.File) {
 		err = f.Close()
 		if err != nil {
@@ -51,6 +53,10 @@ func main() {
 
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	if err = iot.LoadConfig(f, config); err != nil {
+		log.Fatalf("config load error: %v", err)
 	}
 
 	tuner := iot.NewTuner()
