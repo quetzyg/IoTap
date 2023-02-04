@@ -40,28 +40,30 @@ func main() {
 		prober = &shelly.Prober{}
 		config = &shelly.Config{}
 	default:
-		log.Fatalf("unknown driver: %s", driver)
+		log.Fatalf("Unknown driver: %s", driver)
 	}
+
+	log.Printf("Loaded driver: %s\n", driver)
 
 	f, err := os.Open(path)
 	defer func(f *os.File) {
 		err = f.Close()
 		if err != nil {
-			log.Fatalf("unable to close file: %v", err)
+			log.Fatalf("Config close error: %v", err)
 		}
 	}(f)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Config open error: %s", err)
 	}
 
 	if err = iot.LoadConfig(f, config); err != nil {
-		log.Fatalf("config load error: %v", err)
+		log.Fatalf("Config load error: %v", err)
 	}
 
 	tuner := iot.NewTuner()
 
-	log.Printf("Starting IoT device scan using the %s driver...", driver)
+	log.Println("Starting IoT device scan...")
 	err = tuner.Scan(network.Address(), prober)
 	log.Println("done!")
 
