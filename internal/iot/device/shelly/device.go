@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	driver = "shelly"
+	Driver = "shelly"
 
 	// Endpoint paths
 	probePath = "shelly"
@@ -40,7 +40,7 @@ func (d *Device) ID() string {
 
 // Driver name of this Device implementation.
 func (d *Device) Driver() string {
-	return driver
+	return Driver
 }
 
 // buildURL for Shelly requests.
