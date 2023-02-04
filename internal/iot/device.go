@@ -8,7 +8,11 @@ import (
 	"net/http"
 )
 
-type ProbeRequest func(net.IP) (*http.Request, Device, error)
+// Prober implements methods to help find IoT devices on a network.
+type Prober interface {
+	MakeRequest(ip net.IP) (*http.Request, Device, error)
+	IgnoreError(err error) bool
+}
 
 // Device represents an IoT device.
 type Device interface {
