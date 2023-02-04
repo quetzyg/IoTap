@@ -29,3 +29,8 @@ func (pe ProbeErrors) Error() string {
 
 	return s.String()
 }
+
+// Empty checks if the collection has any errors.
+func (pe ProbeErrors) Empty() bool {
+	return len(pe) == 0
+}
