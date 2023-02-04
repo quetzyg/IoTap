@@ -19,6 +19,7 @@ const (
 	probePath = "shelly"
 )
 
+// Device implementation for the Shelly driver.
 type Device struct {
 	ip net.IP
 
