@@ -45,7 +45,7 @@ func DeviceFetcher(client *http.Client, r *http.Request, dev Device) (Device, er
 	defer func(body io.ReadCloser) {
 		err = body.Close()
 		if err != nil {
-			log.Printf("error closing response body: %v", err)
+			log.Printf("Error closing response body: %v", err)
 		}
 	}(response.Body)
 
