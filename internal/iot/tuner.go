@@ -1,6 +1,9 @@
 package iot
 
 import (
+	"fmt"
+	"io"
+	"log"
 	"net"
 	"net/http"
 )
@@ -99,4 +102,103 @@ func (t *Tuner) Scan(ip net.IP, prober Prober) error {
 // Devices that were found during the network scan.
 func (t *Tuner) Devices() Devices {
 	return t.devices
+}
+
+// pushConfig handles a single HTTP configuration push to a device.
+func pushConfig(client *http.Client, r *http.Request) error {
+	r.Header.Set(userAgentHeader, userAgent)
+
+	response, err := client.Do(r)
+	if err != nil {
+		return err
+	}
+
+	defer func(body io.ReadCloser) {
+		err = body.Close()
+		if err != nil {
+			log.Printf("Error closing response body: %v", err)
+		}
+	}(response.Body)
+
+	if response.StatusCode < http.StatusOK || response.StatusCode >= http.StatusMultipleChoices {
+		b, _ := io.ReadAll(response.Body)
+		return fmt.Errorf("%s - %s (%d)", r.URL.Path, b, response.StatusCode)
+	}
+
+	return nil
+}
+
+// PushConfigResult represents the outcome of a push config operation.
+type PushConfigResult struct {
+	dev      Device
+	finished bool
+	err      error
+}
+
+// configure handles a single device's configuration.
+func configure(ch chan<- *PushConfigResult, cfg Config, dev Device) {
+	rs, err := cfg.MakeRequests(dev)
+	if err != nil {
+		ch <- &PushConfigResult{
+			dev:      dev,
+			finished: true,
+			err:      err,
+		}
+		return
+	}
+
+	client := &http.Client{}
+
+	for _, r := range rs {
+		if err = pushConfig(client, r); err != nil {
+			ch <- &PushConfigResult{
+				dev:      dev,
+				finished: true,
+				err:      err,
+			}
+			return
+		}
+
+		ch <- &PushConfigResult{
+			dev: dev,
+		}
+	}
+
+	ch <- &PushConfigResult{
+		dev:      dev,
+		finished: true,
+	}
+}
+
+// PushToDevices is responsible for initialising the push configuration process for all devices.
+func (t *Tuner) PushToDevices(cfg Config) error {
+	ch := make(chan *PushConfigResult)
+
+	for _, device := range t.devices {
+		go configure(ch, cfg, device)
+	}
+
+	errs := ConfigErrors{}
+
+	remaining := len(t.devices)
+
+	for remaining != 0 {
+		select {
+		case result := <-ch:
+			if result.finished {
+				remaining--
+			}
+
+			if result.err != nil {
+				errs = append(errs, &ConfigError{
+					dev: result.dev,
+					err: result.err,
+				})
+			}
+		}
+	}
+
+	close(ch)
+
+	return errs
 }
