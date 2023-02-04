@@ -16,23 +16,6 @@ const (
 	probePath = "shelly"
 )
 
-// buildURL for Shelly requests.
-func buildURL(ip net.IP, path string) string {
-	return fmt.Sprintf("http://%s/%s", ip.String(), strings.TrimPrefix(path, "/"))
-}
-
-// ProbeRequest function implementation for the Shelly driver.
-func ProbeRequest(ip net.IP) (*http.Request, iot.Device, error) {
-	r, err := http.NewRequest(http.MethodGet, buildURL(ip, probePath), nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	r.Header.Set(iot.ContentTypeHeader, iot.JSONMimeType)
-
-	return r, &Device{ip: ip}, nil
-}
-
 type Device struct {
 	ip net.IP
 
@@ -58,4 +41,21 @@ func (d *Device) ID() string {
 // Driver name of this Device implementation.
 func (d *Device) Driver() string {
 	return driver
+}
+
+// buildURL for Shelly requests.
+func buildURL(ip net.IP, path string) string {
+	return fmt.Sprintf("http://%s/%s", ip.String(), strings.TrimPrefix(path, "/"))
+}
+
+// ProbeRequest function implementation for the Shelly driver.
+func ProbeRequest(ip net.IP) (*http.Request, iot.Device, error) {
+	r, err := http.NewRequest(http.MethodGet, buildURL(ip, probePath), nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	r.Header.Set(iot.ContentTypeHeader, iot.JSONMimeType)
+
+	return r, &Device{ip: ip}, nil
 }
