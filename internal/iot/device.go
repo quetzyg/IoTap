@@ -8,27 +8,29 @@ import (
 	"net/http"
 )
 
-// Prober implements methods to help find IoT devices on a network.
+// Prober defines the methods a prober instance should implement.
 type Prober interface {
 	MakeRequest(ip net.IP) (*http.Request, Device, error)
 	IgnoreError(err error) bool
 }
 
-// Device represents an IoT device.
+// Device defines the methods an IoT device instance should implement.
 type Device interface {
 	Driver() string
 	IP() net.IP
 	ID() string
 }
 
+// Devices represents a Device collection.
 type Devices map[string]Device
 
 const (
 	userAgentHeader = "User-Agent"
 	userAgent       = "IoTune/0.1"
 
-	ContentTypeHeader = "Content-Type"
-	JSONMimeType      = "application/json"
+	ContentTypeHeader      = "Content-Type"
+	JSONMimeType           = "application/json"
+	URLEncodedFormMimeType = "application/x-www-form-urlencoded"
 )
 
 // DeviceFetcher performs an HTTP request to fetch a Device.
