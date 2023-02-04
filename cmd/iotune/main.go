@@ -20,11 +20,11 @@ func main() {
 	err := tuner.Scan(network.Address(), shelly.ProbeRequest)
 	log.Println("done!")
 
-	var se iot.ProbeErrors
-	if errors.As(err, &se) {
+	var pe iot.ProbeErrors
+	if errors.As(err, &pe) && !pe.Empty() {
 		log.Println("Errors were found during the scan:")
 
-		for _, e := range se {
+		for _, e := range pe {
 			log.Printf("%v", e)
 		}
 	}
