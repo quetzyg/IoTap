@@ -46,7 +46,7 @@ func Probe(client *http.Client, ip net.IP, prs ...ProbeRequest) (Device, error) 
 // ScanResult represents the outcome of an IP address scan operation.
 type ScanResult struct {
 	dev Device
-	err *ScanError
+	err *ProbeError
 }
 
 // scanIP probes a specific IP and passes the result to a channel.
@@ -55,7 +55,7 @@ func scanIP(ch chan<- *ScanResult, ip net.IP, prs ...ProbeRequest) {
 
 	dev, err := Probe(&http.Client{}, ip, prs...)
 	if err != nil {
-		result.err = &ScanError{ip: ip, err: err}
+		result.err = &ProbeError{ip: ip, err: err}
 		ch <- result
 		return
 	}
@@ -86,7 +86,7 @@ func (t *Tuner) Scan(ip net.IP, prs ...ProbeRequest) error {
 		go scanIP(ch, net.IPv4(ip[0], ip[1], ip[2], octet), prs...)
 	}
 
-	errs := ScanErrors{}
+	errs := ProbeErrors{}
 
 	for i := 0; i < subnet24; i++ {
 		select {
