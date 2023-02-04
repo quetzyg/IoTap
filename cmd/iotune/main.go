@@ -12,24 +12,46 @@ import (
 	"github.com/Stowify/IoTune/internal/network"
 )
 
-const defaultPath = "config.json"
+const (
+	defaultPath = "config.json"
+	scanMode    = "scan"
+	pushMode    = "push"
+)
 
 var (
 	driver string
 	path   string
 	prober iot.Prober
 	config iot.Config
+	mode   string
 )
+
+const usage = `Usage:
+%s [--driver DRIVER] [--config CONFIG] [--scan BOOL]
+
+Options:
+-d, --driver DRIVER	Define the IoT device driver. (default: %s)
+-c, --config CONFIG	Define the configuration file. (default: %s)
+-m, --mode   MODE	Define the run mode. (default: %s)
+
+With no arguments, the tool will use the %s driver in scan mode (no config pushes).
+`
 
 func init() {
 	log.SetFlags(log.LstdFlags)
 
 	// Flag setup
-	flag.StringVar(&driver, "drv", shelly.Driver, "IoT driver name (default "+shelly.Driver+")")
-	flag.StringVar(&path, "cfg", defaultPath, "Location of the config file (default "+defaultPath+")")
+	flag.StringVar(&driver, "d", shelly.Driver, "IoT driver name (default "+shelly.Driver+")")
+	flag.StringVar(&driver, "driver", shelly.Driver, "IoT driver name (default "+shelly.Driver+")")
+
+	flag.StringVar(&mode, "m", "scan", "Run mode (default scan)")
+	flag.StringVar(&mode, "mode", "scan", "Run mode (default scan)")
+
+	flag.StringVar(&path, "c", defaultPath, "Location of the config file (default "+defaultPath+")")
+	flag.StringVar(&path, "config", defaultPath, "Location of the config file (default "+defaultPath+")")
+
 	flag.Usage = func() {
-		fmt.Printf("Usage: %s [OPTIONS]\n\n", os.Args[0])
-		fmt.Printf("%s [-drv <driver>] [-cfg %s]\n", os.Args[0], defaultPath)
+		fmt.Printf(usage, os.Args[0], shelly.Driver, defaultPath, scanMode, shelly.Driver)
 	}
 	flag.Parse()
 }
@@ -45,26 +67,31 @@ func main() {
 
 	log.Printf("Loaded driver: %s\n", driver)
 
-	f, err := os.Open(path)
-	defer func(f *os.File) {
-		err = f.Close()
+	log.Printf("Run mode: %s\n", mode)
+
+	// Only load the config file if we're in push mode
+	if mode == pushMode {
+		f, err := os.Open(path)
+		defer func(f *os.File) {
+			err = f.Close()
+			if err != nil {
+				log.Fatalf("Config close error: %v", err)
+			}
+		}(f)
+
 		if err != nil {
-			log.Fatalf("Config close error: %v", err)
+			log.Fatalf("Config open error: %s", err)
 		}
-	}(f)
 
-	if err != nil {
-		log.Fatalf("Config open error: %s", err)
-	}
-
-	if err = iot.LoadConfig(f, config); err != nil {
-		log.Fatalf("Config load error: %v", err)
+		if err = iot.LoadConfig(f, config); err != nil {
+			log.Fatalf("Config load error: %v", err)
+		}
 	}
 
 	tuner := iot.NewTuner()
 
 	log.Println("Starting IoT device scan...")
-	err = tuner.Scan(network.Address(), prober)
+	err := tuner.Scan(network.Address(), prober)
 	log.Println("done!")
 
 	var pe iot.ProbeErrors
