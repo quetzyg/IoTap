@@ -6,24 +6,24 @@ import (
 	"strings"
 )
 
-// ScanError holds an IP address scanning error.
-type ScanError struct {
+// ProbeError holds an IP address probe error.
+type ProbeError struct {
 	ip  net.IP
 	err error
 }
 
-// Error implements the error interface for ScanError.
-func (se ScanError) Error() string {
-	return fmt.Sprintf("%s: %v\n", se.ip, se.err)
+// Error interface implementation for ProbeError.
+func (pe ProbeError) Error() string {
+	return fmt.Sprintf("%s: %v\n", pe.ip, pe.err)
 }
 
-// ScanErrors represents a ScanError collection.
-type ScanErrors []*ScanError
+// ProbeErrors represents a ProbeError collection.
+type ProbeErrors []*ProbeError
 
-// Error implements the error interface for ScanErrors.
-func (se ScanErrors) Error() string {
+// Error interface implementation for ProbeErrors.
+func (pe ProbeErrors) Error() string {
 	var s strings.Builder
-	for _, e := range se {
+	for _, e := range pe {
 		s.WriteString(e.Error())
 	}
 
