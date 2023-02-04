@@ -34,3 +34,38 @@ func (pe ProbeErrors) Error() string {
 func (pe ProbeErrors) Empty() bool {
 	return len(pe) == 0
 }
+
+// ConfigError holds a device configuration error.
+type ConfigError struct {
+	dev Device
+	err error
+}
+
+// Error interface implementation for ConfigError.
+func (ce ConfigError) Error() string {
+	return fmt.Sprintf(
+		"[%s] %s @ %s: %v\n",
+		ce.dev.Driver(),
+		ce.dev.ID(),
+		ce.dev.IP(),
+		ce.err,
+	)
+}
+
+// ConfigErrors represents a ConfigError collection.
+type ConfigErrors []*ConfigError
+
+// Error interface implementation for ConfigErrors.
+func (ce ConfigErrors) Error() string {
+	var s strings.Builder
+	for _, e := range ce {
+		s.WriteString(e.Error())
+	}
+
+	return s.String()
+}
+
+// Empty checks if the collection has any errors.
+func (ce ConfigErrors) Empty() bool {
+	return len(ce) == 0
+}
