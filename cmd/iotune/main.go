@@ -22,7 +22,7 @@ var (
 )
 
 func init() {
-	log.SetFlags(log.LstdFlags | log.Lshortfile)
+	log.SetFlags(log.LstdFlags)
 
 	// Flag setup
 	flag.StringVar(&driver, "drv", shelly.Driver, "IoT driver name (default "+shelly.Driver+")")
