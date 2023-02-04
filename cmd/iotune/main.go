@@ -106,4 +106,24 @@ func main() {
 	devices := tuner.Devices()
 
 	log.Printf("IoT devices found: %d\n", len(devices))
+
+	if mode == pushMode {
+		log.Print("Pushing configurations to IoT devices...")
+		err = tuner.PushToDevices(config)
+		log.Println("done!")
+
+		var ce iot.ConfigErrors
+		if errors.As(err, &ce) && !ce.Empty() {
+			log.Printf("Successful device configurations: %d\n", len(devices)-len(ce))
+			log.Printf("Failed device configurations: %d\n", len(ce))
+
+			for _, e := range ce {
+				log.Println(e)
+			}
+
+			return
+		}
+
+		log.Printf("All (%d) devices, successfully configured!\n", len(devices))
+	}
 }
