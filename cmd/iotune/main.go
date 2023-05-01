@@ -9,13 +9,14 @@ import (
 
 	"github.com/Stowify/IoTune/internal/iot"
 	"github.com/Stowify/IoTune/internal/iot/device/shellygen1"
+	"github.com/Stowify/IoTune/internal/iot/device/shellygen2"
 	"github.com/Stowify/IoTune/internal/network"
 )
 
 const (
-	defaultPath = "config.json"
-	scanMode    = "scan"
-	pushMode    = "push"
+	defaultConfigPath = "config.json"
+	modeDump          = "dump"
+	modePush          = "push"
 )
 
 var (
@@ -27,14 +28,14 @@ var (
 )
 
 const usage = `Usage:
-%s [--driver DRIVER] [--config CONFIG] [--scan BOOL]
+%s [--driver DRIVER] [--config CONFIG] [--mode MODE]
 
 Options:
--d, --driver DRIVER	Define the IoT device driver. (default: %s)
+-d, --driver DRIVER	Define the IoT device driver. (%s, %s) (default: %s)
 -c, --config CONFIG	Define the configuration file. (default: %s)
--m, --mode   MODE	Define the run mode. (default: %s)
+-m, --mode   MODE	Define the run mode. (%s, %s) (default: %s)
 
-With no arguments, the tool will use the %s driver in scan mode (no config pushes).
+With no arguments, the tool will use the %s driver in dump mode (no config pushes).
 `
 
 func init() {
@@ -44,14 +45,25 @@ func init() {
 	flag.StringVar(&driver, "d", shellygen1.Driver, "IoT driver name (default "+shellygen1.Driver+")")
 	flag.StringVar(&driver, "driver", shellygen1.Driver, "IoT driver name (default "+shellygen1.Driver+")")
 
-	flag.StringVar(&mode, "m", "scan", "Run mode (default scan)")
-	flag.StringVar(&mode, "mode", "scan", "Run mode (default scan)")
+	flag.StringVar(&mode, "m", modeDump, "Run mode (default "+modeDump+")")
+	flag.StringVar(&mode, "mode", modeDump, "Run mode (default "+modeDump+")")
 
-	flag.StringVar(&path, "c", defaultPath, "Location of the config file (default "+defaultPath+")")
-	flag.StringVar(&path, "config", defaultPath, "Location of the config file (default "+defaultPath+")")
+	flag.StringVar(&path, "c", defaultConfigPath, "Location of the config file (default "+defaultConfigPath+")")
+	flag.StringVar(&path, "config", defaultConfigPath, "Location of the config file (default "+defaultConfigPath+")")
 
 	flag.Usage = func() {
-		fmt.Printf(usage, os.Args[0], shellygen1.Driver, defaultPath, scanMode, shellygen1.Driver)
+		fmt.Printf(
+			usage,
+			os.Args[0],
+			shellygen1.Driver,
+			shellygen2.Driver,
+			shellygen1.Driver,
+			defaultConfigPath,
+			modeDump,
+			modePush,
+			modeDump,
+			shellygen1.Driver,
+		)
 	}
 	flag.Parse()
 }
@@ -61,6 +73,8 @@ func main() {
 	case shellygen1.Driver:
 		prober = &shellygen1.Prober{}
 		config = &shellygen1.Config{}
+	case shellygen2.Driver:
+		prober = &shellygen2.Prober{}
 	default:
 		log.Fatalf("Unknown driver: %s", driver)
 	}
@@ -70,7 +84,7 @@ func main() {
 	log.Printf("Run mode: %s\n", mode)
 
 	// Only load the config file if we're in push mode
-	if mode == pushMode {
+	if mode == modePush {
 		f, err := os.Open(path)
 		defer func(f *os.File) {
 			err = f.Close()
@@ -107,7 +121,14 @@ func main() {
 
 	log.Printf("IoT devices found: %d\n", len(devices))
 
-	if mode == pushMode {
+	if mode == modeDump {
+		log.Println("Dumping devices:")
+		for _, device := range devices {
+			log.Println(device)
+		}
+	}
+
+	if mode == modePush {
 		log.Print("Pushing configurations to IoT devices...")
 		err = tuner.PushToDevices(config)
 		log.Println("done!")
