@@ -47,12 +47,23 @@ func (d *Device) Driver() string {
 	return Driver
 }
 
-// buildURL for Shelly requests.
+// String implements the Stringer interface.
+func (d *Device) String() string {
+	return fmt.Sprintf(
+		"%s (%s) %s @ %s",
+		d.Model,
+		d.Firmware,
+		d.MAC,
+		d.ip,
+	)
+}
+
+// buildURL for Shelly Gen1 requests.
 func buildURL(ip net.IP, path string) string {
 	return fmt.Sprintf("http://%s/%s", ip.String(), strings.TrimPrefix(path, "/"))
 }
 
-// Prober implementation for the Shelly driver.
+// Prober implementation for the Shelly Gen1 driver.
 type Prober struct{}
 
 // ProbeRequest function implementation for the Shelly Gen1 driver.
