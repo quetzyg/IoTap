@@ -10,7 +10,7 @@ import (
 
 // Prober defines the methods a prober instance should implement.
 type Prober interface {
-	MakeRequest(ip net.IP) (*http.Request, Device, error)
+	ProbeRequest(ip net.IP) (*http.Request, Device, error)
 	IgnoreError(err error) bool
 }
 

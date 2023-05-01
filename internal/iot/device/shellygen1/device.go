@@ -19,7 +19,7 @@ const (
 	probePath = "shelly"
 )
 
-// Device implementation for the Shelly driver.
+// Device implementation for the Shelly Gen1 driver.
 type Device struct {
 	ip net.IP
 
@@ -55,8 +55,8 @@ func buildURL(ip net.IP, path string) string {
 // Prober implementation for the Shelly driver.
 type Prober struct{}
 
-// MakeRequest function implementation for the Shelly driver.
-func (p *Prober) MakeRequest(ip net.IP) (*http.Request, iot.Device, error) {
+// ProbeRequest function implementation for the Shelly Gen1 driver.
+func (p *Prober) ProbeRequest(ip net.IP) (*http.Request, iot.Device, error) {
 	r, err := http.NewRequest(http.MethodGet, buildURL(ip, probePath), nil)
 	if err != nil {
 		return nil, nil, err
