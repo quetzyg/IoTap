@@ -28,8 +28,8 @@ type Device struct {
 	AuthEnabled  bool   `json:"auth"`
 	Firmware     string `json:"fw"`
 	Discoverable bool   `json:"discoverable"`
-	LongID       int    `json:"longid"`
-	NumOutputs   int    `json:"num_outputs"`
+	LongID       bool   `json:"longid"` // true if the device identifies itself with its full MAC address, false otherwise
+	NumOutputs   uint8  `json:"num_outputs"`
 }
 
 // IP address of the Device.
@@ -58,6 +58,34 @@ func (d *Device) String() string {
 	)
 }
 
+// UnmarshalJSON implements the Unmarshaler interface.
+func (d *Device) UnmarshalJSON(data []byte) error {
+	var tmp map[string]any
+
+	err := json.Unmarshal(data, &tmp)
+	if err != nil {
+		return err
+	}
+
+	keys := []string{"type", "mac", "auth", "fw", "discoverable", "longid", "num_outputs"}
+
+	for _, key := range keys {
+		if _, ok := tmp[key]; !ok {
+			return iot.ErrWrongDevice
+		}
+	}
+
+	d.Model = tmp["type"].(string)
+	d.MAC = tmp["mac"].(string)
+	d.AuthEnabled = tmp["auth"].(bool)
+	d.Firmware = tmp["fw"].(string)
+	d.Discoverable = tmp["discoverable"].(bool)
+	d.LongID = tmp["longid"].(float64) == 0
+	d.NumOutputs = uint8(tmp["num_outputs"].(float64))
+
+	return nil
+}
+
 // buildURL for Shelly Gen1 requests.
 func buildURL(ip net.IP, path string) string {
 	return fmt.Sprintf("http://%s/%s", ip.String(), strings.TrimPrefix(path, "/"))
@@ -84,6 +112,11 @@ func (p *Prober) IgnoreError(err error) bool {
 	if errors.As(err, &ue) {
 		// Ignore timeouts, refused connections and other classic HTTP shenanigans,
 		// since (NORMALLY!) it means there's no such device at the IP address.
+		return true
+	}
+
+	if errors.Is(err, iot.ErrWrongDevice) {
+		// Ignore wrong devices.
 		return true
 	}
 
