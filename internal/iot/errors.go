@@ -1,10 +1,13 @@
 package iot
 
 import (
+	"errors"
 	"fmt"
 	"net"
 	"strings"
 )
+
+var ErrWrongDevice = errors.New("wrong IoT device")
 
 // ProbeError holds an IP address probe error.
 type ProbeError struct {
