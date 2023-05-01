@@ -23,7 +23,7 @@ func NewTuner() *Tuner {
 
 // Probe an IP address for a specific IoT device.
 func Probe(client *http.Client, ip net.IP, prober Prober) (Device, error) {
-	r, dev, err := prober.MakeRequest(ip)
+	r, dev, err := prober.ProbeRequest(ip)
 	if err != nil {
 		return nil, err
 	}
