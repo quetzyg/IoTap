@@ -84,7 +84,7 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 	d.Model = tmp["model"].(string)
 	d.Generation = uint8(tmp["gen"].(float64))
 	d.MAC = tmp["mac"].(string)
-	d.Firmware = tmp["firmware"].(string)
+	d.Firmware = tmp["fw_id"].(string)
 	d.Version = tmp["ver"].(string)
 	d.AppName = tmp["app"].(string)
 	d.AuthEnabled = tmp["auth_en"].(bool)
