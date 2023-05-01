@@ -1,4 +1,4 @@
-package shelly
+package shellygen1
 
 import (
 	"fmt"
@@ -139,8 +139,6 @@ func structToValues(cfg any) url.Values {
 	var values = url.Values{}
 
 	for i := 0; i < cfgVal.NumField(); i++ {
-		key := strings.TrimSuffix(cfgTyp.Field(i).Tag.Get("json"), ",omitempty")
-
 		fieldValue := cfgVal.Field(i)
 
 		// Ignore nil pointers
@@ -153,6 +151,8 @@ func structToValues(cfg any) url.Values {
 		// Convert the Schedule Rules array to string (i.e. CSV), since that's what
 		// the Shelly API expects. Otherwise, we'll get "Bad schedule rules!" errors
 		// when passing URL encoded arrays.
+		key := strings.TrimSuffix(cfgTyp.Field(i).Tag.Get("json"), ",omitempty")
+
 		if key == "schedule_rules" {
 			value = strings.Trim(value, "[]")
 			value = strings.ReplaceAll(value, " ", ",")

@@ -8,7 +8,7 @@ import (
 	"os"
 
 	"github.com/Stowify/IoTune/internal/iot"
-	"github.com/Stowify/IoTune/internal/iot/device/shelly"
+	"github.com/Stowify/IoTune/internal/iot/device/shellygen1"
 	"github.com/Stowify/IoTune/internal/network"
 )
 
@@ -41,8 +41,8 @@ func init() {
 	log.SetFlags(log.LstdFlags)
 
 	// Flag setup
-	flag.StringVar(&driver, "d", shelly.Driver, "IoT driver name (default "+shelly.Driver+")")
-	flag.StringVar(&driver, "driver", shelly.Driver, "IoT driver name (default "+shelly.Driver+")")
+	flag.StringVar(&driver, "d", shellygen1.Driver, "IoT driver name (default "+shellygen1.Driver+")")
+	flag.StringVar(&driver, "driver", shellygen1.Driver, "IoT driver name (default "+shellygen1.Driver+")")
 
 	flag.StringVar(&mode, "m", "scan", "Run mode (default scan)")
 	flag.StringVar(&mode, "mode", "scan", "Run mode (default scan)")
@@ -51,16 +51,16 @@ func init() {
 	flag.StringVar(&path, "config", defaultPath, "Location of the config file (default "+defaultPath+")")
 
 	flag.Usage = func() {
-		fmt.Printf(usage, os.Args[0], shelly.Driver, defaultPath, scanMode, shelly.Driver)
+		fmt.Printf(usage, os.Args[0], shellygen1.Driver, defaultPath, scanMode, shellygen1.Driver)
 	}
 	flag.Parse()
 }
 
 func main() {
 	switch driver {
-	case shelly.Driver:
-		prober = &shelly.Prober{}
-		config = &shelly.Config{}
+	case shellygen1.Driver:
+		prober = &shellygen1.Prober{}
+		config = &shellygen1.Config{}
 	default:
 		log.Fatalf("Unknown driver: %s", driver)
 	}

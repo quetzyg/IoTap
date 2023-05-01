@@ -1,4 +1,4 @@
-package shelly
+package shellygen1
 
 import (
 	"encoding/json"
@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	Driver = "shelly"
+	Driver = "shelly_gen1"
 
 	// Endpoint paths
 	probePath = "shelly"
