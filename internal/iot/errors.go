@@ -13,7 +13,7 @@ type ProbeError struct {
 }
 
 // Error interface implementation for ProbeError.
-func (pe ProbeError) Error() string {
+func (pe *ProbeError) Error() string {
 	return fmt.Sprintf("%s: %v\n", pe.ip, pe.err)
 }
 
