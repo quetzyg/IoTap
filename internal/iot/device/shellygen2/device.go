@@ -88,7 +88,11 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 	d.Version = tmp["ver"].(string)
 	d.AppName = tmp["app"].(string)
 	d.AuthEnabled = tmp["auth_en"].(bool)
-	d.AuthDomain = tmp["auth_domain"].(*string)
+
+	authDomain := tmp["auth_domain"]
+	if authDomain != nil {
+		d.AuthDomain = authDomain.(*string)
+	}
 
 	return nil
 }
