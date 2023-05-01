@@ -25,7 +25,7 @@ type Device struct {
 
 	Model        string `json:"type"`
 	MAC          string `json:"mac"`
-	Auth         bool   `json:"auth"`
+	AuthEnabled  bool   `json:"auth"`
 	Firmware     string `json:"fw"`
 	Discoverable bool   `json:"discoverable"`
 	LongID       int    `json:"longid"`
