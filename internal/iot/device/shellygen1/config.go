@@ -70,7 +70,7 @@ type relay struct {
 	MaxPower      *int      `json:"max_power,omitempty"`      // Shelly1PM only Set power threshold above which an overpower condition will be triggered
 }
 
-// Config implementation for the Shelly driver.
+// Config implementation for the Shelly Gen1 driver.
 type Config struct {
 	Settings *settings `json:"settings"`
 }
@@ -80,7 +80,7 @@ func (c *Config) Driver() string {
 	return Driver
 }
 
-// MakeRequests returns a Shelly driver specific HTTP request collection.
+// MakeRequests returns a Shelly Gen1 driver specific HTTP request collection.
 func (c *Config) MakeRequests(dev iot.Device) ([]*http.Request, error) {
 	if dev.Driver() != c.Driver() {
 		return nil, fmt.Errorf("device mismatch, expected %s, got %s", c.Driver(), dev.Driver())
@@ -128,9 +128,9 @@ func makeRequest(i any, dev iot.Device, path string) (*http.Request, error) {
 	return r, nil
 }
 
-// structToValues returns the url.Values representation of a struct. Unfortunately,
-// the Shelly API doesn't support JSON requests, only HTTP GET with a query-string
-// in the URL or HTTP POST with an application/x-www-form-urlencoded POST payload.
+// structToValues returns the url.Values representation of a struct. Unfortunately, the
+// Shelly Gen1 API doesn't support JSON requests, only HTTP GET with a query-string in
+// the URL or HTTP POST with an application/x-www-form-urlencoded POST payload.
 // Read more at: https://shelly-api-docs.shelly.cloud/gen1/#common-http-api
 func structToValues(cfg any) url.Values {
 	cfgVal := reflect.Indirect(reflect.ValueOf(cfg))
