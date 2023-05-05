@@ -75,6 +75,7 @@ func main() {
 		config = &shellygen1.Config{}
 	case shellygen2.Driver:
 		prober = &shellygen2.Prober{}
+		config = &shellygen2.Config{}
 	default:
 		log.Fatalf("Unknown driver: %s", driver)
 	}
