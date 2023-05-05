@@ -16,7 +16,7 @@ import (
 const (
 	defaultConfigPath = "config.json"
 	modeDump          = "dump"
-	modePush          = "push"
+	modeConfig        = "config"
 )
 
 var (
@@ -33,9 +33,9 @@ const usage = `Usage:
 Options:
 -d, --driver DRIVER	Define the IoT device driver. (%s, %s) (default: %s)
 -c, --config CONFIG	Define the configuration file. (default: %s)
--m, --mode   MODE	Define the run mode. (%s, %s) (default: %s)
+-m, --mode   MODE	Define the operation mode. (%s, %s) (default: %s)
 
-With no arguments, the tool will use the %s driver in dump mode (no config pushes).
+With no arguments, the tool will use the %s driver in dump mode.
 `
 
 func init() {
@@ -60,7 +60,7 @@ func init() {
 			shellygen1.Driver,
 			defaultConfigPath,
 			modeDump,
-			modePush,
+			modeConfig,
 			modeDump,
 			shellygen1.Driver,
 		)
@@ -84,8 +84,7 @@ func main() {
 
 	log.Printf("Run mode: %s\n", mode)
 
-	// Only load the config file if we're in push mode
-	if mode == modePush {
+	if mode == modeConfig {
 		f, err := os.Open(path)
 		defer func(f *os.File) {
 			err = f.Close()
@@ -122,16 +121,16 @@ func main() {
 
 	log.Printf("IoT devices found: %d\n", len(devices))
 
-	if mode == modeDump {
+	if mode == modeDump && len(devices) > 0 {
 		log.Println("Dumping devices:")
 		for _, device := range devices {
 			log.Println(device)
 		}
 	}
 
-	if mode == modePush {
-		log.Print("Pushing configurations to IoT devices...")
-		err = tuner.PushToDevices(config)
+	if mode == modeConfig && len(devices) > 0 {
+		log.Print("Configuring IoT devices...")
+		err = tuner.ConfigureDevices(config)
 		log.Println("done!")
 
 		var ce iot.ConfigErrors

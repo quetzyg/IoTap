@@ -128,18 +128,18 @@ func pushConfig(client *http.Client, r *http.Request) error {
 	return nil
 }
 
-// PushConfigResult represents the outcome of a push config operation.
-type PushConfigResult struct {
+// ConfigResult represents the outcome of a config operation.
+type ConfigResult struct {
 	dev      Device
 	finished bool
 	err      error
 }
 
-// configure handles a single device's configuration.
-func configure(ch chan<- *PushConfigResult, cfg Config, dev Device) {
+// configure a single device.
+func configure(ch chan<- *ConfigResult, cfg Config, dev Device) {
 	rs, err := cfg.MakeRequests(dev)
 	if err != nil {
-		ch <- &PushConfigResult{
+		ch <- &ConfigResult{
 			dev:      dev,
 			finished: true,
 			err:      err,
@@ -151,7 +151,7 @@ func configure(ch chan<- *PushConfigResult, cfg Config, dev Device) {
 
 	for _, r := range rs {
 		if err = pushConfig(client, r); err != nil {
-			ch <- &PushConfigResult{
+			ch <- &ConfigResult{
 				dev:      dev,
 				finished: true,
 				err:      err,
@@ -159,20 +159,20 @@ func configure(ch chan<- *PushConfigResult, cfg Config, dev Device) {
 			return
 		}
 
-		ch <- &PushConfigResult{
+		ch <- &ConfigResult{
 			dev: dev,
 		}
 	}
 
-	ch <- &PushConfigResult{
+	ch <- &ConfigResult{
 		dev:      dev,
 		finished: true,
 	}
 }
 
-// PushToDevices is responsible for initialising the push configuration process for all devices.
-func (t *Tuner) PushToDevices(cfg Config) error {
-	ch := make(chan *PushConfigResult)
+// ConfigureDevices found in the network.
+func (t *Tuner) ConfigureDevices(cfg Config) error {
+	ch := make(chan *ConfigResult)
 
 	for _, device := range t.devices {
 		go configure(ch, cfg, device)
