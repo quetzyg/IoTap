@@ -17,6 +17,7 @@ const (
 	defaultConfigPath = "config.json"
 	modeDump          = "dump"
 	modeConfig        = "config"
+	modeUpdate        = "update"
 )
 
 var (
@@ -33,9 +34,9 @@ const usage = `Usage:
 Options:
 -d, --driver DRIVER	Define the IoT device driver. (%s, %s) (default: %s)
 -c, --config CONFIG	Define the configuration file. (default: %s)
--m, --mode   MODE	Define the operation mode. (%s, %s) (default: %s)
+-m, --mode   MODE	Define the execution mode. (%s, %s, %s) (default: %s)
 
-With no arguments, the tool will use the %s driver in dump mode.
+With no arguments, the tool will use the %s driver in %s mode.
 `
 
 func init() {
@@ -55,14 +56,16 @@ func init() {
 		fmt.Printf(
 			usage,
 			os.Args[0],
-			shellygen1.Driver,
-			shellygen2.Driver,
-			shellygen1.Driver,
+			shellygen1.Driver, // 1st driver
+			shellygen2.Driver, // 2nd driver
+			shellygen1.Driver, // default driver
 			defaultConfigPath,
-			modeDump,
-			modeConfig,
-			modeDump,
+			modeDump,   // 1st mode
+			modeConfig, // 2nd mode
+			modeUpdate, // 3rd mode
+			modeDump,   // default mode
 			shellygen1.Driver,
+			modeDump,
 		)
 	}
 	flag.Parse()
