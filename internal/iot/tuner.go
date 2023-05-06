@@ -128,18 +128,18 @@ func pushConfig(client *http.Client, r *http.Request) error {
 	return nil
 }
 
-// ConfigResult represents the outcome of a config operation.
-type ConfigResult struct {
+// OperationResult represents the outcome of a device operation.
+type OperationResult struct {
 	dev      Device
 	finished bool
 	err      error
 }
 
 // configure a single device.
-func configure(ch chan<- *ConfigResult, cfg Config, dev Device) {
+func configure(ch chan<- *OperationResult, cfg Config, dev Device) {
 	rs, err := cfg.MakeRequests(dev)
 	if err != nil {
-		ch <- &ConfigResult{
+		ch <- &OperationResult{
 			dev:      dev,
 			finished: true,
 			err:      err,
@@ -151,7 +151,7 @@ func configure(ch chan<- *ConfigResult, cfg Config, dev Device) {
 
 	for _, r := range rs {
 		if err = pushConfig(client, r); err != nil {
-			ch <- &ConfigResult{
+			ch <- &OperationResult{
 				dev:      dev,
 				finished: true,
 				err:      err,
@@ -159,12 +159,12 @@ func configure(ch chan<- *ConfigResult, cfg Config, dev Device) {
 			return
 		}
 
-		ch <- &ConfigResult{
+		ch <- &OperationResult{
 			dev: dev,
 		}
 	}
 
-	ch <- &ConfigResult{
+	ch <- &OperationResult{
 		dev:      dev,
 		finished: true,
 	}
@@ -172,13 +172,13 @@ func configure(ch chan<- *ConfigResult, cfg Config, dev Device) {
 
 // ConfigureDevices found in the network.
 func (t *Tuner) ConfigureDevices(cfg Config) error {
-	ch := make(chan *ConfigResult)
+	ch := make(chan *OperationResult)
 
 	for _, device := range t.devices {
 		go configure(ch, cfg, device)
 	}
 
-	errs := ConfigErrors{}
+	errs := OperationErrors{}
 
 	remaining := len(t.devices)
 
@@ -190,7 +190,7 @@ func (t *Tuner) ConfigureDevices(cfg Config) error {
 			}
 
 			if result.err != nil {
-				errs = append(errs, &ConfigError{
+				errs = append(errs, &OperationError{
 					dev: result.dev,
 					err: result.err,
 				})

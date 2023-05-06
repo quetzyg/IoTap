@@ -38,30 +38,30 @@ func (pe ProbeErrors) Empty() bool {
 	return len(pe) == 0
 }
 
-// ConfigError holds a device configuration error.
-type ConfigError struct {
+// OperationError holds a device operation error.
+type OperationError struct {
 	dev Device
 	err error
 }
 
-// Error interface implementation for ConfigError.
-func (ce ConfigError) Error() string {
+// Error interface implementation for OperationError.
+func (oe OperationError) Error() string {
 	return fmt.Sprintf(
 		"[%s] %s @ %s: %v\n",
-		ce.dev.Driver(),
-		ce.dev.ID(),
-		ce.dev.IP(),
-		ce.err,
+		oe.dev.Driver(),
+		oe.dev.ID(),
+		oe.dev.IP(),
+		oe.err,
 	)
 }
 
-// ConfigErrors represents a ConfigError collection.
-type ConfigErrors []*ConfigError
+// OperationErrors represents a OperationError collection.
+type OperationErrors []*OperationError
 
-// Error interface implementation for ConfigErrors.
-func (ce ConfigErrors) Error() string {
+// Error interface implementation for OperationErrors.
+func (oe OperationErrors) Error() string {
 	var s strings.Builder
-	for _, e := range ce {
+	for _, e := range oe {
 		s.WriteString(e.Error())
 	}
 
@@ -69,6 +69,6 @@ func (ce ConfigErrors) Error() string {
 }
 
 // Empty checks if the collection has any errors.
-func (ce ConfigErrors) Empty() bool {
-	return len(ce) == 0
+func (oe OperationErrors) Empty() bool {
+	return len(oe) == 0
 }
