@@ -103,9 +103,14 @@ type wifiRangeExtender struct {
 }
 
 type wifiStation struct {
-	SSID     *string `json:"ssid,omitempty"` // SSID of the network
-	Password *string `json:"pass"`           // Password for the SSID
-	ethernet
+	SSID       *string `json:"ssid,omitempty"`     // SSID of the network
+	Password   *string `json:"pass"`               // Password for the SSID
+	Enable     *bool   `json:"enable,omitempty"`   // True if the configuration is enabled, false otherwise
+	Ipv4Mode   *string `json:"ipv4mode,omitempty"` // IPv4 mode: dhcp, static
+	IP         *string `json:"ip"`                 // IP to use when IPv4 mode is static
+	Netmask    *string `json:"netmask"`            // Netmask to use when IPv4 mode is static
+	Gateway    *string `json:"gw"`                 // Gateway to use when IPv4 mode is static
+	Nameserver *string `json:"nameserver"`         // Nameserver to use when IPv4 mode is static
 }
 
 type wifiRoam struct {
@@ -182,8 +187,8 @@ func (c *Config) MakeRequests(dev iot.Device) ([]*http.Request, error) {
 
 	if c.Settings != nil {
 		if c.Settings.Input != nil {
-			for _, swi := range *c.Settings.Input {
-				r, err := makeRequest(dev, "Input.SetConfig", swi)
+			for _, in := range *c.Settings.Input {
+				r, err := makeRequest(dev, "Input.SetConfig", in)
 				if err != nil {
 					return nil, err
 				}
@@ -192,8 +197,8 @@ func (c *Config) MakeRequests(dev iot.Device) ([]*http.Request, error) {
 		}
 
 		if c.Settings.Relay != nil {
-			for _, swi := range *c.Settings.Relay {
-				r, err := makeRequest(dev, "Switch.SetConfig", swi)
+			for _, rel := range *c.Settings.Relay {
+				r, err := makeRequest(dev, "Switch.SetConfig", rel)
 				if err != nil {
 					return nil, err
 				}
@@ -234,7 +239,7 @@ func (c *Config) MakeRequests(dev iot.Device) ([]*http.Request, error) {
 		}
 
 		if c.Settings.MQTT != nil {
-			r, err := makeRequest(dev, "MQTT.SetConfig", c.Settings.Bluetooth)
+			r, err := makeRequest(dev, "MQTT.SetConfig", c.Settings.MQTT)
 			if err != nil {
 				return nil, err
 			}
