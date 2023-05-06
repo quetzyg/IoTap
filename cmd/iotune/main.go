@@ -136,12 +136,12 @@ func main() {
 		err = tuner.ConfigureDevices(config)
 		log.Println("done!")
 
-		var ce iot.ConfigErrors
-		if errors.As(err, &ce) && !ce.Empty() {
-			log.Printf("Successful device configurations: %d\n", len(devices)-len(ce))
-			log.Printf("Failed device configurations: %d\n", len(ce))
+		var oe iot.OperationErrors
+		if errors.As(err, &oe) && !oe.Empty() {
+			log.Printf("Successful device configurations: %d\n", len(devices)-len(oe))
+			log.Printf("Failed device configurations: %d\n", len(oe))
 
-			for _, e := range ce {
+			for _, e := range oe {
 				log.Println(e)
 			}
 
@@ -149,5 +149,25 @@ func main() {
 		}
 
 		log.Printf("All (%d) devices, successfully configured!\n", len(devices))
+	}
+
+	if mode == modeUpdate && len(devices) > 0 {
+		log.Print("Updating IoT devices...")
+		err = tuner.UpdateDevices()
+		log.Println("done!")
+
+		var oe iot.OperationErrors
+		if errors.As(err, &oe) && !oe.Empty() {
+			log.Printf("Successful device updates: %d\n", len(devices)-len(oe))
+			log.Printf("Failed device updates: %d\n", len(oe))
+
+			for _, e := range oe {
+				log.Println(e)
+			}
+
+			return
+		}
+
+		log.Printf("All (%d) devices, successfully updated!\n", len(devices))
 	}
 }

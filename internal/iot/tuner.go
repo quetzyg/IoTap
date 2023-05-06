@@ -202,3 +202,64 @@ func (t *Tuner) ConfigureDevices(cfg Config) error {
 
 	return errs
 }
+
+// update a single device.
+func update(ch chan<- *OperationResult, dev Device) {
+	client := &http.Client{}
+
+	r, err := dev.UpdateRequest()
+	if err != nil {
+		ch <- &OperationResult{
+			dev:      dev,
+			finished: true,
+			err:      err,
+		}
+	}
+
+	if err = pushConfig(client, r); err != nil {
+		ch <- &OperationResult{
+			dev:      dev,
+			finished: true,
+			err:      err,
+		}
+		return
+	}
+
+	ch <- &OperationResult{
+		dev:      dev,
+		finished: true,
+	}
+}
+
+// UpdateDevices found in the network.
+func (t *Tuner) UpdateDevices() error {
+	ch := make(chan *OperationResult)
+
+	for _, device := range t.devices {
+		go update(ch, device)
+	}
+
+	errs := OperationErrors{}
+
+	remaining := len(t.devices)
+
+	for remaining != 0 {
+		select {
+		case result := <-ch:
+			if result.finished {
+				remaining--
+			}
+
+			if result.err != nil {
+				errs = append(errs, &OperationError{
+					dev: result.dev,
+					err: result.err,
+				})
+			}
+		}
+	}
+
+	close(ch)
+
+	return errs
+}
