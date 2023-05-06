@@ -80,7 +80,7 @@ func (c *Config) Driver() string {
 	return Driver
 }
 
-// MakeRequests returns a Shelly Gen1 driver specific HTTP request collection.
+// MakeRequests returns a Shelly Gen1 specific HTTP request collection.
 func (c *Config) MakeRequests(dev iot.Device) ([]*http.Request, error) {
 	if dev.Driver() != c.Driver() {
 		return nil, fmt.Errorf("device mismatch, expected %s, got %s", c.Driver(), dev.Driver())
