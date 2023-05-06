@@ -151,11 +151,11 @@ type mqtt struct {
 	Config struct {
 		Enable                *bool   `json:"enable,omitempty"`          // True if MQTT connection is enabled, false otherwise
 		Server                *string `json:"server"`                    // Host name of the MQTT server. Can be followed by port number - host:port
-		ClientID              *string `json:"client_id"`                 // Identifies each MQTT client that connects to an MQTT broker
+		ClientID              *string `json:"client_id,omitempty"`       // Identifies each MQTT client that connects to an MQTT broker
 		Username              *string `json:"user"`                      // MQTT username
 		Password              *string `json:"pass"`                      // MQTT password
 		SSLCA                 *string `json:"ssl_ca"`                    // Type of the TCP sockets
-		TopicPrefix           *string `json:"topic_prefix"`              // Prefix of the topics on which device publish/subscribe
+		TopicPrefix           *string `json:"topic_prefix,omitempty"`    // Prefix of the topics on which device publish/subscribe
 		EnableRPC             *bool   `json:"enable_rpc,omitempty"`      // Enable RPC over MQTT
 		RPCNotification       *bool   `json:"rpc_ntf,omitempty"`         // Enable RPC notifications (NotifyStatus and NotifyEvent) to be published
 		StatusNotification    *bool   `json:"status_ntf,omitempty"`      // Enable publishing the complete component status
