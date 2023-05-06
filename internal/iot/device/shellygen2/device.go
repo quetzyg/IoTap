@@ -139,3 +139,10 @@ func (p *Prober) IgnoreError(err error) bool {
 
 	return false
 }
+
+// UpdateRequest returns a device firmware update HTTP request.
+func (d *Device) UpdateRequest() (*http.Request, error) {
+	return makeRequest(d, "Shelly.Update", map[string]string{
+		"stage": "stable",
+	})
+}

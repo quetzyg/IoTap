@@ -16,7 +16,8 @@ const (
 	Driver = "shelly_gen1"
 
 	// Endpoint paths
-	probePath = "shelly"
+	probePath  = "shelly"
+	updatePath = "ota"
 )
 
 // Device implementation for the Shelly Gen1 driver.
@@ -84,6 +85,21 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 	d.NumOutputs = uint8(tmp["num_outputs"].(float64))
 
 	return nil
+}
+
+// UpdateRequest returns a device firmware update HTTP request.
+func (d *Device) UpdateRequest() (*http.Request, error) {
+	values := url.Values{}
+	values.Add("update", "true")
+
+	r, err := http.NewRequest(http.MethodPost, buildURL(d.ip, updatePath), strings.NewReader(values.Encode()))
+	if err != nil {
+		return nil, err
+	}
+
+	r.Header.Set(iot.ContentTypeHeader, iot.URLEncodedFormMimeType)
+
+	return r, nil
 }
 
 // buildURL for Shelly Gen1 requests.
