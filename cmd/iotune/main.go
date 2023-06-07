@@ -134,6 +134,7 @@ func main() {
 	}
 }
 
+// dump the detected devices.
 func dump(devices iot.Devices) {
 	if len(devices) > 0 {
 		log.Println("Dumping devices:")
@@ -166,7 +167,7 @@ func config(tuner *iot.Tuner, devices iot.Devices) {
 	}
 }
 
-// update the firmware of all detected devices.
+// update the firmware of the detected devices.
 func update(tuner *iot.Tuner, devices iot.Devices) {
 	if len(devices) > 0 {
 		log.Print("Updating IoT devices...")
