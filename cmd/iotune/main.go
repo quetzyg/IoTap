@@ -24,7 +24,7 @@ var (
 	driver string
 	path   string
 	prober iot.Prober
-	config iot.Config
+	conf   iot.Config
 	mode   string
 )
 
@@ -75,10 +75,10 @@ func main() {
 	switch driver {
 	case shellygen1.Driver:
 		prober = &shellygen1.Prober{}
-		config = &shellygen1.Config{}
+		conf = &shellygen1.Config{}
 	case shellygen2.Driver:
 		prober = &shellygen2.Prober{}
-		config = &shellygen2.Config{}
+		conf = &shellygen2.Config{}
 	default:
 		log.Fatalf("Unknown driver: %s", driver)
 	}
@@ -100,7 +100,7 @@ func main() {
 			log.Fatalf("Config open error: %s", err)
 		}
 
-		if err = iot.LoadConfig(f, config); err != nil {
+		if err = iot.LoadConfig(f, conf); err != nil {
 			log.Fatalf("Config load error: %v", err)
 		}
 	}
@@ -124,16 +124,30 @@ func main() {
 
 	log.Printf("IoT devices found: %d\n", len(devices))
 
-	if mode == modeDump && len(devices) > 0 {
+	switch mode {
+	case modeDump:
+		dump(devices)
+	case modeConfig:
+		config(tuner, devices)
+	case modeUpdate:
+		update(tuner, devices)
+	}
+}
+
+func dump(devices iot.Devices) {
+	if len(devices) > 0 {
 		log.Println("Dumping devices:")
 		for _, device := range devices {
 			log.Println(device)
 		}
 	}
+}
 
-	if mode == modeConfig && len(devices) > 0 {
+// config the detected devices.
+func config(tuner *iot.Tuner, devices iot.Devices) {
+	if len(devices) > 0 {
 		log.Print("Configuring IoT devices...")
-		err = tuner.ConfigureDevices(config)
+		err := tuner.ConfigureDevices(conf)
 		log.Println("done!")
 
 		var oe iot.OperationErrors
@@ -150,10 +164,13 @@ func main() {
 
 		log.Printf("All (%d) devices, successfully configured!\n", len(devices))
 	}
+}
 
-	if mode == modeUpdate && len(devices) > 0 {
+// update the firmware of all detected devices.
+func update(tuner *iot.Tuner, devices iot.Devices) {
+	if len(devices) > 0 {
 		log.Print("Updating IoT devices...")
-		err = tuner.UpdateDevices()
+		err := tuner.UpdateDevices()
 		log.Println("done!")
 
 		var oe iot.OperationErrors
