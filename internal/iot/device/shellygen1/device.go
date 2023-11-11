@@ -2,7 +2,6 @@ package shellygen1
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net"
 	"net/http"
@@ -120,27 +119,4 @@ func (p *Prober) ProbeRequest(ip net.IP) (*http.Request, iot.Device, error) {
 	r.Header.Set(iot.ContentTypeHeader, iot.JSONMimeType)
 
 	return r, &Device{ip: ip}, nil
-}
-
-// IgnoreError checks if certain errors can be ignored.
-func (p *Prober) IgnoreError(err error) bool {
-	var ue *url.Error
-	if errors.As(err, &ue) {
-		// Ignore timeouts, refused connections and other classic HTTP shenanigans,
-		// since (NORMALLY!) it means there's no such device at the IP address.
-		return true
-	}
-
-	if errors.Is(err, iot.ErrWrongDevice) {
-		// Ignore wrong devices.
-		return true
-	}
-
-	var je *json.SyntaxError
-	if errors.As(err, &je) {
-		// We found something, but it's not outputting valid JSON
-		return true
-	}
-
-	return false
 }

@@ -1,11 +1,14 @@
 package iot
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
 	"net"
 	"net/http"
+	"net/url"
 )
 
 // A Tuner holds Devices found during a network scan.
@@ -29,7 +32,22 @@ func Probe(client *http.Client, ip net.IP, prober Prober) (Device, error) {
 	}
 
 	dev, err = DeviceFetcher(client, r, dev)
-	if prober.IgnoreError(err) {
+
+	var ue *url.Error
+	if errors.As(err, &ue) {
+		// Ignore timeouts, refused connections and other classic HTTP shenanigans,
+		// since (NORMALLY!) it means there's no such device at the IP address.
+		return dev, nil
+	}
+
+	if errors.Is(err, ErrWrongDevice) {
+		// Ignore wrong devices.
+		return dev, nil
+	}
+
+	var je *json.SyntaxError
+	if errors.As(err, &je) {
+		// We found something, but it's not outputting valid JSON
 		return dev, nil
 	}
 

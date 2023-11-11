@@ -11,7 +11,6 @@ import (
 // Prober defines the methods a prober instance should implement.
 type Prober interface {
 	ProbeRequest(ip net.IP) (*http.Request, Device, error)
-	IgnoreError(err error) bool
 }
 
 // Device defines the methods an IoT device instance should implement.
