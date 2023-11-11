@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/Stowify/IoTune/internal/iot"
+	iotune "github.com/Stowify/IoTune"
 )
 
 const (
@@ -81,7 +81,7 @@ func (c *Config) Driver() string {
 }
 
 // MakeRequests returns a Shelly Gen1 specific HTTP request collection.
-func (c *Config) MakeRequests(dev iot.Device) ([]*http.Request, error) {
+func (c *Config) MakeRequests(dev iotune.Device) ([]*http.Request, error) {
 	if dev.Driver() != c.Driver() {
 		return nil, fmt.Errorf("device mismatch, expected %s, got %s", c.Driver(), dev.Driver())
 	}
@@ -115,7 +115,7 @@ func (c *Config) Empty() bool {
 }
 
 // makeRequest for a Shelly endpoint.
-func makeRequest(i any, dev iot.Device, path string) (*http.Request, error) {
+func makeRequest(i any, dev iotune.Device, path string) (*http.Request, error) {
 	values := structToValues(i)
 
 	r, err := http.NewRequest(http.MethodPost, buildURL(dev.IP(), path), strings.NewReader(values.Encode()))
@@ -123,7 +123,7 @@ func makeRequest(i any, dev iot.Device, path string) (*http.Request, error) {
 		return nil, err
 	}
 
-	r.Header.Set(iot.ContentTypeHeader, iot.URLEncodedFormMimeType)
+	r.Header.Set(iotune.ContentTypeHeader, iotune.URLEncodedFormMimeType)
 
 	return r, nil
 }

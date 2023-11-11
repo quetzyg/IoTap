@@ -7,10 +7,9 @@ import (
 	"log"
 	"os"
 
-	"github.com/Stowify/IoTune/internal/iot"
-	"github.com/Stowify/IoTune/internal/iot/device/shellygen1"
-	"github.com/Stowify/IoTune/internal/iot/device/shellygen2"
-	"github.com/Stowify/IoTune/internal/network"
+	iotune "github.com/Stowify/IoTune"
+	"github.com/Stowify/IoTune/shellygen1"
+	"github.com/Stowify/IoTune/shellygen2"
 )
 
 const (
@@ -23,8 +22,8 @@ const (
 var (
 	driver string
 	path   string
-	prober iot.Prober
-	conf   iot.Config
+	prober iotune.Prober
+	conf   iotune.Config
 	mode   string
 )
 
@@ -100,18 +99,18 @@ func main() {
 			log.Fatalf("Config open error: %s", err)
 		}
 
-		if err = iot.LoadConfig(f, conf); err != nil {
+		if err = iotune.LoadConfig(f, conf); err != nil {
 			log.Fatalf("Config load error: %v", err)
 		}
 	}
 
-	tuner := iot.NewTuner()
+	tuner := iotune.NewTuner()
 
 	log.Println("Starting IoT device scan...")
-	err := tuner.Scan(network.Address(), prober)
+	err := tuner.Scan(iotune.Address(), prober)
 	log.Println("done!")
 
-	var pe iot.ProbeErrors
+	var pe iotune.ProbeErrors
 	if errors.As(err, &pe) && !pe.Empty() {
 		log.Println("Errors were found during the scan:")
 
@@ -135,7 +134,7 @@ func main() {
 }
 
 // dump the detected devices.
-func dump(devices iot.Devices) {
+func dump(devices iotune.Devices) {
 	if len(devices) > 0 {
 		log.Println("Dumping devices:")
 		for _, device := range devices {
@@ -145,13 +144,13 @@ func dump(devices iot.Devices) {
 }
 
 // config the detected devices.
-func config(tuner *iot.Tuner, devices iot.Devices) {
+func config(tuner *iotune.Tuner, devices iotune.Devices) {
 	if len(devices) > 0 {
 		log.Print("Configuring IoT devices...")
 		err := tuner.ConfigureDevices(conf)
 		log.Println("done!")
 
-		var oe iot.OperationErrors
+		var oe iotune.OperationErrors
 		if errors.As(err, &oe) && !oe.Empty() {
 			log.Printf("Successful device configurations: %d\n", len(devices)-len(oe))
 			log.Printf("Failed device configurations: %d\n", len(oe))
@@ -168,13 +167,13 @@ func config(tuner *iot.Tuner, devices iot.Devices) {
 }
 
 // update the firmware of the detected devices.
-func update(tuner *iot.Tuner, devices iot.Devices) {
+func update(tuner *iotune.Tuner, devices iotune.Devices) {
 	if len(devices) > 0 {
 		log.Print("Updating IoT devices...")
 		err := tuner.UpdateDevices()
 		log.Println("done!")
 
-		var oe iot.OperationErrors
+		var oe iotune.OperationErrors
 		if errors.As(err, &oe) && !oe.Empty() {
 			log.Printf("Successful device updates: %d\n", len(devices)-len(oe))
 			log.Printf("Failed device updates: %d\n", len(oe))

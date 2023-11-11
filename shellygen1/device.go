@@ -8,7 +8,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/Stowify/IoTune/internal/iot"
+	iotune "github.com/Stowify/IoTune"
 )
 
 const (
@@ -71,7 +71,7 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 
 	for _, key := range keys {
 		if _, ok := tmp[key]; !ok {
-			return iot.ErrUnexpectedDevice
+			return iotune.ErrUnexpectedDevice
 		}
 	}
 
@@ -96,7 +96,7 @@ func (d *Device) UpdateRequest() (*http.Request, error) {
 		return nil, err
 	}
 
-	r.Header.Set(iot.ContentTypeHeader, iot.URLEncodedFormMimeType)
+	r.Header.Set(iotune.ContentTypeHeader, iotune.URLEncodedFormMimeType)
 
 	return r, nil
 }
@@ -110,13 +110,13 @@ func buildURL(ip net.IP, path string) string {
 type Prober struct{}
 
 // ProbeRequest function implementation for the Shelly Gen1 driver.
-func (p *Prober) ProbeRequest(ip net.IP) (*http.Request, iot.Device, error) {
+func (p *Prober) ProbeRequest(ip net.IP) (*http.Request, iotune.Device, error) {
 	r, err := http.NewRequest(http.MethodGet, buildURL(ip, probePath), nil)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	r.Header.Set(iot.ContentTypeHeader, iot.JSONMimeType)
+	r.Header.Set(iotune.ContentTypeHeader, iotune.JSONMimeType)
 
 	return r, &Device{ip: ip}, nil
 }

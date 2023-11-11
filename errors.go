@@ -1,4 +1,4 @@
-package iot
+package iotune
 
 import (
 	"errors"
