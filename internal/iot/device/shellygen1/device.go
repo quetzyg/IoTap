@@ -71,7 +71,7 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 
 	for _, key := range keys {
 		if _, ok := tmp[key]; !ok {
-			return iot.ErrWrongDevice
+			return iot.ErrUnexpectedDevice
 		}
 	}
 

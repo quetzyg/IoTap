@@ -40,8 +40,8 @@ func Probe(client *http.Client, ip net.IP, prober Prober) (Device, error) {
 		return dev, nil
 	}
 
-	if errors.Is(err, ErrWrongDevice) {
-		// Ignore wrong devices.
+	if errors.Is(err, ErrUnexpectedDevice) {
+		// Skip unexpected devices.
 		return dev, nil
 	}
 

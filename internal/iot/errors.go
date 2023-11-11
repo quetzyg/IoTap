@@ -7,7 +7,9 @@ import (
 	"strings"
 )
 
-var ErrWrongDevice = errors.New("wrong IoT device")
+// ErrUnexpectedDevice is an error type used in the process of probing IoT devices on the network.
+// This error is returned when a device is found on the network but does not match an expected or target device.
+var ErrUnexpectedDevice = errors.New("unexpected IoT device")
 
 // ProbeError holds an IP address probe error.
 type ProbeError struct {
