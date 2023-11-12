@@ -53,7 +53,7 @@ func (d *Device) Driver() string {
 // String implements the Stringer interface.
 func (d *Device) String() string {
 	return fmt.Sprintf(
-		"%s, %s, %15s, %s, %s, %s",
+		"%s|%s|%-15s|%-32s|%-14s|%s",
 		d.Driver(),
 		d.MAC,
 		d.ip,
