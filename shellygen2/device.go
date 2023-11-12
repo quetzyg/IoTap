@@ -9,6 +9,7 @@ import (
 
 	iotune "github.com/Stowify/IoTune"
 	"github.com/Stowify/IoTune/device"
+	"github.com/Stowify/IoTune/maputil"
 )
 
 const (
@@ -71,19 +72,30 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	keys := []string{"id", "name", "model", "gen", "mac", "fw_id", "ver", "app", "auth_en", "auth_domain"}
+	keys := []string{
+		"name",
+		"id",
+		"mac",
+		"model",
+		"gen",
+		"fw_id",
+		"ver",
+		"app",
+		"auth_en",
+		"auth_domain",
+	}
 
 	for _, key := range keys {
-		if _, ok := tmp[key]; !ok {
+		if !maputil.KeyExists(tmp, key) {
 			return device.ErrUnexpected
 		}
 	}
 
-	d.Key = tmp["id"].(string)
 	d.Name = tmp["name"].(string)
+	d.Key = tmp["id"].(string)
+	d.MAC = tmp["mac"].(string)
 	d.Model = tmp["model"].(string)
 	d.Generation = uint8(tmp["gen"].(float64))
-	d.MAC = tmp["mac"].(string)
 	d.Firmware = tmp["fw_id"].(string)
 	d.Version = tmp["ver"].(string)
 	d.AppName = tmp["app"].(string)
