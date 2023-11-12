@@ -11,7 +11,6 @@ import (
 	"github.com/Stowify/IoTune/device"
 	"github.com/Stowify/IoTune/shellygen1"
 	"github.com/Stowify/IoTune/shellygen2"
-	"github.com/Stowify/IoTune/tuner"
 )
 
 const (
@@ -106,13 +105,13 @@ func main() {
 		}
 	}
 
-	tun := tuner.New()
+	tuner := device.NewTuner()
 
 	log.Println("Starting IoT device scan...")
-	err := tun.Scan(iotune.Address(), prober)
+	err := tuner.Scan(iotune.Address(), prober)
 	log.Println("done!")
 
-	var pe iotune.ProbeErrors
+	var pe device.ProbeErrors
 	if errors.As(err, &pe) && !pe.Empty() {
 		log.Println("Errors were found during the scan:")
 
@@ -121,7 +120,7 @@ func main() {
 		}
 	}
 
-	devices := tun.Devices()
+	devices := tuner.Devices()
 
 	log.Printf("IoT devices found: %d\n", len(devices))
 
@@ -129,9 +128,9 @@ func main() {
 	case modeDump:
 		dump(devices)
 	case modeConfig:
-		config(tun, devices)
+		config(tuner, devices)
 	case modeUpdate:
-		update(tun, devices)
+		update(tuner, devices)
 	}
 }
 
@@ -146,13 +145,13 @@ func dump(devices device.Collection) {
 }
 
 // config the detected devices.
-func config(tuner *tuner.Resource, devices device.Collection) {
+func config(tuner *device.Tuner, devices device.Collection) {
 	if len(devices) > 0 {
 		log.Print("Configuring IoT devices...")
 		err := tuner.ConfigureDevices(conf)
 		log.Println("done!")
 
-		var oe iotune.OperationErrors
+		var oe device.OperationErrors
 		if errors.As(err, &oe) && !oe.Empty() {
 			log.Printf("Successful device configurations: %d\n", len(devices)-len(oe))
 			log.Printf("Failed device configurations: %d\n", len(oe))
@@ -169,13 +168,13 @@ func config(tuner *tuner.Resource, devices device.Collection) {
 }
 
 // update the firmware of the detected devices.
-func update(tuner *tuner.Resource, devices device.Collection) {
+func update(tuner *device.Tuner, devices device.Collection) {
 	if len(devices) > 0 {
 		log.Print("Updating IoT devices...")
 		err := tuner.UpdateDevices()
 		log.Println("done!")
 
-		var oe iotune.OperationErrors
+		var oe device.OperationErrors
 		if errors.As(err, &oe) && !oe.Empty() {
 			log.Printf("Successful device updates: %d\n", len(devices)-len(oe))
 			log.Printf("Failed device updates: %d\n", len(oe))

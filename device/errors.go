@@ -1,17 +1,15 @@
-package iotune
+package device
 
 import (
 	"errors"
 	"fmt"
 	"net"
 	"strings"
-
-	"github.com/Stowify/IoTune/device"
 )
 
-// ErrUnexpectedDevice is an error type used in the process of probing IoT devices on the network.
+// ErrUnexpected is an error type used in the process of probing IoT devices on the network.
 // This error is returned when a device is found on the network but does not match an expected or target device.
-var ErrUnexpectedDevice = errors.New("unexpected IoT device")
+var ErrUnexpected = errors.New("unexpected IoT device")
 
 // ProbeError holds an IP address probe error.
 type ProbeError struct {
@@ -51,11 +49,11 @@ func (pe ProbeErrors) Empty() bool {
 
 // OperationError holds a device operation error.
 type OperationError struct {
-	dev device.Resource
+	dev Resource
 	err error
 }
 
-func NewOperationError(dev device.Resource, err error) *OperationError {
+func NewOperationError(dev Resource, err error) *OperationError {
 	return &OperationError{
 		dev: dev,
 		err: err,
