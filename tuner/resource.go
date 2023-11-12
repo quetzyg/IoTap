@@ -1,4 +1,4 @@
-package iotune
+package tuner
 
 import (
 	"encoding/json"
@@ -9,29 +9,32 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+
+	iotune "github.com/Stowify/IoTune"
+	"github.com/Stowify/IoTune/device"
 )
 
-// A Tuner holds Devices found during a network scan.
+// Resource holds Devices found during a network scan.
 // It also has the ability to set their configuration.
-type Tuner struct {
-	devices Devices
+type Resource struct {
+	devices device.Collection
 }
 
-// NewTuner creates a new Tuner instance.
-func NewTuner() *Tuner {
-	return &Tuner{
-		devices: Devices{},
+// New creates a new tuner instance.
+func New() *Resource {
+	return &Resource{
+		devices: device.Collection{},
 	}
 }
 
 // Probe an IP address for a specific IoT device.
-func Probe(client *http.Client, ip net.IP, prober Prober) (Device, error) {
+func Probe(client *http.Client, ip net.IP, prober device.Prober) (device.Resource, error) {
 	r, dev, err := prober.ProbeRequest(ip)
 	if err != nil {
 		return nil, err
 	}
 
-	dev, err = DeviceFetcher(client, r, dev)
+	dev, err = device.Fetcher(client, r, dev)
 
 	var ue *url.Error
 	if errors.As(err, &ue) {
@@ -40,7 +43,7 @@ func Probe(client *http.Client, ip net.IP, prober Prober) (Device, error) {
 		return dev, nil
 	}
 
-	if errors.Is(err, ErrUnexpectedDevice) {
+	if errors.Is(err, iotune.ErrUnexpectedDevice) {
 		// Skip unexpected devices.
 		return dev, nil
 	}
@@ -56,17 +59,17 @@ func Probe(client *http.Client, ip net.IP, prober Prober) (Device, error) {
 
 // ProbeResult represents the outcome of an IP address probe operation.
 type ProbeResult struct {
-	dev Device
-	err *ProbeError
+	dev device.Resource
+	err *iotune.ProbeError
 }
 
 // probe probes a specific IP and passes the result to a channel.
-func probe(ch chan<- *ProbeResult, ip net.IP, prober Prober) {
+func probe(ch chan<- *ProbeResult, ip net.IP, prober device.Prober) {
 	result := &ProbeResult{}
 
 	dev, err := Probe(&http.Client{}, ip, prober)
 	if err != nil {
-		result.err = &ProbeError{ip: ip, err: err}
+		result.err = iotune.NewProbeError(ip, err)
 		ch <- result
 		return
 	}
@@ -86,9 +89,9 @@ func probe(ch chan<- *ProbeResult, ip net.IP, prober Prober) {
 const subnet24 = 254
 
 // Scan the network with an IoT device prober.
-func (t *Tuner) Scan(ip net.IP, prober Prober) error {
+func (t *Resource) Scan(ip net.IP, prober device.Prober) error {
 	// Cleanup before scanning
-	t.devices = Devices{}
+	t.devices = device.Collection{}
 
 	ch := make(chan *ProbeResult)
 
@@ -97,7 +100,7 @@ func (t *Tuner) Scan(ip net.IP, prober Prober) error {
 		go probe(ch, net.IPv4(ip[0], ip[1], ip[2], octet), prober)
 	}
 
-	errs := ProbeErrors{}
+	errs := iotune.ProbeErrors{}
 
 	for i := 0; i < subnet24; i++ {
 		select {
@@ -118,14 +121,12 @@ func (t *Tuner) Scan(ip net.IP, prober Prober) error {
 }
 
 // Devices that were found during the network scan.
-func (t *Tuner) Devices() Devices {
+func (t *Resource) Devices() device.Collection {
 	return t.devices
 }
 
 // pushConfig handles a single HTTP configuration push to a device.
 func pushConfig(client *http.Client, r *http.Request) error {
-	r.Header.Set(userAgentHeader, userAgent)
-
 	response, err := client.Do(r)
 	if err != nil {
 		return err
@@ -148,13 +149,13 @@ func pushConfig(client *http.Client, r *http.Request) error {
 
 // OperationResult represents the outcome of a device operation.
 type OperationResult struct {
-	dev      Device
+	dev      device.Resource
 	finished bool
 	err      error
 }
 
 // configure a single device.
-func configure(ch chan<- *OperationResult, cfg Config, dev Device) {
+func configure(ch chan<- *OperationResult, cfg iotune.Config, dev device.Resource) {
 	rs, err := cfg.MakeRequests(dev)
 	if err != nil {
 		ch <- &OperationResult{
@@ -189,14 +190,14 @@ func configure(ch chan<- *OperationResult, cfg Config, dev Device) {
 }
 
 // ConfigureDevices found in the network.
-func (t *Tuner) ConfigureDevices(cfg Config) error {
+func (t *Resource) ConfigureDevices(cfg iotune.Config) error {
 	ch := make(chan *OperationResult)
 
-	for _, device := range t.devices {
-		go configure(ch, cfg, device)
+	for _, dev := range t.devices {
+		go configure(ch, cfg, dev)
 	}
 
-	errs := OperationErrors{}
+	errs := iotune.OperationErrors{}
 
 	remaining := len(t.devices)
 
@@ -208,10 +209,7 @@ func (t *Tuner) ConfigureDevices(cfg Config) error {
 			}
 
 			if result.err != nil {
-				errs = append(errs, &OperationError{
-					dev: result.dev,
-					err: result.err,
-				})
+				errs = append(errs, iotune.NewOperationError(result.dev, result.err))
 			}
 		}
 	}
@@ -222,7 +220,7 @@ func (t *Tuner) ConfigureDevices(cfg Config) error {
 }
 
 // update a single device.
-func update(ch chan<- *OperationResult, dev Device) {
+func update(ch chan<- *OperationResult, dev device.Resource) {
 	client := &http.Client{}
 
 	r, err := dev.UpdateRequest()
@@ -250,14 +248,14 @@ func update(ch chan<- *OperationResult, dev Device) {
 }
 
 // UpdateDevices found in the network.
-func (t *Tuner) UpdateDevices() error {
+func (t *Resource) UpdateDevices() error {
 	ch := make(chan *OperationResult)
 
-	for _, device := range t.devices {
-		go update(ch, device)
+	for _, dev := range t.devices {
+		go update(ch, dev)
 	}
 
-	errs := OperationErrors{}
+	errs := iotune.OperationErrors{}
 
 	remaining := len(t.devices)
 
@@ -269,10 +267,7 @@ func (t *Tuner) UpdateDevices() error {
 			}
 
 			if result.err != nil {
-				errs = append(errs, &OperationError{
-					dev: result.dev,
-					err: result.err,
-				})
+				errs = append(errs, iotune.NewOperationError(result.dev, result.err))
 			}
 		}
 	}

@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	iotune "github.com/Stowify/IoTune"
+	"github.com/Stowify/IoTune/device"
 )
 
 const (
@@ -110,7 +111,7 @@ func buildURL(ip net.IP, path string) string {
 type Prober struct{}
 
 // ProbeRequest function implementation for the Shelly Gen1 driver.
-func (p *Prober) ProbeRequest(ip net.IP) (*http.Request, iotune.Device, error) {
+func (p *Prober) ProbeRequest(ip net.IP) (*http.Request, device.Resource, error) {
 	r, err := http.NewRequest(http.MethodGet, buildURL(ip, probePath), nil)
 	if err != nil {
 		return nil, nil, err

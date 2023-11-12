@@ -5,12 +5,14 @@ import (
 	"errors"
 	"io"
 	"net/http"
+
+	"github.com/Stowify/IoTune/device"
 )
 
 // Config defines the methods an IoT device configuration instance should implement.
 type Config interface {
 	Driver() string
-	MakeRequests(Device) ([]*http.Request, error)
+	MakeRequests(device.Resource) ([]*http.Request, error)
 	Empty() bool
 }
 

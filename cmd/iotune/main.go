@@ -8,8 +8,10 @@ import (
 	"os"
 
 	iotune "github.com/Stowify/IoTune"
+	"github.com/Stowify/IoTune/device"
 	"github.com/Stowify/IoTune/shellygen1"
 	"github.com/Stowify/IoTune/shellygen2"
+	"github.com/Stowify/IoTune/tuner"
 )
 
 const (
@@ -22,7 +24,7 @@ const (
 var (
 	driver string
 	path   string
-	prober iotune.Prober
+	prober device.Prober
 	conf   iotune.Config
 	mode   string
 )
@@ -104,10 +106,10 @@ func main() {
 		}
 	}
 
-	tuner := iotune.NewTuner()
+	tun := tuner.New()
 
 	log.Println("Starting IoT device scan...")
-	err := tuner.Scan(iotune.Address(), prober)
+	err := tun.Scan(iotune.Address(), prober)
 	log.Println("done!")
 
 	var pe iotune.ProbeErrors
@@ -119,7 +121,7 @@ func main() {
 		}
 	}
 
-	devices := tuner.Devices()
+	devices := tun.Devices()
 
 	log.Printf("IoT devices found: %d\n", len(devices))
 
@@ -127,24 +129,24 @@ func main() {
 	case modeDump:
 		dump(devices)
 	case modeConfig:
-		config(tuner, devices)
+		config(tun, devices)
 	case modeUpdate:
-		update(tuner, devices)
+		update(tun, devices)
 	}
 }
 
 // dump the detected devices.
-func dump(devices iotune.Devices) {
+func dump(devices device.Collection) {
 	if len(devices) > 0 {
 		log.Println("Dumping devices:")
-		for _, device := range devices {
-			log.Println(device)
+		for _, dev := range devices {
+			log.Println(dev)
 		}
 	}
 }
 
 // config the detected devices.
-func config(tuner *iotune.Tuner, devices iotune.Devices) {
+func config(tuner *tuner.Resource, devices device.Collection) {
 	if len(devices) > 0 {
 		log.Print("Configuring IoT devices...")
 		err := tuner.ConfigureDevices(conf)
@@ -167,7 +169,7 @@ func config(tuner *iotune.Tuner, devices iotune.Devices) {
 }
 
 // update the firmware of the detected devices.
-func update(tuner *iotune.Tuner, devices iotune.Devices) {
+func update(tuner *tuner.Resource, devices device.Collection) {
 	if len(devices) > 0 {
 		log.Print("Updating IoT devices...")
 		err := tuner.UpdateDevices()
