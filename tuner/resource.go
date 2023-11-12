@@ -154,7 +154,7 @@ type OperationResult struct {
 }
 
 // configure a single device.
-func configure(ch chan<- *OperationResult, cfg iotune.Config, dev device.Resource) {
+func configure(ch chan<- *OperationResult, cfg device.Config, dev device.Resource) {
 	rs, err := cfg.MakeRequests(dev)
 	if err != nil {
 		ch <- &OperationResult{
@@ -189,7 +189,7 @@ func configure(ch chan<- *OperationResult, cfg iotune.Config, dev device.Resourc
 }
 
 // ConfigureDevices found in the network.
-func (t *Resource) ConfigureDevices(cfg iotune.Config) error {
+func (t *Resource) ConfigureDevices(cfg device.Config) error {
 	ch := make(chan *OperationResult)
 
 	for _, dev := range t.devices {

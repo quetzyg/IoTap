@@ -25,7 +25,7 @@ var (
 	driver string
 	path   string
 	prober device.Prober
-	conf   iotune.Config
+	conf   device.Config
 	mode   string
 )
 
@@ -101,7 +101,7 @@ func main() {
 			log.Fatalf("Config open error: %s", err)
 		}
 
-		if err = iotune.LoadConfig(f, conf); err != nil {
+		if err = device.LoadConfig(f, conf); err != nil {
 			log.Fatalf("Config load error: %v", err)
 		}
 	}
