@@ -71,7 +71,15 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	keys := []string{"device.type", "device.mac", "login.enabled", "fw", "discoverable", "mqtt.id", "device.num_outputs"}
+	keys := []string{
+		"device.type",
+		"device.mac",
+		"device.num_outputs",
+		"mqtt.id",
+		"login.enabled",
+		"fw",
+		"discoverable",
+	}
 
 	for _, key := range keys {
 		if !maputil.KeyExists(tmp, key) {
