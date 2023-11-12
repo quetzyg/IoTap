@@ -10,13 +10,14 @@ import (
 
 	iotune "github.com/Stowify/IoTune"
 	"github.com/Stowify/IoTune/device"
+	"github.com/Stowify/IoTune/maputil"
 )
 
 const (
 	Driver = "shelly_gen1"
 
 	// Endpoint paths
-	probePath  = "shelly"
+	probePath  = "settings"
 	updatePath = "ota"
 )
 
@@ -25,11 +26,11 @@ type Device struct {
 	ip net.IP
 
 	Model        string `json:"type"`
+	Name         string `json:"name"`
 	MAC          string `json:"mac"`
 	AuthEnabled  bool   `json:"auth"`
 	Firmware     string `json:"fw"`
 	Discoverable bool   `json:"discoverable"`
-	LongID       bool   `json:"longid"` // true if the device identifies itself with its full MAC address, false otherwise
 	NumOutputs   uint8  `json:"num_outputs"`
 }
 
@@ -51,12 +52,13 @@ func (d *Device) Driver() string {
 // String implements the Stringer interface.
 func (d *Device) String() string {
 	return fmt.Sprintf(
-		"[%s] %s %s @ %s (%s)",
+		"[%s] %s %s @ %s (%s) - %s",
 		d.Driver(),
 		d.Firmware,
 		d.Model,
 		d.ip,
 		d.MAC,
+		d.Name,
 	)
 }
 
@@ -69,21 +71,21 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	keys := []string{"type", "mac", "auth", "fw", "discoverable", "longid", "num_outputs"}
+	keys := []string{"device.type", "device.mac", "login.enabled", "fw", "discoverable", "mqtt.id", "device.num_outputs"}
 
 	for _, key := range keys {
-		if _, ok := tmp[key]; !ok {
+		if !maputil.KeyExists(tmp, key) {
 			return device.ErrUnexpected
 		}
 	}
 
-	d.Model = tmp["type"].(string)
-	d.MAC = tmp["mac"].(string)
-	d.AuthEnabled = tmp["auth"].(bool)
+	d.Model = tmp["device"].(map[string]any)["type"].(string)
+	d.MAC = tmp["device"].(map[string]any)["mac"].(string)
+	d.NumOutputs = uint8(tmp["device"].(map[string]any)["num_outputs"].(float64))
+	d.Name = tmp["mqtt"].(map[string]any)["id"].(string)
+	d.AuthEnabled = tmp["login"].(map[string]any)["enabled"].(bool)
 	d.Firmware = tmp["fw"].(string)
 	d.Discoverable = tmp["discoverable"].(bool)
-	d.LongID = tmp["longid"].(float64) == 0
-	d.NumOutputs = uint8(tmp["num_outputs"].(float64))
 
 	return nil
 }
