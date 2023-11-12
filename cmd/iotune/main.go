@@ -23,7 +23,6 @@ const (
 var (
 	driver string
 	path   string
-	prober device.Prober
 	conf   device.Config
 	mode   string
 )
@@ -74,10 +73,8 @@ func init() {
 func main() {
 	switch driver {
 	case shellygen1.Driver:
-		prober = &shellygen1.Prober{}
 		conf = &shellygen1.Config{}
 	case shellygen2.Driver:
-		prober = &shellygen2.Prober{}
 		conf = &shellygen2.Config{}
 	default:
 		log.Fatalf("Unknown driver: %s", driver)
@@ -105,10 +102,13 @@ func main() {
 		}
 	}
 
-	tuner := device.NewTuner()
+	tuner := device.NewTuner([]device.Prober{
+		&shellygen1.Prober{},
+		&shellygen2.Prober{},
+	})
 
 	log.Println("Starting IoT device scan...")
-	err := tuner.Scan(iotune.Address(), prober)
+	err := tuner.Scan(iotune.Address())
 	log.Println("done!")
 
 	var pe device.ProbeErrors

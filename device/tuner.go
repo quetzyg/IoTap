@@ -11,15 +11,17 @@ import (
 	"net/url"
 )
 
-// Tuner holds Devices found during a network scan.
+// Tuner holds the Devices found during a network scan.
 // It also has the ability to set their configuration.
 type Tuner struct {
+	probers []Prober
 	devices Collection
 }
 
 // NewTuner creates a new tuner instance.
-func NewTuner() *Tuner {
+func NewTuner(probers []Prober) *Tuner {
 	return &Tuner{
+		probers: probers,
 		devices: Collection{},
 	}
 }
@@ -60,24 +62,24 @@ type ProbeResult struct {
 	err *ProbeError
 }
 
-// probe probes a specific IP and passes the result to a channel.
-func probe(ch chan<- *ProbeResult, ip net.IP, prober Prober) {
+// probe an IP and send the result to a channel.
+func probe(ch chan<- *ProbeResult, ip net.IP, probers []Prober) {
 	result := &ProbeResult{}
 
-	dev, err := Probe(&http.Client{}, ip, prober)
-	if err != nil {
-		result.err = NewProbeError(ip, err)
-		ch <- result
-		return
+	for _, prober := range probers {
+		dev, err := Probe(&http.Client{}, ip, prober)
+
+		// Device found!
+		if dev != nil {
+			result.dev = dev
+			break
+		}
+
+		if err != nil {
+			result.err = NewProbeError(ip, err)
+		}
 	}
 
-	// No device found
-	if dev == nil {
-		ch <- result
-		return
-	}
-
-	result.dev = dev
 	ch <- result
 	return
 }
@@ -86,14 +88,14 @@ func probe(ch chan<- *ProbeResult, ip net.IP, prober Prober) {
 const subnet24 = 254
 
 // Scan the network with an IoT device prober.
-func (t *Tuner) Scan(ip net.IP, prober Prober) error {
+func (t *Tuner) Scan(ip net.IP) error {
 	// Cleanup before scanning
 	t.devices = Collection{}
 
 	ch := make(chan *ProbeResult)
 
 	for octet := byte(1); octet <= subnet24; octet++ {
-		go probe(ch, net.IPv4(ip[0], ip[1], ip[2], octet), prober)
+		go probe(ch, net.IPv4(ip[0], ip[1], ip[2], octet), t.probers)
 	}
 
 	errs := ProbeErrors{}
