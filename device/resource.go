@@ -8,12 +8,12 @@ import (
 	"net/http"
 )
 
-// Prober defines the methods a prober instance should implement.
+// Prober defines the methods a prober implementation should have.
 type Prober interface {
 	ProbeRequest(ip net.IP) (*http.Request, Resource, error)
 }
 
-// Resource defines the methods an IoT device instance should implement.
+// Resource defines the methods an IoT device resource should implement.
 type Resource interface {
 	Driver() string
 	IP() net.IP
@@ -21,10 +21,10 @@ type Resource interface {
 	UpdateRequest() (*http.Request, error)
 }
 
-// Collection represents a collection of devices.
+// Collection represents a collection of device resources.
 type Collection map[string]Resource
 
-// Fetcher performs an HTTP request to fetch a device Resource.
+// Fetcher performs an HTTP request to fetch a device resource.
 func Fetcher(client *http.Client, r *http.Request, dev Resource) (Resource, error) {
 	response, err := client.Do(r)
 	if err != nil {
