@@ -102,10 +102,10 @@ func buildURL(ip net.IP, path string) string {
 	return fmt.Sprintf("http://%s/%s", ip.String(), strings.TrimPrefix(path, "/"))
 }
 
-// Prober implementation for the Shelly Gen1 driver.
+// Prober implementation for the Shelly Gen2 driver.
 type Prober struct{}
 
-// ProbeRequest function implementation for the Shelly Gen1 driver.
+// ProbeRequest function implementation for the Shelly Gen2 driver.
 func (p *Prober) ProbeRequest(ip net.IP) (*http.Request, device.Resource, error) {
 	r, err := http.NewRequest(http.MethodGet, buildURL(ip, probePath), nil)
 	if err != nil {
