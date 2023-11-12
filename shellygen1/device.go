@@ -52,12 +52,12 @@ func (d *Device) Driver() string {
 // String implements the Stringer interface.
 func (d *Device) String() string {
 	return fmt.Sprintf(
-		"[%s] %s %s @ %s (%s) - %s",
+		"%s, %s, %s, %s, %s, %s",
 		d.Driver(),
+		d.MAC,
+		d.ip,
 		d.Firmware,
 		d.Model,
-		d.ip,
-		d.MAC,
 		d.Name,
 	)
 }
