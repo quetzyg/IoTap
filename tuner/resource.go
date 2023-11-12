@@ -95,8 +95,7 @@ func (t *Resource) Scan(ip net.IP, prober device.Prober) error {
 
 	ch := make(chan *ProbeResult)
 
-	var octet byte
-	for octet = 1; octet <= subnet24; octet++ {
+	for octet := byte(1); octet <= subnet24; octet++ {
 		go probe(ch, net.IPv4(ip[0], ip[1], ip[2], octet), prober)
 	}
 
