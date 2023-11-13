@@ -19,6 +19,26 @@ const (
 	probePath = "shelly"
 )
 
+// buildURL for Shelly requests.
+func buildURL(ip net.IP, path string) string {
+	return fmt.Sprintf("http://%s/%s", ip.String(), strings.TrimPrefix(path, "/"))
+}
+
+// Prober implementation for the Shelly Gen2 driver.
+type Prober struct{}
+
+// ProbeRequest function implementation for the Shelly Gen2 driver.
+func (p *Prober) ProbeRequest(ip net.IP) (*http.Request, device.Resource, error) {
+	r, err := http.NewRequest(http.MethodGet, buildURL(ip, probePath), nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	r.Header.Set(iotune.ContentTypeHeader, iotune.JSONMimeType)
+
+	return r, &Device{ip: ip}, nil
+}
+
 // Device implementation for the Shelly Gen2 driver.
 type Device struct {
 	ip net.IP
@@ -107,26 +127,6 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 	}
 
 	return nil
-}
-
-// buildURL for Shelly requests.
-func buildURL(ip net.IP, path string) string {
-	return fmt.Sprintf("http://%s/%s", ip.String(), strings.TrimPrefix(path, "/"))
-}
-
-// Prober implementation for the Shelly Gen2 driver.
-type Prober struct{}
-
-// ProbeRequest function implementation for the Shelly Gen2 driver.
-func (p *Prober) ProbeRequest(ip net.IP) (*http.Request, device.Resource, error) {
-	r, err := http.NewRequest(http.MethodGet, buildURL(ip, probePath), nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	r.Header.Set(iotune.ContentTypeHeader, iotune.JSONMimeType)
-
-	return r, &Device{ip: ip}, nil
 }
 
 // UpdateRequest returns a device firmware update HTTP request.
