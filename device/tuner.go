@@ -228,6 +228,38 @@ var Update = func(ch chan<- *ProcedureResult, dev Resource) {
 	}
 }
 
+// Reboot is a procedure implementation designed for rebooting IoT devices.
+var Reboot = func(ch chan<- *ProcedureResult, dev Resource) {
+	res, ok := dev.(Rebooter)
+	if !ok {
+		ch <- &ProcedureResult{
+			err: fmt.Errorf("%w: reboot", ErrUnsupportedProcedure),
+			dev: dev,
+		}
+		return
+	}
+
+	r, err := res.RebootRequest()
+	if err != nil {
+		ch <- &ProcedureResult{
+			dev: dev,
+			err: err,
+		}
+	}
+
+	if err = dispatch(&http.Client{}, r); err != nil {
+		ch <- &ProcedureResult{
+			dev: dev,
+			err: err,
+		}
+		return
+	}
+
+	ch <- &ProcedureResult{
+		dev: dev,
+	}
+}
+
 // Execute a procedure on all IoT devices we have found.
 func (t *Tuner) Execute(proc procedure) error {
 	ch := make(chan *ProcedureResult)

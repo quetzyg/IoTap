@@ -18,6 +18,7 @@ const (
 	modeDump          = "dump"
 	modeConfig        = "config"
 	modeUpdate        = "update"
+	modeReboot        = "reboot"
 )
 
 var (
@@ -33,7 +34,7 @@ const usage = `Usage:
 Options:
 -d, --driver DRIVER	Define the IoT device driver. (%s, %s) (default: %s)
 -c, --config CONFIG	Define the configuration file. (default: %s)
--m, --mode   MODE	Define the execution mode. (%s, %s, %s) (default: %s)
+-m, --mode   MODE	Define the execution mode. (%s, %s, %s, %s) (default: %s)
 
 With no arguments, the tool will use the %s driver in %s mode.
 `
@@ -62,6 +63,7 @@ func init() {
 			modeDump,   // 1st mode
 			modeConfig, // 2nd mode
 			modeUpdate, // 3rd mode
+			modeReboot, // 4th mode
 			modeDump,   // default mode
 			shellygen1.Driver,
 			modeDump,
@@ -131,6 +133,8 @@ func main() {
 		config(tuner, devices)
 	case modeUpdate:
 		update(tuner, devices)
+	case modeReboot:
+		reboot(tuner, devices)
 	}
 }
 
@@ -187,5 +191,28 @@ func update(tuner *device.Tuner, devices device.Collection) {
 		}
 
 		log.Printf("All (%d) devices, successfully updated!\n", len(devices))
+	}
+}
+
+// reboot the detected devices.
+func reboot(tuner *device.Tuner, devices device.Collection) {
+	if len(devices) > 0 {
+		log.Print("Rebooting IoT devices...")
+		err := tuner.Execute(device.Reboot)
+		log.Println("done!")
+
+		var e device.Errors
+		if errors.As(err, &e) && !e.Empty() {
+			log.Printf("Successful device reboots: %d\n", len(devices)-len(e))
+			log.Printf("Failed device reboots: %d\n", len(e))
+
+			for _, err = range e {
+				log.Println(err)
+			}
+
+			return
+		}
+
+		log.Printf("All (%d) devices, successfully rebooted!\n", len(devices))
 	}
 }
