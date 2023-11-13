@@ -111,11 +111,11 @@ func main() {
 	err := tuner.Scan(iotune.Address())
 	log.Println("done!")
 
-	var pe device.ProbeErrors
-	if errors.As(err, &pe) && !pe.Empty() {
+	var ec device.Errors
+	if errors.As(err, &ec) && !ec.Empty() {
 		log.Println("Errors were found during the scan:")
 
-		for _, e := range pe {
+		for _, e := range ec {
 			log.Printf("%v", e)
 		}
 	}

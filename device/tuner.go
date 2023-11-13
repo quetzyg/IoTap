@@ -98,7 +98,7 @@ func (t *Tuner) Scan(ip net.IP) error {
 		go probe(ch, net.IPv4(ip[0], ip[1], ip[2], octet), t.probers)
 	}
 
-	errs := ProbeErrors{}
+	errs := Errors{}
 
 	for i := 0; i < subnet24; i++ {
 		select {

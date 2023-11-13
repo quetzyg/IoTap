@@ -29,13 +29,13 @@ func (pe *ProbeError) Error() string {
 	return fmt.Sprintf("%s: %v\n", pe.ip, pe.err)
 }
 
-// ProbeErrors represents a ProbeError collection.
-type ProbeErrors []*ProbeError
+// Errors represents an error collection.
+type Errors []error
 
-// Error interface implementation for ProbeErrors.
-func (pe ProbeErrors) Error() string {
+// Error interface implementation for Errors.
+func (e Errors) Error() string {
 	var s strings.Builder
-	for _, e := range pe {
+	for _, e := range e {
 		s.WriteString(e.Error())
 	}
 
@@ -43,8 +43,8 @@ func (pe ProbeErrors) Error() string {
 }
 
 // Empty checks if the collection has any errors.
-func (pe ProbeErrors) Empty() bool {
-	return len(pe) == 0
+func (e Errors) Empty() bool {
+	return len(e) == 0
 }
 
 // OperationError holds a device operation error.
