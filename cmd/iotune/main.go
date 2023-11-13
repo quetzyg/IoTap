@@ -39,91 +39,35 @@ Options:
 Without arguments, the tool will run in %s mode.
 `
 
-func init() {
-	log.SetFlags(log.LstdFlags)
-
-	// Flag setup
-	flag.StringVar(&driver, "d", shellygen1.Driver, "IoT driver name (default "+shellygen1.Driver+")")
-	flag.StringVar(&driver, "driver", shellygen1.Driver, "IoT driver name (default "+shellygen1.Driver+")")
-
-	flag.StringVar(&mode, "m", modeDump, "Run mode (default "+modeDump+")")
-	flag.StringVar(&mode, "mode", modeDump, "Run mode (default "+modeDump+")")
-
-	flag.StringVar(&path, "c", defaultConfigPath, "Location of the config file (default "+defaultConfigPath+")")
-	flag.StringVar(&path, "config", defaultConfigPath, "Location of the config file (default "+defaultConfigPath+")")
-
-	flag.Usage = func() {
-		fmt.Printf(
-			usage,
-			os.Args[0],
-			shellygen1.Driver, // 1st driver
-			shellygen2.Driver, // 2nd driver
-			shellygen1.Driver, // default driver
-			defaultConfigPath,
-			modeDump,   // 1st mode
-			modeConfig, // 2nd mode
-			modeUpdate, // 3rd mode
-			modeReboot, // 4th mode
-			modeDump,   // default mode
-			modeDump,
-		)
+// loadConfig is responsible for the configuration loading logic, performing a series of checks,
+// including verifying the driver, checking the file path, and handling I/O operations.
+func loadConfig() {
+	switch driver {
+	case shellygen1.Driver:
+		conf = &shellygen1.Config{}
+	case shellygen2.Driver:
+		conf = &shellygen2.Config{}
+	default:
+		log.Fatalf("Unknown driver: %s", driver)
 	}
-	flag.Parse()
-}
 
-func main() {
-	log.Printf("Running in %q mode\n", mode)
-
-	if mode == modeConfig {
-		switch driver {
-		case shellygen1.Driver:
-			conf = &shellygen1.Config{}
-		case shellygen2.Driver:
-			conf = &shellygen2.Config{}
-		default:
-			log.Fatalf("Unknown driver: %s", driver)
-		}
-
-		f, err := os.Open(path)
-		defer func(f *os.File) {
-			err = f.Close()
-			if err != nil {
-				log.Fatalf("Config close error: %v", err)
-			}
-		}(f)
-
+	f, err := os.Open(path)
+	defer func(f *os.File) {
+		err = f.Close()
 		if err != nil {
-			log.Fatalf("Config open error: %s", err)
+			log.Fatalf("Config close error: %v", err)
 		}
+	}(f)
 
-		if err = device.LoadConfig(f, conf); err != nil {
-			log.Fatalf("%s config load error: %v", driver, err)
-		}
-
-		log.Printf("Successfully loaded %q configuration from %s\n", driver, path)
+	if err != nil {
+		log.Fatalf("Config open error: %s", err)
 	}
 
-	tuner := device.NewTuner([]device.Prober{
-		&shellygen1.Prober{},
-		&shellygen2.Prober{},
-	})
-
-	scan(tuner)
-
-	devices := tuner.Devices()
-
-	log.Printf("IoT devices found: %d\n", len(devices))
-
-	switch mode {
-	case modeDump:
-		dump(devices)
-	case modeConfig:
-		config(tuner, devices)
-	case modeUpdate:
-		update(tuner, devices)
-	case modeReboot:
-		reboot(tuner, devices)
+	if err = device.LoadConfig(f, conf); err != nil {
+		log.Fatalf("%s config load error: %v", driver, err)
 	}
+
+	log.Printf("Successfully loaded %q configuration from %s\n", driver, path)
 }
 
 // scan for devices on the network.
@@ -218,5 +162,67 @@ func reboot(tuner *device.Tuner, devices device.Collection) {
 		}
 
 		log.Printf("All (%d) devices, successfully rebooted!\n", len(devices))
+	}
+}
+
+func init() {
+	log.SetFlags(log.LstdFlags)
+
+	// Flag setup
+	flag.StringVar(&driver, "d", shellygen1.Driver, "IoT driver name (default "+shellygen1.Driver+")")
+	flag.StringVar(&driver, "driver", shellygen1.Driver, "IoT driver name (default "+shellygen1.Driver+")")
+
+	flag.StringVar(&mode, "m", modeDump, "Run mode (default "+modeDump+")")
+	flag.StringVar(&mode, "mode", modeDump, "Run mode (default "+modeDump+")")
+
+	flag.StringVar(&path, "c", defaultConfigPath, "Location of the config file (default "+defaultConfigPath+")")
+	flag.StringVar(&path, "config", defaultConfigPath, "Location of the config file (default "+defaultConfigPath+")")
+
+	flag.Usage = func() {
+		fmt.Printf(
+			usage,
+			os.Args[0],
+			shellygen1.Driver, // 1st driver
+			shellygen2.Driver, // 2nd driver
+			shellygen1.Driver, // default driver
+			defaultConfigPath,
+			modeDump,   // 1st mode
+			modeConfig, // 2nd mode
+			modeUpdate, // 3rd mode
+			modeReboot, // 4th mode
+			modeDump,   // default mode
+			modeDump,
+		)
+	}
+	flag.Parse()
+}
+
+func main() {
+	log.Printf("Running in %q mode\n", mode)
+
+	if mode == modeConfig {
+		loadConfig()
+	}
+
+	tuner := device.NewTuner([]device.Prober{
+		&shellygen1.Prober{},
+		&shellygen2.Prober{},
+	})
+
+	scan(tuner)
+
+	devices := tuner.Devices()
+
+	log.Printf("IoT devices found: %d\n", len(devices))
+
+	switch mode {
+	case modeDump:
+		dump(devices)
+	case modeConfig:
+		config(tuner, devices)
+	case modeUpdate:
+		update(tuner, devices)
+	case modeReboot:
+		reboot(tuner, devices)
 	}
 }
