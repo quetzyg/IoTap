@@ -56,15 +56,16 @@ func Probe(client *http.Client, ip net.IP, prober Prober) (Resource, error) {
 	return dev, err
 }
 
-// ProbeResult represents the outcome of an IP address probe operation.
-type ProbeResult struct {
+// DispatchResult encapsulates the outcome of one or more HTTP requests made to an IoT device.
+// These requests can be related to various operations such as probing, rebooting, upgrading or configuring a device.
+type DispatchResult struct {
 	dev Resource
-	err *ProbeError
+	err error
 }
 
 // probe an IP and send the result to a channel.
-func probe(ch chan<- *ProbeResult, ip net.IP, probers []Prober) {
-	result := &ProbeResult{}
+func probe(ch chan<- *DispatchResult, ip net.IP, probers []Prober) {
+	result := &DispatchResult{}
 
 	for _, prober := range probers {
 		dev, err := Probe(&http.Client{}, ip, prober)
@@ -92,7 +93,7 @@ func (t *Tuner) Scan(ip net.IP) error {
 	// Cleanup before scanning
 	t.devices = Collection{}
 
-	ch := make(chan *ProbeResult)
+	ch := make(chan *DispatchResult)
 
 	for octet := byte(1); octet <= subnet24; octet++ {
 		go probe(ch, net.IPv4(ip[0], ip[1], ip[2], octet), t.probers)
@@ -145,17 +146,11 @@ func pushConfig(client *http.Client, r *http.Request) error {
 	return nil
 }
 
-// OperationResult represents the outcome of a device operation.
-type OperationResult struct {
-	dev Resource
-	err error
-}
-
 // configure a single device.
-func configure(ch chan<- *OperationResult, cfg Config, dev Resource) {
+func configure(ch chan<- *DispatchResult, cfg Config, dev Resource) {
 	rs, err := cfg.MakeRequests(dev)
 	if err != nil {
-		ch <- &OperationResult{
+		ch <- &DispatchResult{
 			dev: dev,
 			err: err,
 		}
@@ -166,7 +161,7 @@ func configure(ch chan<- *OperationResult, cfg Config, dev Resource) {
 
 	for _, r := range rs {
 		if err = pushConfig(client, r); err != nil {
-			ch <- &OperationResult{
+			ch <- &DispatchResult{
 				dev: dev,
 				err: err,
 			}
@@ -174,14 +169,14 @@ func configure(ch chan<- *OperationResult, cfg Config, dev Resource) {
 		}
 	}
 
-	ch <- &OperationResult{
+	ch <- &DispatchResult{
 		dev: dev,
 	}
 }
 
 // ConfigureDevices found in the network.
 func (t *Tuner) ConfigureDevices(cfg Config) error {
-	ch := make(chan *OperationResult)
+	ch := make(chan *DispatchResult)
 
 	for _, dev := range t.devices {
 		go configure(ch, cfg, dev)
@@ -208,33 +203,33 @@ func (t *Tuner) ConfigureDevices(cfg Config) error {
 }
 
 // update a single device.
-func update(ch chan<- *OperationResult, dev Resource) {
+func update(ch chan<- *DispatchResult, dev Resource) {
 	client := &http.Client{}
 
 	r, err := dev.UpdateRequest()
 	if err != nil {
-		ch <- &OperationResult{
+		ch <- &DispatchResult{
 			dev: dev,
 			err: err,
 		}
 	}
 
 	if err = pushConfig(client, r); err != nil {
-		ch <- &OperationResult{
+		ch <- &DispatchResult{
 			dev: dev,
 			err: err,
 		}
 		return
 	}
 
-	ch <- &OperationResult{
+	ch <- &DispatchResult{
 		dev: dev,
 	}
 }
 
 // UpdateDevices found in the network.
 func (t *Tuner) UpdateDevices() error {
-	ch := make(chan *OperationResult)
+	ch := make(chan *DispatchResult)
 
 	for _, dev := range t.devices {
 		go update(ch, dev)
