@@ -59,8 +59,8 @@ type Errors []error
 // Error interface implementation for Errors.
 func (e Errors) Error() string {
 	var s strings.Builder
-	for _, e := range e {
-		s.WriteString(e.Error())
+	for _, err := range e {
+		s.WriteString(err.Error())
 	}
 
 	return s.String()
