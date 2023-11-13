@@ -73,20 +73,18 @@ func init() {
 }
 
 func main() {
-	switch driver {
-	case shellygen1.Driver:
-		conf = &shellygen1.Config{}
-	case shellygen2.Driver:
-		conf = &shellygen2.Config{}
-	default:
-		log.Fatalf("Unknown driver: %s", driver)
-	}
-
-	log.Printf("Loaded driver: %s\n", driver)
-
 	log.Printf("Run mode: %s\n", mode)
 
 	if mode == modeConfig {
+		switch driver {
+		case shellygen1.Driver:
+			conf = &shellygen1.Config{}
+		case shellygen2.Driver:
+			conf = &shellygen2.Config{}
+		default:
+			log.Fatalf("Unknown driver: %s", driver)
+		}
+
 		f, err := os.Open(path)
 		defer func(f *os.File) {
 			err = f.Close()
@@ -100,8 +98,10 @@ func main() {
 		}
 
 		if err = device.LoadConfig(f, conf); err != nil {
-			log.Fatalf("Config load error: %v", err)
+			log.Fatalf("%s config load error: %v", driver, err)
 		}
+
+		log.Printf("Successfully loaded %q configuration from %s\n", driver, path)
 	}
 
 	tuner := device.NewTuner([]device.Prober{
