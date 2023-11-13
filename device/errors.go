@@ -7,9 +7,14 @@ import (
 	"strings"
 )
 
-// ErrUnexpected is an error type used in the process of probing IoT devices on the network.
-// This error is returned when a device is found on the network but does not match an expected or target device.
-var ErrUnexpected = errors.New("unexpected IoT device")
+var (
+	// ErrUnexpected is an error type used in the process of probing IoT devices on the network.
+	// This error is returned when a device is found on the network but does not match an expected or target device.
+	ErrUnexpected = errors.New("unexpected IoT device")
+
+	// ErrUnsupportedProcedure means that a particular procedure is not supported on the IoT device.
+	ErrUnsupportedProcedure = errors.New("unsupported device procedure")
+)
 
 // ProbeError holds an IP address probe error.
 type ProbeError struct {
