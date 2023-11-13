@@ -147,9 +147,8 @@ func pushConfig(client *http.Client, r *http.Request) error {
 
 // OperationResult represents the outcome of a device operation.
 type OperationResult struct {
-	dev      Resource
-	finished bool
-	err      error
+	dev Resource
+	err error
 }
 
 // configure a single device.
@@ -157,9 +156,8 @@ func configure(ch chan<- *OperationResult, cfg Config, dev Resource) {
 	rs, err := cfg.MakeRequests(dev)
 	if err != nil {
 		ch <- &OperationResult{
-			dev:      dev,
-			finished: true,
-			err:      err,
+			dev: dev,
+			err: err,
 		}
 		return
 	}
@@ -169,21 +167,15 @@ func configure(ch chan<- *OperationResult, cfg Config, dev Resource) {
 	for _, r := range rs {
 		if err = pushConfig(client, r); err != nil {
 			ch <- &OperationResult{
-				dev:      dev,
-				finished: true,
-				err:      err,
+				dev: dev,
+				err: err,
 			}
 			return
-		}
-
-		ch <- &OperationResult{
-			dev: dev,
 		}
 	}
 
 	ch <- &OperationResult{
-		dev:      dev,
-		finished: true,
+		dev: dev,
 	}
 }
 
@@ -202,9 +194,7 @@ func (t *Tuner) ConfigureDevices(cfg Config) error {
 	for remaining != 0 {
 		select {
 		case result := <-ch:
-			if result.finished {
-				remaining--
-			}
+			remaining--
 
 			if result.err != nil {
 				errs = append(errs, NewOperationError(result.dev, result.err))
@@ -224,24 +214,21 @@ func update(ch chan<- *OperationResult, dev Resource) {
 	r, err := dev.UpdateRequest()
 	if err != nil {
 		ch <- &OperationResult{
-			dev:      dev,
-			finished: true,
-			err:      err,
+			dev: dev,
+			err: err,
 		}
 	}
 
 	if err = pushConfig(client, r); err != nil {
 		ch <- &OperationResult{
-			dev:      dev,
-			finished: true,
-			err:      err,
+			dev: dev,
+			err: err,
 		}
 		return
 	}
 
 	ch <- &OperationResult{
-		dev:      dev,
-		finished: true,
+		dev: dev,
 	}
 }
 
@@ -260,9 +247,7 @@ func (t *Tuner) UpdateDevices() error {
 	for remaining != 0 {
 		select {
 		case result := <-ch:
-			if result.finished {
-				remaining--
-			}
+			remaining--
 
 			if result.err != nil {
 				errs = append(errs, NewOperationError(result.dev, result.err))
