@@ -19,6 +19,7 @@ const (
 	// Endpoint paths
 	probePath  = "settings"
 	updatePath = "ota"
+	rebootPath = "reboot"
 )
 
 // buildURL for Shelly Gen1 requests.
@@ -133,22 +134,18 @@ func (d *Device) UpdateRequest() (*http.Request, error) {
 	return r, nil
 }
 
-// buildURL for Shelly Gen1 requests.
-func buildURL(ip net.IP, path string) string {
-	return fmt.Sprintf("http://%s/%s", ip.String(), strings.TrimPrefix(path, "/"))
-}
-
-// Prober implementation for the Shelly Gen1 driver.
-type Prober struct{}
-
-// ProbeRequest function implementation for the Shelly Gen1 driver.
-func (p *Prober) ProbeRequest(ip net.IP) (*http.Request, device.Resource, error) {
-	r, err := http.NewRequest(http.MethodGet, buildURL(ip, probePath), nil)
+// RebootRequest creates and returns an HTTP request that reboots the device.
+// The nature of the request (like the HTTP method, endpoint, headers, etc.) could vary
+// depending on the specific device's APIs and networking requirements.
+// This method should be implemented in a way that the resulting request, when sent through an HTTP client,
+// triggers a reboot sequence for the IoT device.
+func (d *Device) RebootRequest() (*http.Request, error) {
+	r, err := http.NewRequest(http.MethodGet, buildURL(d.ip, rebootPath), nil)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	r.Header.Set(iotune.ContentTypeHeader, iotune.JSONMimeType)
 
-	return r, &Device{ip: ip}, nil
+	return r, nil
 }
