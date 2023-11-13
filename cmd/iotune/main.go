@@ -170,8 +170,8 @@ func config(tuner *device.Tuner, devices device.Collection) {
 // update the firmware of the detected devices.
 func update(tuner *device.Tuner, devices device.Collection) {
 	if len(devices) > 0 {
-		log.Print("Updating IoT devices...")
-		err := tuner.UpdateDevices()
+		log.Print("Updating IoT device firmwares...")
+		err := tuner.Execute(device.Update)
 		log.Println("done!")
 
 		var oe device.Errors

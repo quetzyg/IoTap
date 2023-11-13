@@ -56,16 +56,16 @@ func Probe(client *http.Client, ip net.IP, prober Prober) (Resource, error) {
 	return dev, err
 }
 
-// DispatchResult encapsulates the outcome of one or more HTTP requests made to an IoT device.
-// These requests can be related to various operations such as probing, rebooting, upgrading or configuring a device.
-type DispatchResult struct {
+// ProcedureResult encapsulates the outcome of a procedure executed on an IoT device.
+// These can be related to various operations such as probing, updating, rebooting or configuring a device.
+type ProcedureResult struct {
 	dev Resource
 	err error
 }
 
 // probe an IP and send the result to a channel.
-func probe(ch chan<- *DispatchResult, ip net.IP, probers []Prober) {
-	result := &DispatchResult{}
+func probe(ch chan<- *ProcedureResult, ip net.IP, probers []Prober) {
+	result := &ProcedureResult{}
 
 	for _, prober := range probers {
 		dev, err := Probe(&http.Client{}, ip, prober)
@@ -93,7 +93,7 @@ func (t *Tuner) Scan(ip net.IP) error {
 	// Cleanup before scanning
 	t.devices = Collection{}
 
-	ch := make(chan *DispatchResult)
+	ch := make(chan *ProcedureResult)
 
 	for octet := byte(1); octet <= subnet24; octet++ {
 		go probe(ch, net.IPv4(ip[0], ip[1], ip[2], octet), t.probers)
@@ -124,8 +124,8 @@ func (t *Tuner) Devices() Collection {
 	return t.devices
 }
 
-// pushConfig handles a single HTTP configuration push to a device.
-func pushConfig(client *http.Client, r *http.Request) error {
+// dispatch an HTTP request.
+func dispatch(client *http.Client, r *http.Request) error {
 	response, err := client.Do(r)
 	if err != nil {
 		return err
@@ -147,10 +147,10 @@ func pushConfig(client *http.Client, r *http.Request) error {
 }
 
 // configure a single device.
-func configure(ch chan<- *DispatchResult, cfg Config, dev Resource) {
+func configure(ch chan<- *ProcedureResult, cfg Config, dev Resource) {
 	rs, err := cfg.MakeRequests(dev)
 	if err != nil {
-		ch <- &DispatchResult{
+		ch <- &ProcedureResult{
 			dev: dev,
 			err: err,
 		}
@@ -160,8 +160,8 @@ func configure(ch chan<- *DispatchResult, cfg Config, dev Resource) {
 	client := &http.Client{}
 
 	for _, r := range rs {
-		if err = pushConfig(client, r); err != nil {
-			ch <- &DispatchResult{
+		if err = dispatch(client, r); err != nil {
+			ch <- &ProcedureResult{
 				dev: dev,
 				err: err,
 			}
@@ -169,14 +169,14 @@ func configure(ch chan<- *DispatchResult, cfg Config, dev Resource) {
 		}
 	}
 
-	ch <- &DispatchResult{
+	ch <- &ProcedureResult{
 		dev: dev,
 	}
 }
 
 // ConfigureDevices found in the network.
 func (t *Tuner) ConfigureDevices(cfg Config) error {
-	ch := make(chan *DispatchResult)
+	ch := make(chan *ProcedureResult)
 
 	for _, dev := range t.devices {
 		go configure(ch, cfg, dev)
@@ -202,43 +202,43 @@ func (t *Tuner) ConfigureDevices(cfg Config) error {
 	return errs
 }
 
-// update a single device.
-func update(ch chan<- *DispatchResult, dev Resource) {
-	client := &http.Client{}
+// procedure is a function type designed to encapsulate operations to be carried out on an IoT device.
+type procedure func(ch chan<- *ProcedureResult, dev Resource)
 
+// Update is a procedure implementation designed for updating the firmware of IoT devices.
+var Update = func(ch chan<- *ProcedureResult, dev Resource) {
 	r, err := dev.UpdateRequest()
 	if err != nil {
-		ch <- &DispatchResult{
+		ch <- &ProcedureResult{
 			dev: dev,
 			err: err,
 		}
 	}
 
-	if err = pushConfig(client, r); err != nil {
-		ch <- &DispatchResult{
+	if err = dispatch(&http.Client{}, r); err != nil {
+		ch <- &ProcedureResult{
 			dev: dev,
 			err: err,
 		}
 		return
 	}
 
-	ch <- &DispatchResult{
+	ch <- &ProcedureResult{
 		dev: dev,
 	}
 }
 
-// UpdateDevices found in the network.
-func (t *Tuner) UpdateDevices() error {
-	ch := make(chan *DispatchResult)
+// Execute a procedure on all IoT devices we have found.
+func (t *Tuner) Execute(proc procedure) error {
+	ch := make(chan *ProcedureResult)
 
 	for _, dev := range t.devices {
-		go update(ch, dev)
+		go proc(ch, dev)
 	}
 
 	errs := Errors{}
 
 	remaining := len(t.devices)
-
 	for remaining != 0 {
 		select {
 		case result := <-ch:
@@ -249,7 +249,6 @@ func (t *Tuner) UpdateDevices() error {
 			}
 		}
 	}
-
 	close(ch)
 
 	return errs
