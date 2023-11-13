@@ -130,17 +130,15 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 }
 
 // UpdateRequest returns a device firmware update HTTP request.
+// See: https://shelly-api-docs.shelly.cloud/gen2/ComponentsAndServices/Shelly#shellyupdate
 func (d *Device) UpdateRequest() (*http.Request, error) {
 	return makeRequest(d, "Shelly.Update", map[string]string{
 		"stage": "stable",
 	})
 }
 
-// RebootRequest creates and returns an HTTP request that reboots the device.
-// The nature of the request (like the HTTP method, endpoint, headers, etc.) could vary
-// depending on the specific device's APIs and networking requirements.
-// This method should be implemented in a way that the resulting request, when sent through an HTTP client,
-// triggers a reboot sequence for the IoT device.
+// RebootRequest returns a device reboot HTTP request.
+// See: https://shelly-api-docs.shelly.cloud/gen2/ComponentsAndServices/Shelly#shellyreboot
 func (d *Device) RebootRequest() (*http.Request, error) {
 	return makeRequest(d, "Shelly.Reboot", nil)
 }
