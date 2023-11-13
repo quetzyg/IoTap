@@ -33,10 +33,10 @@ const usage = `Usage:
 
 Options:
 -d, --driver DRIVER	Define the IoT device driver. (%s, %s) (default: %s)
--c, --config CONFIG	Define the configuration file. (default: %s)
+-c, --config CONFIG	Define the configuration file path. (default: %s)
 -m, --mode   MODE	Define the execution mode. (%s, %s, %s, %s) (default: %s)
 
-With no arguments, the tool will use the %s driver in %s mode.
+Without arguments, the tool will run in %s mode.
 `
 
 func init() {
@@ -65,7 +65,6 @@ func init() {
 			modeUpdate, // 3rd mode
 			modeReboot, // 4th mode
 			modeDump,   // default mode
-			shellygen1.Driver,
 			modeDump,
 		)
 	}
@@ -73,7 +72,7 @@ func init() {
 }
 
 func main() {
-	log.Printf("Run mode: %s\n", mode)
+	log.Printf("Running in %q mode\n", mode)
 
 	if mode == modeConfig {
 		switch driver {
@@ -109,18 +108,7 @@ func main() {
 		&shellygen2.Prober{},
 	})
 
-	log.Println("Starting IoT device scan...")
-	err := tuner.Scan(iotune.Address())
-	log.Println("done!")
-
-	var ec device.Errors
-	if errors.As(err, &ec) && !ec.Empty() {
-		log.Println("Errors were found during the scan:")
-
-		for _, e := range ec {
-			log.Printf("%v", e)
-		}
-	}
+	scan(tuner)
 
 	devices := tuner.Devices()
 
@@ -135,6 +123,22 @@ func main() {
 		update(tuner, devices)
 	case modeReboot:
 		reboot(tuner, devices)
+	}
+}
+
+// scan for devices on the network.
+func scan(tuner *device.Tuner) {
+	log.Println("Starting IoT device scan...")
+	err := tuner.Scan(iotune.Address())
+	log.Println("done!")
+
+	var ec device.Errors
+	if errors.As(err, &ec) && !ec.Empty() {
+		log.Println("Errors were found during the scan:")
+
+		for _, e := range ec {
+			log.Printf("%v", e)
+		}
 	}
 }
 
