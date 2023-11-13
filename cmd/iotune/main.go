@@ -151,7 +151,7 @@ func config(tuner *device.Tuner, devices device.Collection) {
 		err := tuner.ConfigureDevices(conf)
 		log.Println("done!")
 
-		var oe device.OperationErrors
+		var oe device.Errors
 		if errors.As(err, &oe) && !oe.Empty() {
 			log.Printf("Successful device configurations: %d\n", len(devices)-len(oe))
 			log.Printf("Failed device configurations: %d\n", len(oe))
@@ -174,7 +174,7 @@ func update(tuner *device.Tuner, devices device.Collection) {
 		err := tuner.UpdateDevices()
 		log.Println("done!")
 
-		var oe device.OperationErrors
+		var oe device.Errors
 		if errors.As(err, &oe) && !oe.Empty() {
 			log.Printf("Successful device updates: %d\n", len(devices)-len(oe))
 			log.Printf("Failed device updates: %d\n", len(oe))

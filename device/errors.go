@@ -29,24 +29,6 @@ func (pe *ProbeError) Error() string {
 	return fmt.Sprintf("%s: %v\n", pe.ip, pe.err)
 }
 
-// Errors represents an error collection.
-type Errors []error
-
-// Error interface implementation for Errors.
-func (e Errors) Error() string {
-	var s strings.Builder
-	for _, e := range e {
-		s.WriteString(e.Error())
-	}
-
-	return s.String()
-}
-
-// Empty checks if the collection has any errors.
-func (e Errors) Empty() bool {
-	return len(e) == 0
-}
-
 // OperationError holds a device operation error.
 type OperationError struct {
 	dev Resource
@@ -71,13 +53,13 @@ func (oe OperationError) Error() string {
 	)
 }
 
-// OperationErrors represents a OperationError collection.
-type OperationErrors []*OperationError
+// Errors represents an error collection.
+type Errors []error
 
-// Error interface implementation for OperationErrors.
-func (oe OperationErrors) Error() string {
+// Error interface implementation for Errors.
+func (e Errors) Error() string {
 	var s strings.Builder
-	for _, e := range oe {
+	for _, e := range e {
 		s.WriteString(e.Error())
 	}
 
@@ -85,6 +67,6 @@ func (oe OperationErrors) Error() string {
 }
 
 // Empty checks if the collection has any errors.
-func (oe OperationErrors) Empty() bool {
-	return len(oe) == 0
+func (e Errors) Empty() bool {
+	return len(e) == 0
 }

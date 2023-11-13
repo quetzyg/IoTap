@@ -187,7 +187,7 @@ func (t *Tuner) ConfigureDevices(cfg Config) error {
 		go configure(ch, cfg, dev)
 	}
 
-	errs := OperationErrors{}
+	errs := Errors{}
 
 	remaining := len(t.devices)
 
@@ -240,7 +240,7 @@ func (t *Tuner) UpdateDevices() error {
 		go update(ch, dev)
 	}
 
-	errs := OperationErrors{}
+	errs := Errors{}
 
 	remaining := len(t.devices)
 
