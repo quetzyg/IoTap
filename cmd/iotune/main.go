@@ -155,13 +155,13 @@ func config(tuner *device.Tuner, devices device.Collection) {
 		err := tuner.ConfigureDevices(conf)
 		log.Println("done!")
 
-		var oe device.Errors
-		if errors.As(err, &oe) && !oe.Empty() {
-			log.Printf("Successful device configurations: %d\n", len(devices)-len(oe))
-			log.Printf("Failed device configurations: %d\n", len(oe))
+		var e device.Errors
+		if errors.As(err, &e) && !e.Empty() {
+			log.Printf("Successful device configurations: %d\n", len(devices)-len(e))
+			log.Printf("Failed device configurations: %d\n", len(e))
 
-			for _, e := range oe {
-				log.Println(e)
+			for _, err = range e {
+				log.Println(err)
 			}
 
 			return
@@ -171,20 +171,20 @@ func config(tuner *device.Tuner, devices device.Collection) {
 	}
 }
 
-// update the firmware of the detected devices.
+// update the firmware of the available devices.
 func update(tuner *device.Tuner, devices device.Collection) {
 	if len(devices) > 0 {
-		log.Print("Updating IoT device firmwares...")
+		log.Print("Updating IoT devices...")
 		err := tuner.Execute(device.Update)
 		log.Println("done!")
 
-		var oe device.Errors
-		if errors.As(err, &oe) && !oe.Empty() {
-			log.Printf("Successful device updates: %d\n", len(devices)-len(oe))
-			log.Printf("Failed device updates: %d\n", len(oe))
+		var e device.Errors
+		if errors.As(err, &e) && !e.Empty() {
+			log.Printf("Successful device updates: %d\n", len(devices)-len(e))
+			log.Printf("Failed device updates: %d\n", len(e))
 
-			for _, e := range oe {
-				log.Println(e)
+			for _, err = range e {
+				log.Println(err)
 			}
 
 			return
