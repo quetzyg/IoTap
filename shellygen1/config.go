@@ -1,10 +1,5 @@
 package shellygen1
 
-const (
-	settingsPath      = "settings"
-	settingsRelayPath = "settings/relay/%d"
-)
-
 // settings for Shelly Gen1 devices.
 // Read more at: https://shelly-api-docs.shelly.cloud/gen1/#settings
 type settings struct {

@@ -11,6 +11,11 @@ import (
 	"github.com/Stowify/IoTune/device"
 )
 
+const (
+	settingsPath      = "settings"
+	settingsRelayPath = "settings/relay/%d"
+)
+
 // makeRequest for a Shelly endpoint.
 func makeRequest(i any, dev device.Resource, path string) (*http.Request, error) {
 	values := structToValues(i)
