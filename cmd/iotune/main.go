@@ -39,6 +39,50 @@ Options:
 Without arguments, the tool will run in %s mode.
 `
 
+func init() {
+	log.SetFlags(log.LstdFlags)
+
+	log.Println(`8888888      88888888888`)
+	log.Println(`  888            888`)
+	log.Println(`  888            888`)
+	log.Println(`  888    .d88b.  888  888  888 88888b.   .d88b.`)
+	log.Println(`  888   d88""88b 888  888  888 888 "88b d8P  Y8b`)
+	log.Println(`  888   888  888 888  888  888 888  888 88888888`)
+	log.Println(`  888   Y88..88P 888  Y88b 888 888  888 Y8b.`)
+	log.Println(`8888888  "Y88P"  888   "Y88888 888  888  "Y8888`)
+	log.Println(``)
+
+	log.Printf("Version %s (Build time %s)", iotune.Version, iotune.BuildTime)
+
+	// Flag setup
+	flag.StringVar(&driver, "d", shellygen1.Driver, "IoT driver name (default "+shellygen1.Driver+")")
+	flag.StringVar(&driver, "driver", shellygen1.Driver, "IoT driver name (default "+shellygen1.Driver+")")
+
+	flag.StringVar(&mode, "m", modeDump, "Run mode (default "+modeDump+")")
+	flag.StringVar(&mode, "mode", modeDump, "Run mode (default "+modeDump+")")
+
+	flag.StringVar(&path, "c", defaultConfigPath, "Location of the config file (default "+defaultConfigPath+")")
+	flag.StringVar(&path, "config", defaultConfigPath, "Location of the config file (default "+defaultConfigPath+")")
+
+	flag.Usage = func() {
+		fmt.Printf(
+			usage,
+			os.Args[0],
+			shellygen1.Driver, // 1st driver
+			shellygen2.Driver, // 2nd driver
+			shellygen1.Driver, // default driver
+			defaultConfigPath,
+			modeDump,   // 1st mode
+			modeConfig, // 2nd mode
+			modeUpdate, // 3rd mode
+			modeReboot, // 4th mode
+			modeDump,   // default mode
+			modeDump,
+		)
+	}
+	flag.Parse()
+}
+
 // loadConfig is responsible for the configuration loading logic, performing a series of checks,
 // including verifying the driver, checking the file path, and handling I/O operations.
 func loadConfig() {
@@ -163,38 +207,6 @@ func reboot(tuner *device.Tuner, devices device.Collection) {
 
 		log.Printf("All (%d) devices, successfully rebooted!\n", len(devices))
 	}
-}
-
-func init() {
-	log.SetFlags(log.LstdFlags)
-
-	// Flag setup
-	flag.StringVar(&driver, "d", shellygen1.Driver, "IoT driver name (default "+shellygen1.Driver+")")
-	flag.StringVar(&driver, "driver", shellygen1.Driver, "IoT driver name (default "+shellygen1.Driver+")")
-
-	flag.StringVar(&mode, "m", modeDump, "Run mode (default "+modeDump+")")
-	flag.StringVar(&mode, "mode", modeDump, "Run mode (default "+modeDump+")")
-
-	flag.StringVar(&path, "c", defaultConfigPath, "Location of the config file (default "+defaultConfigPath+")")
-	flag.StringVar(&path, "config", defaultConfigPath, "Location of the config file (default "+defaultConfigPath+")")
-
-	flag.Usage = func() {
-		fmt.Printf(
-			usage,
-			os.Args[0],
-			shellygen1.Driver, // 1st driver
-			shellygen2.Driver, // 2nd driver
-			shellygen1.Driver, // default driver
-			defaultConfigPath,
-			modeDump,   // 1st mode
-			modeConfig, // 2nd mode
-			modeUpdate, // 3rd mode
-			modeReboot, // 4th mode
-			modeDump,   // default mode
-			modeDump,
-		)
-	}
-	flag.Parse()
 }
 
 func main() {
