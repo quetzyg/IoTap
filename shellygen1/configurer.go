@@ -61,7 +61,7 @@ func structToValues(cfg any) url.Values {
 	return values
 }
 
-// ConfigureRequests returns a Shelly Gen1 specific HTTP request collection.
+// ConfigureRequests generates a slice of *http.Requests that are to be executed in order to configure an IoT device.
 func (d *Device) ConfigureRequests(cfg device.Config) ([]*http.Request, error) {
 	c, ok := cfg.(*Config)
 	if !ok {
