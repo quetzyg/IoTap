@@ -151,34 +151,6 @@ func dispatch(client *http.Client, r *http.Request) error {
 // procedure is a function type designed to encapsulate operations to be carried out on an IoT device.
 type procedure func(tun *Tuner, dev Resource, ch chan<- *ProcedureResult)
 
-// Configure is a procedure implementation designed to apply configuration settings to an IoT device.
-var Configure = func(tun *Tuner, dev Resource, ch chan<- *ProcedureResult) {
-	rs, err := tun.config.MakeRequests(dev)
-	if err != nil {
-		ch <- &ProcedureResult{
-			dev: dev,
-			err: err,
-		}
-		return
-	}
-
-	client := &http.Client{}
-
-	for _, r := range rs {
-		if err = dispatch(client, r); err != nil {
-			ch <- &ProcedureResult{
-				dev: dev,
-				err: err,
-			}
-			return
-		}
-	}
-
-	ch <- &ProcedureResult{
-		dev: dev,
-	}
-}
-
 // Execute a procedure implementation on all IoT devices we have found.
 func (t *Tuner) Execute(proc procedure) error {
 	ch := make(chan *ProcedureResult)

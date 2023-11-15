@@ -4,13 +4,11 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
-	"net/http"
 )
 
 // Config defines the methods an IoT device configuration instance should implement.
 type Config interface {
 	Driver() string
-	MakeRequests(Resource) ([]*http.Request, error)
 	Empty() bool
 }
 
