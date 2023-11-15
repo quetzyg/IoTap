@@ -15,13 +15,15 @@ import (
 // It also has the ability to set their configuration.
 type Tuner struct {
 	probers []Prober
+	config  Config
 	devices Collection
 }
 
 // NewTuner creates a new tuner instance.
-func NewTuner(probers []Prober) *Tuner {
+func NewTuner(probers []Prober, config Config) *Tuner {
 	return &Tuner{
 		probers: probers,
+		config:  config,
 		devices: Collection{},
 	}
 }
@@ -146,9 +148,12 @@ func dispatch(client *http.Client, r *http.Request) error {
 	return nil
 }
 
-// configure a single device.
-func configure(ch chan<- *ProcedureResult, cfg Config, dev Resource) {
-	rs, err := cfg.MakeRequests(dev)
+// procedure is a function type designed to encapsulate operations to be carried out on an IoT device.
+type procedure func(tun *Tuner, dev Resource, ch chan<- *ProcedureResult)
+
+// Configure is a procedure implementation designed to apply configuration settings to an IoT device.
+var Configure = func(tun *Tuner, dev Resource, ch chan<- *ProcedureResult) {
+	rs, err := tun.config.MakeRequests(dev)
 	if err != nil {
 		ch <- &ProcedureResult{
 			dev: dev,
@@ -174,39 +179,8 @@ func configure(ch chan<- *ProcedureResult, cfg Config, dev Resource) {
 	}
 }
 
-// ConfigureDevices found in the network.
-func (t *Tuner) ConfigureDevices(cfg Config) error {
-	ch := make(chan *ProcedureResult)
-
-	for _, dev := range t.devices {
-		go configure(ch, cfg, dev)
-	}
-
-	errs := Errors{}
-
-	remaining := len(t.devices)
-
-	for remaining != 0 {
-		select {
-		case result := <-ch:
-			remaining--
-
-			if result.err != nil {
-				errs = append(errs, NewOperationError(result.dev, result.err))
-			}
-		}
-	}
-
-	close(ch)
-
-	return errs
-}
-
-// procedure is a function type designed to encapsulate operations to be carried out on an IoT device.
-type procedure func(ch chan<- *ProcedureResult, dev Resource)
-
-// Update is a procedure implementation designed for updating the firmware of IoT devices.
-var Update = func(ch chan<- *ProcedureResult, dev Resource) {
+// Update is a procedure implementation designed to update the firmware of an IoT device.
+var Update = func(_ *Tuner, dev Resource, ch chan<- *ProcedureResult) {
 	r, err := dev.UpdateRequest()
 	if err != nil {
 		ch <- &ProcedureResult{
@@ -229,7 +203,7 @@ var Update = func(ch chan<- *ProcedureResult, dev Resource) {
 }
 
 // Reboot is a procedure implementation designed for rebooting IoT devices.
-var Reboot = func(ch chan<- *ProcedureResult, dev Resource) {
+var Reboot = func(_ *Tuner, dev Resource, ch chan<- *ProcedureResult) {
 	res, ok := dev.(Rebooter)
 	if !ok {
 		ch <- &ProcedureResult{
@@ -260,12 +234,12 @@ var Reboot = func(ch chan<- *ProcedureResult, dev Resource) {
 	}
 }
 
-// Execute a procedure on all IoT devices we have found.
+// Execute a procedure implementation on all IoT devices we have found.
 func (t *Tuner) Execute(proc procedure) error {
 	ch := make(chan *ProcedureResult)
 
 	for _, dev := range t.devices {
-		go proc(ch, dev)
+		go proc(t, dev, ch)
 	}
 
 	errs := Errors{}

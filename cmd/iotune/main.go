@@ -100,7 +100,7 @@ func dump(devices device.Collection) {
 func config(tuner *device.Tuner, devices device.Collection) {
 	if len(devices) > 0 {
 		log.Print("Configuring IoT devices...")
-		err := tuner.ConfigureDevices(conf)
+		err := tuner.Execute(device.Configure)
 		log.Println("done!")
 
 		var e device.Errors
@@ -207,7 +207,7 @@ func main() {
 	tuner := device.NewTuner([]device.Prober{
 		&shellygen1.Prober{},
 		&shellygen2.Prober{},
-	})
+	}, conf)
 
 	scan(tuner)
 
