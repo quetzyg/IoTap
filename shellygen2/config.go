@@ -15,11 +15,11 @@ const (
 
 // Config implementation for the Shelly Gen2 driver.
 type Config struct {
-	Settings *Settings `json:"settings"`
+	Settings *settings `json:"settings"`
 }
 
-// Settings for Shelly Gen2 devices.
-type Settings struct {
+// settings for Shelly Gen2 devices.
+type settings struct {
 	Input     *[]*input  `json:"input,omitempty"`
 	Relay     *[]*relay  `json:"relay,omitempty"`
 	Wifi      *wifi      `json:"wifi,omitempty"`
