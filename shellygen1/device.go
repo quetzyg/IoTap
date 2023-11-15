@@ -4,11 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net"
-	"net/http"
-	"net/url"
 	"strings"
 
-	iotune "github.com/Stowify/IoTune"
 	"github.com/Stowify/IoTune/device"
 	"github.com/Stowify/IoTune/maputil"
 )
@@ -25,21 +22,6 @@ const (
 // buildURL for Shelly Gen1 requests.
 func buildURL(ip net.IP, path string) string {
 	return fmt.Sprintf("http://%s/%s", ip.String(), strings.TrimPrefix(path, "/"))
-}
-
-// Prober implementation for the Shelly Gen1 driver.
-type Prober struct{}
-
-// ProbeRequest function implementation for the Shelly Gen1 driver.
-func (p *Prober) ProbeRequest(ip net.IP) (*http.Request, device.Resource, error) {
-	r, err := http.NewRequest(http.MethodGet, buildURL(ip, probePath), nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	r.Header.Set(iotune.ContentTypeHeader, iotune.JSONMimeType)
-
-	return r, &Device{ip: ip}, nil
 }
 
 // Device implementation for the Shelly Gen1 driver.
@@ -117,33 +99,4 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 	d.Discoverable = tmp["discoverable"].(bool)
 
 	return nil
-}
-
-// UpdateRequest returns a device firmware update HTTP request.
-// See: https://shelly-api-docs.shelly.cloud/gen1/#ota
-func (d *Device) UpdateRequest() (*http.Request, error) {
-	values := url.Values{}
-	values.Add("update", "true")
-
-	r, err := http.NewRequest(http.MethodPost, buildURL(d.ip, updatePath), strings.NewReader(values.Encode()))
-	if err != nil {
-		return nil, err
-	}
-
-	r.Header.Set(iotune.ContentTypeHeader, iotune.URLEncodedFormMimeType)
-
-	return r, nil
-}
-
-// RebootRequest returns a device reboot HTTP request.
-// See: https://shelly-api-docs.shelly.cloud/gen1/#reboot
-func (d *Device) RebootRequest() (*http.Request, error) {
-	r, err := http.NewRequest(http.MethodGet, buildURL(d.ip, rebootPath), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	r.Header.Set(iotune.ContentTypeHeader, iotune.JSONMimeType)
-
-	return r, nil
 }
