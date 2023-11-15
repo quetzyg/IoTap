@@ -104,15 +104,13 @@ func (t *Tuner) Scan(ip net.IP) error {
 	errs := Errors{}
 
 	for i := 0; i < subnet24; i++ {
-		select {
-		case result := <-ch:
-			if result.err != nil {
-				errs = append(errs, result.err)
-			}
+		result := <-ch
+		if result.err != nil {
+			errs = append(errs, result.err)
+		}
 
-			if result.dev != nil {
-				t.devices[result.dev.ID()] = result.dev
-			}
+		if result.dev != nil {
+			t.devices[result.dev.ID()] = result.dev
 		}
 	}
 
@@ -163,13 +161,11 @@ func (t *Tuner) Execute(proc procedure) error {
 
 	remaining := len(t.devices)
 	for remaining != 0 {
-		select {
-		case result := <-ch:
-			remaining--
+		result := <-ch
+		remaining--
 
-			if result.err != nil {
-				errs = append(errs, NewOperationError(result.dev, result.err))
-			}
+		if result.err != nil {
+			errs = append(errs, NewOperationError(result.dev, result.err))
 		}
 	}
 	close(ch)
