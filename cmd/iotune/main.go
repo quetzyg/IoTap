@@ -198,7 +198,12 @@ func init() {
 }
 
 func main() {
-	log.Printf("Running in %q mode\n", mode)
+	switch mode {
+	case modeDump, modeConfig, modeUpdate, modeReboot:
+		log.Printf("Running in %q mode\n", mode)
+	default:
+		log.Fatalf("Invalid run mode: %s", mode)
+	}
 
 	if mode == modeConfig {
 		loadConfig()
