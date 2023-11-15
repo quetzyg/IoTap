@@ -2,7 +2,6 @@ package device
 
 import (
 	"encoding/json"
-	"errors"
 	"io"
 )
 
@@ -11,8 +10,6 @@ type Config interface {
 	Driver() string
 	Empty() bool
 }
-
-var ErrConfigurationEmpty = errors.New("empty configuration")
 
 // LoadConfig from an I/O reader and unmarshal the data into a Config instance.
 func LoadConfig(reader io.Reader, config Config) error {

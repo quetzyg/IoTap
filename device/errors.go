@@ -8,6 +8,10 @@ import (
 )
 
 var (
+	// ErrConfigurationEmpty is an error type used when loading a configuration file.
+	// This error is returned when the configuration file data import results in an empty Config instance.
+	ErrConfigurationEmpty = errors.New("empty configuration")
+
 	// ErrUnexpected is an error type used in the process of probing IoT devices on the network.
 	// This error is returned when a device is found on the network but does not match an expected or target device.
 	ErrUnexpected = errors.New("unexpected IoT device")
