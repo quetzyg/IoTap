@@ -187,6 +187,7 @@ var Update = func(_ *Tuner, dev Resource, ch chan<- *ProcedureResult) {
 			dev: dev,
 			err: err,
 		}
+		return
 	}
 
 	if err = dispatch(&http.Client{}, r); err != nil {
@@ -219,6 +220,7 @@ var Reboot = func(_ *Tuner, dev Resource, ch chan<- *ProcedureResult) {
 			dev: dev,
 			err: err,
 		}
+		return
 	}
 
 	if err = dispatch(&http.Client{}, r); err != nil {
