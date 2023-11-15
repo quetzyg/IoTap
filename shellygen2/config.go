@@ -3,7 +3,6 @@ package shellygen2
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	iotune "github.com/Stowify/IoTune"
@@ -176,86 +175,6 @@ type rpcRequest struct {
 // Driver name of this Config implementation.
 func (c *Config) Driver() string {
 	return Driver
-}
-
-// MakeRequests returns a Shelly Gen2 specific HTTP request collection.
-func (c *Config) MakeRequests(dev device.Resource) ([]*http.Request, error) {
-	if dev.Driver() != c.Driver() {
-		return nil, fmt.Errorf("device mismatch, expected %s, got %s", c.Driver(), dev.Driver())
-	}
-
-	var requests []*http.Request
-
-	if c.Settings != nil {
-		if c.Settings.Input != nil {
-			for _, in := range *c.Settings.Input {
-				r, err := makeRequest(dev, "Input.SetConfig", in)
-				if err != nil {
-					return nil, err
-				}
-				requests = append(requests, r)
-			}
-		}
-
-		if c.Settings.Relay != nil {
-			for _, rel := range *c.Settings.Relay {
-				r, err := makeRequest(dev, "Switch.SetConfig", rel)
-				if err != nil {
-					return nil, err
-				}
-				requests = append(requests, r)
-			}
-		}
-
-		if c.Settings.Ethernet != nil {
-			r, err := makeRequest(dev, "Eth.SetConfig", c.Settings.Ethernet)
-			if err != nil {
-				return nil, err
-			}
-			requests = append(requests, r)
-		}
-
-		if c.Settings.Wifi != nil {
-			r, err := makeRequest(dev, "Wifi.SetConfig", c.Settings.Wifi)
-			if err != nil {
-				return nil, err
-			}
-			requests = append(requests, r)
-		}
-
-		if c.Settings.Bluetooth != nil {
-			r, err := makeRequest(dev, "BLE.SetConfig", c.Settings.Bluetooth)
-			if err != nil {
-				return nil, err
-			}
-			requests = append(requests, r)
-		}
-
-		if c.Settings.Cloud != nil {
-			r, err := makeRequest(dev, "Cloud.SetConfig", c.Settings.Cloud)
-			if err != nil {
-				return nil, err
-			}
-			requests = append(requests, r)
-		}
-
-		if c.Settings.MQTT != nil {
-			r, err := makeRequest(dev, "MQTT.SetConfig", c.Settings.MQTT)
-			if err != nil {
-				return nil, err
-			}
-			requests = append(requests, r)
-		}
-
-		// Reboot request
-		r, err := makeRequest(dev, "Shelly.Reboot", nil)
-		if err != nil {
-			return nil, err
-		}
-		requests = append(requests, r)
-	}
-
-	return requests, nil
 }
 
 // Empty checks if the struct holding the configuration has a zero value.

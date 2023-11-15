@@ -4,39 +4,19 @@ import (
 	"encoding/json"
 	"fmt"
 	"net"
-	"net/http"
 	"strings"
 
-	iotune "github.com/Stowify/IoTune"
 	"github.com/Stowify/IoTune/device"
 	"github.com/Stowify/IoTune/maputil"
 )
 
 const (
 	Driver = "shelly_gen2"
-
-	// Endpoint paths
-	probePath = "shelly"
 )
 
 // buildURL for Shelly requests.
 func buildURL(ip net.IP, path string) string {
 	return fmt.Sprintf("http://%s/%s", ip.String(), strings.TrimPrefix(path, "/"))
-}
-
-// Prober implementation for the Shelly Gen2 driver.
-type Prober struct{}
-
-// ProbeRequest function implementation for the Shelly Gen2 driver.
-func (p *Prober) ProbeRequest(ip net.IP) (*http.Request, device.Resource, error) {
-	r, err := http.NewRequest(http.MethodGet, buildURL(ip, probePath), nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	r.Header.Set(iotune.ContentTypeHeader, iotune.JSONMimeType)
-
-	return r, &Device{ip: ip}, nil
 }
 
 // Device implementation for the Shelly Gen2 driver.
@@ -127,18 +107,4 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 	}
 
 	return nil
-}
-
-// UpdateRequest returns a device firmware update HTTP request.
-// See: https://shelly-api-docs.shelly.cloud/gen2/ComponentsAndServices/Shelly#shellyupdate
-func (d *Device) UpdateRequest() (*http.Request, error) {
-	return makeRequest(d, "Shelly.Update", map[string]string{
-		"stage": "stable",
-	})
-}
-
-// RebootRequest returns a device reboot HTTP request.
-// See: https://shelly-api-docs.shelly.cloud/gen2/ComponentsAndServices/Shelly#shellyreboot
-func (d *Device) RebootRequest() (*http.Request, error) {
-	return makeRequest(d, "Shelly.Reboot", nil)
 }
