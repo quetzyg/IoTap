@@ -11,8 +11,8 @@ import (
 	"net/url"
 )
 
-// Tuner holds the Devices found during a network scan.
-// It also has the ability to set their configuration.
+// The Tuner type maintains a record of the Devices discovered during a network
+// scan and has the capability to execute procedures on those devices.
 type Tuner struct {
 	probers []Prober
 	config  Config
@@ -68,9 +68,10 @@ type ProcedureResult struct {
 // probe an IP and send the result to a channel.
 func probe(ch chan<- *ProcedureResult, ip net.IP, probers []Prober) {
 	result := &ProcedureResult{}
+	client := &http.Client{}
 
 	for _, prober := range probers {
-		dev, err := Probe(&http.Client{}, ip, prober)
+		dev, err := Probe(client, ip, prober)
 
 		// Device found!
 		if dev != nil {
