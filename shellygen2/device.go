@@ -11,6 +11,7 @@ import (
 )
 
 const (
+	// Driver name of this device implementation.
 	Driver = "shelly_gen2"
 )
 

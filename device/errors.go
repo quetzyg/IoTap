@@ -20,7 +20,8 @@ var (
 	// This error is returned when a device tries to use a wrong Config value.
 	ErrDriverMismatch = errors.New("device driver mismatch")
 
-	// ErrUnsupportedProcedure means that a particular procedure is not supported on the IoT device.
+	// ErrUnsupportedProcedure is an error type used in the execution of procedures against an IoT device.
+	// This error is returned when a device does not support a particular procedure that is being executed.
 	ErrUnsupportedProcedure = errors.New("unsupported device procedure")
 )
 
@@ -30,6 +31,7 @@ type ProbeError struct {
 	err error
 }
 
+// NewProbeError creates a *ProbeError instance.
 func NewProbeError(ip net.IP, err error) *ProbeError {
 	return &ProbeError{
 		ip:  ip,
@@ -48,6 +50,7 @@ type OperationError struct {
 	err error
 }
 
+// NewOperationError creates an *OperationError instance.
 func NewOperationError(dev Resource, err error) *OperationError {
 	return &OperationError{
 		dev: dev,

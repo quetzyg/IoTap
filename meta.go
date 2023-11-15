@@ -1,7 +1,7 @@
 package iotune
 
+// Variables to hold build-time information.
 var (
-	// Version and BuildTime placeholder values, to be replaced at compile time.
 	Version   = "<N/A>"
 	BuildTime = "<N/A>"
 )
