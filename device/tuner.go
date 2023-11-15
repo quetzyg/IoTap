@@ -179,30 +179,6 @@ var Configure = func(tun *Tuner, dev Resource, ch chan<- *ProcedureResult) {
 	}
 }
 
-// Update is a procedure implementation designed to update the firmware of an IoT device.
-var Update = func(_ *Tuner, dev Resource, ch chan<- *ProcedureResult) {
-	r, err := dev.UpdateRequest()
-	if err != nil {
-		ch <- &ProcedureResult{
-			dev: dev,
-			err: err,
-		}
-		return
-	}
-
-	if err = dispatch(&http.Client{}, r); err != nil {
-		ch <- &ProcedureResult{
-			dev: dev,
-			err: err,
-		}
-		return
-	}
-
-	ch <- &ProcedureResult{
-		dev: dev,
-	}
-}
-
 // Execute a procedure implementation on all IoT devices we have found.
 func (t *Tuner) Execute(proc procedure) error {
 	ch := make(chan *ProcedureResult)

@@ -18,7 +18,6 @@ type Resource interface {
 	Driver() string
 	IP() net.IP
 	ID() string
-	UpdateRequest() (*http.Request, error)
 }
 
 // Collection represents a collection of device resources.
