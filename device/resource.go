@@ -13,11 +13,6 @@ type Prober interface {
 	ProbeRequest(ip net.IP) (*http.Request, Resource, error)
 }
 
-// Rebooter is an interface that provides a standard way to interact with IoT devices to trigger a reboot.
-type Rebooter interface {
-	RebootRequest() (*http.Request, error)
-}
-
 // Resource defines the methods an IoT device resource should implement.
 type Resource interface {
 	Driver() string

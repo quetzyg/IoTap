@@ -1,0 +1,44 @@
+package device
+
+import (
+	"fmt"
+	"net/http"
+)
+
+// Rebooter is an interface that provides a standard way to trigger a reboot on IoT devices.
+type Rebooter interface {
+	RebootRequest() (*http.Request, error)
+}
+
+// Reboot is a procedure implementation designed to reboot an IoT device.
+var Reboot = func(_ *Tuner, dev Resource, ch chan<- *ProcedureResult) {
+	res, ok := dev.(Rebooter)
+	if !ok {
+		ch <- &ProcedureResult{
+			err: fmt.Errorf("%w: reboot", ErrUnsupportedProcedure),
+			dev: dev,
+		}
+		return
+	}
+
+	r, err := res.RebootRequest()
+	if err != nil {
+		ch <- &ProcedureResult{
+			dev: dev,
+			err: err,
+		}
+		return
+	}
+
+	if err = dispatch(&http.Client{}, r); err != nil {
+		ch <- &ProcedureResult{
+			dev: dev,
+			err: err,
+		}
+		return
+	}
+
+	ch <- &ProcedureResult{
+		dev: dev,
+	}
+}
