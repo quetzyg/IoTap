@@ -12,6 +12,10 @@ var (
 	// This error is returned when a device is found on the network but does not match an expected or target device.
 	ErrUnexpected = errors.New("unexpected IoT device")
 
+	// ErrDriverMismatch is an error type used in the IoT device configuration process.
+	// This error is returned when a device tries to use a wrong Config value.
+	ErrDriverMismatch = errors.New("device driver mismatch")
+
 	// ErrUnsupportedProcedure means that a particular procedure is not supported on the IoT device.
 	ErrUnsupportedProcedure = errors.New("unsupported device procedure")
 )

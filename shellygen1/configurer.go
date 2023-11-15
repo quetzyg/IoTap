@@ -65,7 +65,7 @@ func structToValues(cfg any) url.Values {
 func (d *Device) ConfigureRequests(cfg device.Config) ([]*http.Request, error) {
 	c, ok := cfg.(*Config)
 	if !ok {
-		return nil, fmt.Errorf("driver mismatch, expected %s, got %s", d.Driver(), cfg.Driver())
+		return nil, fmt.Errorf("%w: expected %q, got %q", device.ErrDriverMismatch, d.Driver(), cfg.Driver())
 	}
 
 	var requests []*http.Request
