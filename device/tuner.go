@@ -85,7 +85,6 @@ func probe(ch chan<- *ProcedureResult, ip net.IP, probers []Prober) {
 	}
 
 	ch <- result
-	return
 }
 
 // The usable IP addresses of a /24 subnet.
