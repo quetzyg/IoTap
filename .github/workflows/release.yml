@@ -24,16 +24,18 @@ jobs:
       - run: go version
 
       - name: Build binaries
+        id: build
         run: |-
           VERSION=$(date +'%g.%m.%d')-$(git rev-parse --short HEAD)
           TIME=$(date +'%T')
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           GOOS=linux GOARCH=amd64 go build -v -ldflags "-X github.com/Stowify/IoTune.Version=$(VERSION) -X github.com/Stowify/IoTune.BuildTime=$(TIME)" -o iotune-linux ./cmd/iotune/main.go
           GOOS=darwin GOARCH=amd64 go build -v -ldflags "-X github.com/Stowify/IoTune.Version=$(VERSION) -X github.com/Stowify/IoTune.BuildTime=$(TIME)" -o iotune-macos ./cmd/iotune/main.go
           GOOS=windows GOARCH=amd64 go build -v -ldflags "-X github.com/Stowify/IoTune.Version=$(VERSION) -X github.com/Stowify/IoTune.BuildTime=$(TIME)" -o iotune-win.exe ./cmd/iotune/main.go
 
       - uses: ncipollo/release-action@v1
         with:
-          name: $VERSION
-          tag: $VERSION
+          name: ${{ steps.build.outputs.version }}
+          tag: ${{ steps.build.outputs.version }}
           artifacts: "iotune-*"
           token: ${{ secrets.GITHUB_TOKEN }}
