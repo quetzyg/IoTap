@@ -9,6 +9,9 @@ import (
 	"strings"
 )
 
+// Driver is the default value when the user does not specify which driver it wants to target.
+const Driver = "all"
+
 // Prober defines the methods an implementation should have.
 type Prober interface {
 	ProbeRequest(ip net.IP) (*http.Request, Resource, error)

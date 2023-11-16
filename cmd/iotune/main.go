@@ -55,8 +55,8 @@ func init() {
 	log.Printf("Version %s (Build time %s)", iotune.Version, iotune.BuildTime)
 
 	// Flag setup
-	flag.StringVar(&driver, "d", shellygen1.Driver, "IoT driver name (default "+shellygen1.Driver+")")
-	flag.StringVar(&driver, "driver", shellygen1.Driver, "IoT driver name (default "+shellygen1.Driver+")")
+	flag.StringVar(&driver, "d", device.Driver, "IoT driver name (default "+device.Driver+")")
+	flag.StringVar(&driver, "driver", device.Driver, "IoT driver name (default "+device.Driver+")")
 
 	flag.StringVar(&mode, "m", modeDump, "Run mode (default "+modeDump+")")
 	flag.StringVar(&mode, "mode", modeDump, "Run mode (default "+modeDump+")")
@@ -70,7 +70,7 @@ func init() {
 			os.Args[0],
 			shellygen1.Driver, // 1st driver
 			shellygen2.Driver, // 2nd driver
-			shellygen1.Driver, // default driver
+			device.Driver,     // default driver
 			defaultConfigPath,
 			modeDump,   // 1st mode
 			modeConfig, // 2nd mode
@@ -87,6 +87,8 @@ func init() {
 // including verifying the driver, checking the file path, and handling I/O operations.
 func loadConfig(driver string) {
 	switch driver {
+	case device.Driver:
+		log.Fatalln("In order to load a configuration file, a specific driver must be set")
 	case shellygen1.Driver:
 		conf = &shellygen1.Config{}
 	case shellygen2.Driver:
