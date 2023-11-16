@@ -6,6 +6,7 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"strings"
 )
 
 // Prober defines the methods an implementation should have.
@@ -48,4 +49,20 @@ func Fetcher(client *http.Client, r *http.Request, dev Resource) (Resource, erro
 	}
 
 	return dev, nil
+}
+
+// Macify takes a non-delimited string representation of a MAC address as input
+// and returns a properly formatted MAC address with appropriate colon (:) separators.
+func Macify(address string) string {
+	// If we don't have exactly 12 characters, just return what we got
+	if len(address) != 12 {
+		return address
+	}
+
+	var octets []string
+	for i := 0; i < len(address); i += 2 {
+		octets = append(octets, address[i:i+2])
+	}
+
+	return strings.Join(octets, ":")
 }
