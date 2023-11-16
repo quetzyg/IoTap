@@ -1,0 +1,36 @@
+name: Release
+
+on:
+  push
+
+permissions:
+  contents: write
+
+jobs:
+  releaser:
+    needs: ci
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout codebase
+        uses: actions/checkout@v4
+
+      - name: Set up Golang
+        uses: actions/setup-go@v4
+        with:
+          go-version: 'stable'
+
+      - run: go version
+
+      - name: Build binaries
+        run: |-
+          VERSION=$(date +'%g.%m.%d')-$(git rev-parse --short HEAD)
+          TIME=$(date +'%T')
+          GOOS=linux GOARCH=amd64 go build -v -ldflags "-X github.com/Stowify/IoTune.Version=$(VERSION) -X github.com/Stowify/IoTune.BuildTime=$(TIME)" -o iotune-linux ./cmd/iotune/main.go
+          GOOS=darwin GOARCH=amd64 go build -v -ldflags "-X github.com/Stowify/IoTune.Version=$(VERSION) -X github.com/Stowify/IoTune.BuildTime=$(TIME)" -o iotune-macos ./cmd/iotune/main.go
+          GOOS=windows GOARCH=amd64 go build -v -ldflags "-X github.com/Stowify/IoTune.Version=$(VERSION) -X github.com/Stowify/IoTune.BuildTime=$(TIME)" -o iotune-win.exe ./cmd/iotune/main.go
+
+      - uses: ncipollo/release-action@v1
+        with:
+          name: $VERSION
+          artifacts: "iotune-*"
+          token: ${{ secrets.GITHUB_TOKEN }}
