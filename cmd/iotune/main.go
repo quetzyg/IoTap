@@ -85,7 +85,7 @@ func init() {
 
 // loadConfig is responsible for the configuration loading logic, performing a series of checks,
 // including verifying the driver, checking the file path, and handling I/O operations.
-func loadConfig() {
+func loadConfig(driver string) {
 	switch driver {
 	case shellygen1.Driver:
 		conf = &shellygen1.Config{}
@@ -245,7 +245,7 @@ func main() {
 	}
 
 	if mode == modeConfig {
-		loadConfig()
+		loadConfig(driver)
 	}
 
 	tuner := device.NewTuner([]device.Prober{
