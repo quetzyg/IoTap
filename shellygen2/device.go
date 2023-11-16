@@ -24,16 +24,16 @@ func buildURL(ip net.IP, path string) string {
 type Device struct {
 	ip net.IP
 
-	Key         string  `json:"id"`
-	Name        string  `json:"name"`
-	Model       string  `json:"model"`
-	Generation  uint8   `json:"gen"`
-	MAC         string  `json:"mac"`
-	Firmware    string  `json:"fw_id"`
-	Version     string  `json:"ver"`
-	AppName     string  `json:"app"`
-	AuthEnabled bool    `json:"auth_en"`
-	AuthDomain  *string `json:"auth_domain"`
+	Key         string           `json:"id"`
+	Name        string           `json:"name"`
+	Model       string           `json:"model"`
+	Generation  uint8            `json:"gen"`
+	MAC         net.HardwareAddr `json:"mac"`
+	Firmware    string           `json:"fw_id"`
+	Version     string           `json:"ver"`
+	AppName     string           `json:"app"`
+	AuthEnabled bool             `json:"auth_en"`
+	AuthDomain  *string          `json:"auth_domain"`
 }
 
 // IP address of the Device.
@@ -43,7 +43,7 @@ func (d *Device) IP() net.IP {
 
 // ID returns the Device's unique identifier.
 func (d *Device) ID() string {
-	return d.MAC
+	return d.MAC.String()
 }
 
 // Driver name of this Device implementation.
@@ -81,7 +81,13 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 
 	d.Name = tmp["name"].(string)
 	d.Key = tmp["id"].(string)
-	d.MAC = tmp["mac"].(string)
+
+	mac := device.Macify(tmp["mac"].(string))
+	d.MAC, err = net.ParseMAC(mac)
+	if err != nil {
+		return err
+	}
+
 	d.Model = tmp["model"].(string)
 	d.Generation = uint8(tmp["gen"].(float64))
 	d.Firmware = tmp["fw_id"].(string)

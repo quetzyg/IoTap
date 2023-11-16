@@ -29,13 +29,13 @@ func buildURL(ip net.IP, path string) string {
 type Device struct {
 	ip net.IP
 
-	Model        string `json:"type"`
-	Name         string `json:"name"`
-	MAC          string `json:"mac"`
-	AuthEnabled  bool   `json:"auth"`
-	Firmware     string `json:"fw"`
-	Discoverable bool   `json:"discoverable"`
-	NumOutputs   uint8  `json:"num_outputs"`
+	Model        string           `json:"type"`
+	Name         string           `json:"name"`
+	MAC          net.HardwareAddr `json:"mac"`
+	AuthEnabled  bool             `json:"auth"`
+	Firmware     string           `json:"fw"`
+	Discoverable bool             `json:"discoverable"`
+	NumOutputs   uint8            `json:"num_outputs"`
 }
 
 // IP address of the Device.
@@ -45,7 +45,7 @@ func (d *Device) IP() net.IP {
 
 // ID returns the Device's unique identifier.
 func (d *Device) ID() string {
-	return d.MAC
+	return d.MAC.String()
 }
 
 // Driver name of this Device implementation.
@@ -79,7 +79,13 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 	}
 
 	d.Model = tmp["device"].(map[string]any)["type"].(string)
-	d.MAC = tmp["device"].(map[string]any)["mac"].(string)
+
+	mac := device.Macify(tmp["device"].(map[string]any)["mac"].(string))
+	d.MAC, err = net.ParseMAC(mac)
+	if err != nil {
+		return err
+	}
+
 	d.NumOutputs = uint8(tmp["device"].(map[string]any)["num_outputs"].(float64))
 	d.AuthEnabled = tmp["login"].(map[string]any)["enabled"].(bool)
 	d.Name = tmp["name"].(string)
