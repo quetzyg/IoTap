@@ -131,11 +131,38 @@ func scan(tuner *device.Tuner) {
 }
 
 // dump the detected devices.
-func dump(devices device.Collection) {
+func dump(devices device.Collection, separator string) {
 	if len(devices) > 0 {
 		log.Println("Dumping devices:")
+
+		// Find the appropriate padding for each column
+		var widths [6]int
 		for _, dev := range devices {
-			log.Println(dev)
+			for i, w := range dev.(device.Tabler).ColWidths() {
+				if w > widths[i] {
+					widths[i] = w
+				}
+			}
+		}
+
+		format := fmt.Sprintf(
+			"%%-%ds%s%%-%ds%s%%-%ds%s%%-%ds%s%%-%ds%s%%-%ds",
+			widths[0],
+			separator,
+			widths[1],
+			separator,
+			widths[2],
+			separator,
+			widths[3],
+			separator,
+			widths[4],
+			separator,
+			widths[5],
+		)
+
+		// Apply the computed format to each IoT device row
+		for _, dev := range devices {
+			log.Println(dev.(device.Tabler).Row(format))
 		}
 	}
 }
@@ -234,7 +261,7 @@ func main() {
 
 	switch mode {
 	case modeDump:
-		dump(devices)
+		dump(devices, " ")
 	case modeConfig:
 		config(tuner, devices)
 	case modeUpdate:

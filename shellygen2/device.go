@@ -51,19 +51,6 @@ func (d *Device) Driver() string {
 	return Driver
 }
 
-// String implements the Stringer interface.
-func (d *Device) String() string {
-	return fmt.Sprintf(
-		"%s|%s|%-15s|%-32s|%-14s|%s",
-		d.Driver(),
-		d.MAC,
-		d.ip,
-		d.Firmware,
-		d.Model,
-		d.Name,
-	)
-}
-
 // UnmarshalJSON implements the Unmarshaler interface.
 func (d *Device) UnmarshalJSON(data []byte) error {
 	var tmp map[string]any
