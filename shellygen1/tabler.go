@@ -8,7 +8,7 @@ import "fmt"
 func (d *Device) ColWidths() [6]int {
 	return [6]int{
 		len(d.Driver()),
-		len(d.MAC),
+		len(d.MAC.String()),
 		len(d.ip.String()),
 		len(d.Firmware),
 		len(d.Model),
