@@ -34,5 +34,6 @@ jobs:
       - uses: ncipollo/release-action@v1
         with:
           name: $VERSION
+          tag: $VERSION
           artifacts: "iotune-*"
           token: ${{ secrets.GITHUB_TOKEN }}
