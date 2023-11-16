@@ -238,7 +238,28 @@ func reboot(tuner *device.Tuner, devices device.Collection) {
 	}
 }
 
+// resolveProber instances according to the driver passed.
+func resolveProber(driver string) []device.Prober {
+	switch driver {
+	case device.Driver:
+		return []device.Prober{&shellygen1.Prober{}, &shellygen2.Prober{}}
+	case shellygen1.Driver:
+		return []device.Prober{&shellygen1.Prober{}}
+	case shellygen2.Driver:
+		return []device.Prober{&shellygen2.Prober{}}
+	default:
+		return nil
+	}
+}
+
 func main() {
+	probers := resolveProber(driver)
+	if len(probers) == 0 {
+		log.Fatalf("Unable to resolve IoT device probers with driver: %s", driver)
+	}
+
+	log.Printf("IoT device probers resolved: %d\n", len(probers))
+
 	switch mode {
 	case modeDump, modeConfig, modeUpdate, modeReboot:
 		log.Printf("Running in %q mode\n", mode)
@@ -250,10 +271,7 @@ func main() {
 		loadConfig(driver)
 	}
 
-	tuner := device.NewTuner([]device.Prober{
-		&shellygen1.Prober{},
-		&shellygen2.Prober{},
-	}, conf)
+	tuner := device.NewTuner(probers, conf)
 
 	scan(tuner)
 
