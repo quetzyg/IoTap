@@ -40,7 +40,7 @@ Without arguments, the tool will run in %s mode.
 `
 
 func init() {
-	log.SetFlags(log.LstdFlags)
+	log.SetFlags(0)
 
 	log.Println(`8888888      88888888888`)
 	log.Println(`  888            888`)
