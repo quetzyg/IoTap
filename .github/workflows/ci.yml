@@ -17,6 +17,12 @@ jobs:
 
       - run: go version
 
+      - name: Go mod tidy
+        run: go mod tidy
+
+      - name: Go mod download
+        run: go mod download
+
       - name: Verify dependencies
         run: go mod verify
 
@@ -45,5 +51,5 @@ jobs:
 
       - name: Run tests
         run: |-
-          go test -race -failfast -vet=off -v ./... -coverprofile=coverage.out
+          go test -race -shuffle=on -failfast -vet=off -v ./... -coverprofile=coverage.out
           go tool cover -html=coverage.out -o coverage.html
