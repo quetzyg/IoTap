@@ -1,12 +1,16 @@
 package shellygen1
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/Stowify/IoTune/device"
+)
 
 // ColWidths calculates and returns the width of each of the 6 fields in the Device type
 // as an array of integers. The purpose of this method is to assist in correctly formatting
 // the string representation of Device data for consistent visual alignment.
-func (d *Device) ColWidths() [6]int {
-	return [6]int{
+func (d *Device) ColWidths() device.ColWidths {
+	return device.ColWidths{
 		len(d.Driver()),
 		len(d.MAC.String()),
 		len(d.ip.String()),

@@ -136,7 +136,7 @@ func dump(devices device.Collection, separator string) {
 		log.Println("Dumping devices:")
 
 		// Find the appropriate padding for each column
-		var widths [6]int
+		var widths device.ColWidths
 		for _, dev := range devices {
 			for i, w := range dev.(device.Tabler).ColWidths() {
 				if w > widths[i] {
