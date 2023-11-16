@@ -66,8 +66,8 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 		"device.type",
 		"device.mac",
 		"device.num_outputs",
-		"mqtt.id",
 		"login.enabled",
+		"name",
 		"fw",
 		"discoverable",
 	}
@@ -81,8 +81,8 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 	d.Model = tmp["device"].(map[string]any)["type"].(string)
 	d.MAC = tmp["device"].(map[string]any)["mac"].(string)
 	d.NumOutputs = uint8(tmp["device"].(map[string]any)["num_outputs"].(float64))
-	d.Name = tmp["mqtt"].(map[string]any)["id"].(string)
 	d.AuthEnabled = tmp["login"].(map[string]any)["enabled"].(bool)
+	d.Name = tmp["name"].(string)
 	d.Firmware = tmp["fw"].(string)
 	d.Discoverable = tmp["discoverable"].(bool)
 
