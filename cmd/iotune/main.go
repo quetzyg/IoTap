@@ -36,7 +36,7 @@ Options:
 -c, --config CONFIG	Define the configuration file path. (default: %s)
 -m, --mode   MODE	Define the execution mode. (%s, %s, %s, %s) (default: %s)
 
-Without arguments, the tool will run in %s mode.
+Without arguments, IoTune will execute in %s mode.
 `
 
 func init() {
@@ -58,8 +58,8 @@ func init() {
 	flag.StringVar(&driver, "d", device.Driver, "IoT driver name (default "+device.Driver+")")
 	flag.StringVar(&driver, "driver", device.Driver, "IoT driver name (default "+device.Driver+")")
 
-	flag.StringVar(&mode, "m", modeDump, "Run mode (default "+modeDump+")")
-	flag.StringVar(&mode, "mode", modeDump, "Run mode (default "+modeDump+")")
+	flag.StringVar(&mode, "m", modeDump, "Execution mode (default "+modeDump+")")
+	flag.StringVar(&mode, "mode", modeDump, "Execution mode (default "+modeDump+")")
 
 	flag.StringVar(&path, "c", defaultConfigPath, "Location of the config file (default "+defaultConfigPath+")")
 	flag.StringVar(&path, "config", defaultConfigPath, "Location of the config file (default "+defaultConfigPath+")")
@@ -257,7 +257,7 @@ func main() {
 	case modeDump, modeConfig, modeUpdate, modeReboot:
 		log.Printf("Executing in %q mode\n", mode)
 	default:
-		log.Fatalf("Invalid run mode: %s", mode)
+		log.Fatalf("Invalid execution mode: %s", mode)
 	}
 
 	probers := resolveProber(driver)
