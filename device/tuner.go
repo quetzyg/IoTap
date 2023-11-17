@@ -19,11 +19,20 @@ type Tuner struct {
 	devices Collection
 }
 
+// SetConfig field value.
+func (t *Tuner) SetConfig(cfg Config) {
+	t.config = cfg
+}
+
+// SetScript field value.
+func (t *Tuner) SetScript(scr *IoTScript) {
+	t.script = scr
+}
+
 // NewTuner creates a new tuner instance.
-func NewTuner(probers []Prober, config Config) *Tuner {
+func NewTuner(probers []Prober) *Tuner {
 	return &Tuner{
 		probers: probers,
-		config:  config,
 		devices: Collection{},
 	}
 }
