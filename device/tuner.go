@@ -3,10 +3,11 @@ package device
 import (
 	"encoding/json"
 	"errors"
-	iotune "github.com/Stowify/IoTune"
 	"net"
 	"net/http"
 	"net/url"
+
+	iotune "github.com/Stowify/IoTune"
 )
 
 // The Tuner type maintains a record of the Devices discovered during a network
