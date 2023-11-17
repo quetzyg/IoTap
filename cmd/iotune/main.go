@@ -22,10 +22,9 @@ const (
 )
 
 var (
-	driver string
-	path   string
-	conf   device.Config
-	mode   string
+	driver  string
+	cfgPath string
+	mode    string
 )
 
 const usage = `Usage:
@@ -61,8 +60,8 @@ func init() {
 	flag.StringVar(&mode, "m", modeDump, "Execution mode (default "+modeDump+")")
 	flag.StringVar(&mode, "mode", modeDump, "Execution mode (default "+modeDump+")")
 
-	flag.StringVar(&path, "c", defaultConfigPath, "Location of the config file (default "+defaultConfigPath+")")
-	flag.StringVar(&path, "config", defaultConfigPath, "Location of the config file (default "+defaultConfigPath+")")
+	flag.StringVar(&cfgPath, "c", defaultConfigPath, "Location of the config file (default "+defaultConfigPath+")")
+	flag.StringVar(&cfgPath, "config", defaultConfigPath, "Location of the config file (default "+defaultConfigPath+")")
 
 	flag.Usage = func() {
 		fmt.Printf(
@@ -83,16 +82,18 @@ func init() {
 	flag.Parse()
 }
 
-// loadConfig is responsible for the configuration loading logic, performing a series of checks,
+// loadConfig encapsulates the configuration loading logic, performing a series of checks,
 // including verifying the driver, checking the file path, and handling I/O operations.
-func loadConfig(driver string) {
+func loadConfig(driver, path string) device.Config {
+	var config device.Config
+
 	switch driver {
 	case device.Driver:
 		log.Fatalln("In order to load a configuration file, a specific driver must be set")
 	case shellygen1.Driver:
-		conf = &shellygen1.Config{}
+		config = &shellygen1.Config{}
 	case shellygen2.Driver:
-		conf = &shellygen2.Config{}
+		config = &shellygen2.Config{}
 	default:
 		log.Fatalf("Unknown driver: %s", driver)
 	}
@@ -109,11 +110,13 @@ func loadConfig(driver string) {
 		log.Fatalf("Config open error: %s", err)
 	}
 
-	if err = device.LoadConfig(f, conf); err != nil {
+	if err = device.LoadConfig(f, config); err != nil {
 		log.Fatalf("%s config load error: %v", driver, err)
 	}
 
 	log.Printf("Successfully loaded %q configuration from %s\n", driver, path)
+
+	return config
 }
 
 // scan for devices on the network.
@@ -267,11 +270,11 @@ func main() {
 
 	log.Printf("Loaded IoT device probers: %d\n", len(probers))
 
-	if mode == modeConfig {
-		loadConfig(driver)
-	}
+	tuner := device.NewTuner(probers)
 
-	tuner := device.NewTuner(probers, conf)
+	if mode == modeConfig {
+		tuner.SetConfig(loadConfig(driver, cfgPath))
+	}
 
 	scan(tuner)
 
