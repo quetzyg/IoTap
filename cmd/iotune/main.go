@@ -14,28 +14,30 @@ import (
 )
 
 const (
-	defaultConfigPath = "config.json"
-	modeDump          = "dump"
-	modeConfig        = "config"
-	modeUpdate        = "update"
-	modeReboot        = "reboot"
+	modeDump   = "dump"
+	modeConfig = "config"
+	modeUpdate = "update"
+	modeScript = "script"
+	modeReboot = "reboot"
 )
 
 var (
+	mode    string
 	driver  string
 	cfgPath string
-	mode    string
+	scrPath string
 )
 
 const usage = `Usage:
-%s [--driver DRIVER] [--config CONFIG] [--mode MODE]
+%s [--mode MODE] [--driver DRIVER] [--config CONFIG] [--script SCRIPT]
 
 Options:
--d, --driver DRIVER	Define the IoT device driver. (%s, %s) (default: %s)
--c, --config CONFIG	Define the configuration file path. (default: %s)
--m, --mode   MODE	Define the execution mode. (%s, %s, %s, %s) (default: %s)
+-m, --mode   MODE	Define the execution mode. (%s, %s, %s, %s, %s) (default: %s)
+-d, --driver DRIVER	Define the IoT device driver. (%s, %s, %s) (default: %s)
+-c, --config CONFIG	Define the IoT device configuration file path.
+-s, --script SCRIPT	Define the IoT device script file path.
 
-Without arguments, IoTune will execute in %s mode.
+Without arguments, IoTune will execute in %q mode.
 `
 
 func init() {
@@ -54,28 +56,32 @@ func init() {
 	log.Printf("Version %s (Build time %s)", iotune.Version, iotune.BuildTime)
 
 	// Flag setup
-	flag.StringVar(&driver, "d", device.Driver, "IoT driver name (default "+device.Driver+")")
-	flag.StringVar(&driver, "driver", device.Driver, "IoT driver name (default "+device.Driver+")")
-
 	flag.StringVar(&mode, "m", modeDump, "Execution mode (default "+modeDump+")")
 	flag.StringVar(&mode, "mode", modeDump, "Execution mode (default "+modeDump+")")
 
-	flag.StringVar(&cfgPath, "c", defaultConfigPath, "Location of the config file (default "+defaultConfigPath+")")
-	flag.StringVar(&cfgPath, "config", defaultConfigPath, "Location of the config file (default "+defaultConfigPath+")")
+	flag.StringVar(&driver, "d", device.Driver, "IoT driver name (default "+device.Driver+")")
+	flag.StringVar(&driver, "driver", device.Driver, "IoT driver name (default "+device.Driver+")")
+
+	flag.StringVar(&cfgPath, "c", "", "Location of the config file")
+	flag.StringVar(&cfgPath, "config", "", "Location of the config file")
+
+	flag.StringVar(&scrPath, "s", "", "Location of the script file")
+	flag.StringVar(&scrPath, "script", "", "Location of the script file")
 
 	flag.Usage = func() {
 		fmt.Printf(
 			usage,
 			os.Args[0],
-			shellygen1.Driver, // 1st driver
-			shellygen2.Driver, // 2nd driver
+			modeDump,          // 1st mode
+			modeConfig,        // 2nd mode
+			modeUpdate,        // 3rd mode
+			modeScript,        // 4th mode
+			modeReboot,        // 5th mode
+			modeDump,          // default mode
+			device.Driver,     // 1st driver
+			shellygen1.Driver, // 2nd driver
+			shellygen2.Driver, // 3rd driver
 			device.Driver,     // default driver
-			defaultConfigPath,
-			modeDump,   // 1st mode
-			modeConfig, // 2nd mode
-			modeUpdate, // 3rd mode
-			modeReboot, // 4th mode
-			modeDump,   // default mode
 			modeDump,
 		)
 	}
@@ -83,19 +89,23 @@ func init() {
 }
 
 // loadConfig encapsulates the configuration loading logic, performing a series of checks,
-// including verifying the driver, checking the file path, and handling I/O operations.
+// including verifying the driver, checking the file path, and error handling.
 func loadConfig(driver, path string) device.Config {
 	var config device.Config
 
 	switch driver {
 	case device.Driver:
-		log.Fatalln("In order to load a configuration file, a specific driver must be set")
+		log.Fatalf("The config mode isn't supported by the %q driver", driver)
 	case shellygen1.Driver:
 		config = &shellygen1.Config{}
 	case shellygen2.Driver:
 		config = &shellygen2.Config{}
 	default:
 		log.Fatalf("Unknown driver: %s", driver)
+	}
+
+	if path == "" {
+		log.Fatalln("The configuration file path is empty")
 	}
 
 	f, err := os.Open(path)
@@ -117,6 +127,32 @@ func loadConfig(driver, path string) device.Config {
 	log.Printf("Successfully loaded %q configuration from %s\n", driver, path)
 
 	return config
+}
+
+// loadScript encapsulates the script loading logic, performing a series of checks,
+// including verifying the driver, checking the file path, and error handling.
+func loadScript(driver string, path string) *device.IoTScript {
+	switch driver {
+	case device.Driver, shellygen1.Driver:
+		log.Fatalf("The script mode isn't supported by the %q driver", driver)
+	case shellygen2.Driver:
+		// All good!
+	default:
+		log.Fatalf("Unknown driver: %s", driver)
+	}
+
+	if path == "" {
+		log.Fatalln("The script file path is empty")
+	}
+
+	script, err := device.LoadScript(path)
+	if err != nil {
+		log.Fatalf("%s script loading error: %v", driver, err)
+	}
+
+	log.Printf("Successfully loaded %q script from %s\n", driver, path)
+
+	return script
 }
 
 // execScan encapsulates the device scanning and error handling.
@@ -218,6 +254,29 @@ func execUpdate(tuner *device.Tuner, devices device.Collection) {
 	}
 }
 
+// execUpdate encapsulates the execution of the device.Script procedure.
+func execScript(tuner *device.Tuner, devices device.Collection) {
+	if len(devices) > 0 {
+		log.Print("Uploading script to IoT devices...")
+		err := tuner.Execute(device.Script)
+		log.Println("done!")
+
+		var e device.Errors
+		if errors.As(err, &e) && !e.Empty() {
+			log.Printf("Successful script uploads: %d\n", len(devices)-len(e))
+			log.Printf("Failed script uploads: %d\n", len(e))
+
+			for _, err = range e {
+				log.Println(err)
+			}
+
+			return
+		}
+
+		log.Printf("All (%d) devices, had the script successfully uploaded!\n", len(devices))
+	}
+}
+
 // execReboot encapsulates the execution of the device.Reboot procedure.
 func execReboot(tuner *device.Tuner, devices device.Collection) {
 	if len(devices) > 0 {
@@ -257,7 +316,7 @@ func resolveProber(driver string) []device.Prober {
 
 func main() {
 	switch mode {
-	case modeDump, modeConfig, modeUpdate, modeReboot:
+	case modeDump, modeConfig, modeUpdate, modeScript, modeReboot:
 		log.Printf("Executing in %q mode\n", mode)
 	default:
 		log.Fatalf("Invalid execution mode: %s", mode)
@@ -265,15 +324,17 @@ func main() {
 
 	probers := resolveProber(driver)
 	if len(probers) == 0 {
-		log.Fatalf("Unable to resolve IoT device probers with driver: %s", driver)
+		log.Fatalf("Unable to resolve an IoT device prober with the %q driver", driver)
 	}
-
-	log.Printf("Loaded IoT device probers: %d\n", len(probers))
 
 	tuner := device.NewTuner(probers)
 
 	if mode == modeConfig {
 		tuner.SetConfig(loadConfig(driver, cfgPath))
+	}
+
+	if mode == modeScript {
+		tuner.SetScript(loadScript(driver, scrPath))
 	}
 
 	execScan(tuner)
@@ -289,6 +350,8 @@ func main() {
 		execConfig(tuner, devices)
 	case modeUpdate:
 		execUpdate(tuner, devices)
+	case modeScript:
+		execScript(tuner, devices)
 	case modeReboot:
 		execReboot(tuner, devices)
 	}
