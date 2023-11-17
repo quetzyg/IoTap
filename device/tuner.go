@@ -15,6 +15,7 @@ import (
 type Tuner struct {
 	probers []Prober
 	config  Config
+	script  *IoTScript
 	devices Collection
 }
 
