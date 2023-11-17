@@ -28,7 +28,7 @@ func buildURL(ip net.IP, path string) string {
 	return fmt.Sprintf("http://%s/%s", ip.String(), strings.TrimPrefix(path, "/"))
 }
 
-// Create a compliant request for Shelly Gen2 endpoints.
+// Create a Shelly Gen2 compliant request.
 func request(dev device.Resource, method string, params any) (*http.Request, error) {
 	req := &rpcRequest{
 		Source: "IoTune",
