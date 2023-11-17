@@ -1,7 +1,9 @@
 name: Release
 
 on:
-  push
+  push:
+    tags:
+      - latest
 
 permissions:
   contents: write
