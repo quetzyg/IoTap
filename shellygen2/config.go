@@ -1,18 +1,5 @@
 package shellygen2
 
-import (
-	"bytes"
-	"encoding/json"
-	"net/http"
-
-	iotune "github.com/Stowify/IoTune"
-	"github.com/Stowify/IoTune/device"
-)
-
-const (
-	rpcPath = "rpc"
-)
-
 // Config implementation for the Shelly Gen2 driver.
 type Config struct {
 	Settings *settings `json:"settings"`
@@ -164,14 +151,6 @@ type mqtt struct {
 	} `json:"config"`
 }
 
-// rpcRequest for the RPC endpoint.
-type rpcRequest struct {
-	ID         int    `json:"id"`
-	Source     string `json:"src"`
-	Method     string `json:"method"`
-	Parameters any    `json:"params,omitempty"`
-}
-
 // Driver name of this Config implementation.
 func (c *Config) Driver() string {
 	return Driver
@@ -180,30 +159,4 @@ func (c *Config) Driver() string {
 // Empty checks if the struct holding the configuration has a zero value.
 func (c *Config) Empty() bool {
 	return *c == Config{}
-}
-
-// makeRequest for a Shelly Gen2 endpoint.
-func makeRequest(dev device.Resource, method string, params any) (*http.Request, error) {
-	req := &rpcRequest{
-		Source: "IoTune",
-		Method: method,
-	}
-
-	if params != nil {
-		req.Parameters = params
-	}
-
-	body, err := json.Marshal(req)
-	if err != nil {
-		return nil, err
-	}
-
-	r, err := http.NewRequest(http.MethodPost, buildURL(dev.IP(), rpcPath), bytes.NewBuffer(body))
-	if err != nil {
-		return nil, err
-	}
-
-	r.Header.Set(iotune.ContentTypeHeader, iotune.JSONMimeType)
-
-	return r, nil
 }

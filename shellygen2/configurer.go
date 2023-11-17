@@ -19,7 +19,7 @@ func (d *Device) ConfigureRequests(cfg device.Config) ([]*http.Request, error) {
 	if c.Settings != nil {
 		if c.Settings.Input != nil {
 			for _, in := range *c.Settings.Input {
-				r, err := makeRequest(d, "Input.SetConfig", in)
+				r, err := request(d, "Input.SetConfig", in)
 				if err != nil {
 					return nil, err
 				}
@@ -29,7 +29,7 @@ func (d *Device) ConfigureRequests(cfg device.Config) ([]*http.Request, error) {
 
 		if c.Settings.Relay != nil {
 			for _, rel := range *c.Settings.Relay {
-				r, err := makeRequest(d, "Switch.SetConfig", rel)
+				r, err := request(d, "Switch.SetConfig", rel)
 				if err != nil {
 					return nil, err
 				}
@@ -38,7 +38,7 @@ func (d *Device) ConfigureRequests(cfg device.Config) ([]*http.Request, error) {
 		}
 
 		if c.Settings.Ethernet != nil {
-			r, err := makeRequest(d, "Eth.SetConfig", c.Settings.Ethernet)
+			r, err := request(d, "Eth.SetConfig", c.Settings.Ethernet)
 			if err != nil {
 				return nil, err
 			}
@@ -46,7 +46,7 @@ func (d *Device) ConfigureRequests(cfg device.Config) ([]*http.Request, error) {
 		}
 
 		if c.Settings.Wifi != nil {
-			r, err := makeRequest(d, "Wifi.SetConfig", c.Settings.Wifi)
+			r, err := request(d, "Wifi.SetConfig", c.Settings.Wifi)
 			if err != nil {
 				return nil, err
 			}
@@ -54,7 +54,7 @@ func (d *Device) ConfigureRequests(cfg device.Config) ([]*http.Request, error) {
 		}
 
 		if c.Settings.Bluetooth != nil {
-			r, err := makeRequest(d, "BLE.SetConfig", c.Settings.Bluetooth)
+			r, err := request(d, "BLE.SetConfig", c.Settings.Bluetooth)
 			if err != nil {
 				return nil, err
 			}
@@ -62,7 +62,7 @@ func (d *Device) ConfigureRequests(cfg device.Config) ([]*http.Request, error) {
 		}
 
 		if c.Settings.Cloud != nil {
-			r, err := makeRequest(d, "Cloud.SetConfig", c.Settings.Cloud)
+			r, err := request(d, "Cloud.SetConfig", c.Settings.Cloud)
 			if err != nil {
 				return nil, err
 			}
@@ -70,7 +70,7 @@ func (d *Device) ConfigureRequests(cfg device.Config) ([]*http.Request, error) {
 		}
 
 		if c.Settings.MQTT != nil {
-			r, err := makeRequest(d, "MQTT.SetConfig", c.Settings.MQTT)
+			r, err := request(d, "MQTT.SetConfig", c.Settings.MQTT)
 			if err != nil {
 				return nil, err
 			}
@@ -78,7 +78,7 @@ func (d *Device) ConfigureRequests(cfg device.Config) ([]*http.Request, error) {
 		}
 
 		// Reboot request
-		r, err := makeRequest(d, "Shelly.Reboot", nil)
+		r, err := request(d, "Shelly.Reboot", nil)
 		if err != nil {
 			return nil, err
 		}

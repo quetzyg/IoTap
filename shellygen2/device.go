@@ -2,9 +2,7 @@ package shellygen2
 
 import (
 	"encoding/json"
-	"fmt"
 	"net"
-	"strings"
 
 	"github.com/Stowify/IoTune/device"
 	"github.com/Stowify/IoTune/maputil"
@@ -14,11 +12,6 @@ const (
 	// Driver name of this device implementation.
 	Driver = "shelly_gen2"
 )
-
-// buildURL for Shelly requests.
-func buildURL(ip net.IP, path string) string {
-	return fmt.Sprintf("http://%s/%s", ip.String(), strings.TrimPrefix(path, "/"))
-}
 
 // Device implementation for the Shelly Gen2 driver.
 type Device struct {
