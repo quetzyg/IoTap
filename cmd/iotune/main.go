@@ -119,8 +119,8 @@ func loadConfig(driver, path string) device.Config {
 	return config
 }
 
-// scan for devices on the network.
-func scan(tuner *device.Tuner) {
+// execScan encapsulates the device scanning and error handling.
+func execScan(tuner *device.Tuner) {
 	log.Println("Starting IoT device scan...")
 	err := tuner.Scan(iotune.Address())
 	log.Println("done!")
@@ -276,7 +276,7 @@ func main() {
 		tuner.SetConfig(loadConfig(driver, cfgPath))
 	}
 
-	scan(tuner)
+	execScan(tuner)
 
 	devices := tuner.Devices()
 
