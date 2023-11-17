@@ -15,14 +15,17 @@ type IoTScript struct {
 	code []byte
 }
 
+// Name of the file the script was loaded from.
 func (s *IoTScript) Name() string {
 	return s.name
 }
 
+// Code returns the contents of the script.
 func (s *IoTScript) Code() []byte {
 	return s.code
 }
 
+// LoadScript from a local file path.
 func LoadScript(file string) (*IoTScript, error) {
 	content, err := os.ReadFile(file)
 	if err != nil {
