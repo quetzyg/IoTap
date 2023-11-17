@@ -253,19 +253,19 @@ func resolveProber(driver string) []device.Prober {
 }
 
 func main() {
+	switch mode {
+	case modeDump, modeConfig, modeUpdate, modeReboot:
+		log.Printf("Executing in %q mode\n", mode)
+	default:
+		log.Fatalf("Invalid run mode: %s", mode)
+	}
+
 	probers := resolveProber(driver)
 	if len(probers) == 0 {
 		log.Fatalf("Unable to resolve IoT device probers with driver: %s", driver)
 	}
 
 	log.Printf("IoT device probers resolved: %d\n", len(probers))
-
-	switch mode {
-	case modeDump, modeConfig, modeUpdate, modeReboot:
-		log.Printf("Running in %q mode\n", mode)
-	default:
-		log.Fatalf("Invalid run mode: %s", mode)
-	}
 
 	if mode == modeConfig {
 		loadConfig(driver)
