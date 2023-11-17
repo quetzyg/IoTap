@@ -150,7 +150,7 @@ func loadScript(driver string, path string) *device.IoTScript {
 		log.Fatalf("%s script loading error: %v", driver, err)
 	}
 
-	log.Printf("Successfully loaded %q script from %s\n", driver, path)
+	log.Printf("Successfully loaded script for %q from %s\n", driver, path)
 
 	return script
 }
@@ -227,7 +227,7 @@ func execConfig(tuner *device.Tuner, devices device.Collection) {
 			return
 		}
 
-		log.Printf("All (%d) devices, successfully configured!\n", len(devices))
+		log.Println("All devices were successfully configured!")
 	}
 }
 
@@ -250,7 +250,7 @@ func execUpdate(tuner *device.Tuner, devices device.Collection) {
 			return
 		}
 
-		log.Printf("All (%d) devices, successfully updated!\n", len(devices))
+		log.Println("All devices were successfully updated!")
 	}
 }
 
@@ -273,7 +273,7 @@ func execScript(tuner *device.Tuner, devices device.Collection) {
 			return
 		}
 
-		log.Printf("All (%d) devices, had the script successfully uploaded!\n", len(devices))
+		log.Println("The script has been successfully uploaded to all devices!")
 	}
 }
 
@@ -296,7 +296,7 @@ func execReboot(tuner *device.Tuner, devices device.Collection) {
 			return
 		}
 
-		log.Printf("All (%d) devices, successfully rebooted!\n", len(devices))
+		log.Println("All devices were successfully rebooted!")
 	}
 }
 
