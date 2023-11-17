@@ -2,9 +2,7 @@ package shellygen1
 
 import (
 	"encoding/json"
-	"fmt"
 	"net"
-	"strings"
 
 	"github.com/Stowify/IoTune/device"
 	"github.com/Stowify/IoTune/maputil"
@@ -19,11 +17,6 @@ const (
 	updatePath = "ota"
 	rebootPath = "reboot"
 )
-
-// buildURL for Shelly Gen1 requests.
-func buildURL(ip net.IP, path string) string {
-	return fmt.Sprintf("http://%s/%s", ip.String(), strings.TrimPrefix(path, "/"))
-}
 
 // Device implementation for the Shelly Gen1 driver.
 type Device struct {
