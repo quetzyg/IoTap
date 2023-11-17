@@ -300,7 +300,7 @@ func execReboot(tuner *device.Tuner, devices device.Collection) {
 	}
 }
 
-// resolveProber instances according to the driver passed.
+// resolveProber instances from a driver value.
 func resolveProber(driver string) []device.Prober {
 	switch driver {
 	case device.Driver:
