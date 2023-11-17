@@ -132,8 +132,8 @@ func scan(tuner *device.Tuner) {
 	}
 }
 
-// dump the detected devices.
-func dump(devices device.Collection, separator string) {
+// execDump is a helper function that lists the detected devices.
+func execDump(devices device.Collection, separator string) {
 	if len(devices) > 0 {
 		log.Println("Dumping devices:")
 
@@ -169,8 +169,8 @@ func dump(devices device.Collection, separator string) {
 	}
 }
 
-// config the detected devices.
-func config(tuner *device.Tuner, devices device.Collection) {
+// execConfig encapsulates the execution of the device.Configure procedure.
+func execConfig(tuner *device.Tuner, devices device.Collection) {
 	if len(devices) > 0 {
 		log.Print("Configuring IoT devices...")
 		err := tuner.Execute(device.Configure)
@@ -192,8 +192,8 @@ func config(tuner *device.Tuner, devices device.Collection) {
 	}
 }
 
-// update the firmware of the available devices.
-func update(tuner *device.Tuner, devices device.Collection) {
+// execUpdate encapsulates the execution of the device.Update procedure.
+func execUpdate(tuner *device.Tuner, devices device.Collection) {
 	if len(devices) > 0 {
 		log.Print("Updating IoT devices...")
 		err := tuner.Execute(device.Update)
@@ -215,8 +215,8 @@ func update(tuner *device.Tuner, devices device.Collection) {
 	}
 }
 
-// reboot the detected devices.
-func reboot(tuner *device.Tuner, devices device.Collection) {
+// execReboot encapsulates the execution of the device.Reboot procedure.
+func execReboot(tuner *device.Tuner, devices device.Collection) {
 	if len(devices) > 0 {
 		log.Print("Rebooting IoT devices...")
 		err := tuner.Execute(device.Reboot)
@@ -265,7 +265,7 @@ func main() {
 		log.Fatalf("Unable to resolve IoT device probers with driver: %s", driver)
 	}
 
-	log.Printf("IoT device probers resolved: %d\n", len(probers))
+	log.Printf("Loaded IoT device probers: %d\n", len(probers))
 
 	if mode == modeConfig {
 		loadConfig(driver)
@@ -281,12 +281,12 @@ func main() {
 
 	switch mode {
 	case modeDump:
-		dump(devices, " ")
+		execDump(devices, " ")
 	case modeConfig:
-		config(tuner, devices)
+		execConfig(tuner, devices)
 	case modeUpdate:
-		update(tuner, devices)
+		execUpdate(tuner, devices)
 	case modeReboot:
-		reboot(tuner, devices)
+		execReboot(tuner, devices)
 	}
 }
