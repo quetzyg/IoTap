@@ -41,18 +41,18 @@ func Probe(client *http.Client, ip net.IP, prober Prober) (Resource, error) {
 	if errors.As(err, &ue) {
 		// Ignore timeouts, refused connections and other classic HTTP shenanigans,
 		// since (NORMALLY!) it means there's no such device at the IP address.
-		return dev, nil
+		return nil, nil
 	}
 
 	if errors.Is(err, ErrUnexpected) {
 		// Skip unexpected devices.
-		return dev, nil
+		return nil, nil
 	}
 
 	var je *json.SyntaxError
 	if errors.As(err, &je) {
 		// We found something, but it's not outputting valid JSON
-		return dev, nil
+		return nil, nil
 	}
 
 	return dev, err
