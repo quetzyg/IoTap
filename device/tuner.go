@@ -3,9 +3,7 @@ package device
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
-	"io"
-	"log"
+	iotune "github.com/Stowify/IoTune"
 	"net"
 	"net/http"
 	"net/url"
@@ -35,7 +33,7 @@ func Probe(client *http.Client, ip net.IP, prober Prober) (Resource, error) {
 		return nil, err
 	}
 
-	dev, err = Fetcher(client, r, dev)
+	err = iotune.Dispatch(client, r, dev)
 
 	var ue *url.Error
 	if errors.As(err, &ue) {
@@ -122,28 +120,6 @@ func (t *Tuner) Scan(ip net.IP) error {
 // Devices that were found during the network scan.
 func (t *Tuner) Devices() Collection {
 	return t.devices
-}
-
-// dispatch an HTTP request.
-func dispatch(client *http.Client, r *http.Request) error {
-	response, err := client.Do(r)
-	if err != nil {
-		return err
-	}
-
-	defer func(body io.ReadCloser) {
-		err = body.Close()
-		if err != nil {
-			log.Printf("Error closing response body: %v", err)
-		}
-	}(response.Body)
-
-	if response.StatusCode < http.StatusOK || response.StatusCode >= http.StatusMultipleChoices {
-		b, _ := io.ReadAll(response.Body)
-		return fmt.Errorf("%s - %s (%d)", r.URL.Path, b, response.StatusCode)
-	}
-
-	return nil
 }
 
 // procedure is a function type designed to encapsulate operations to be carried out on an IoT device.

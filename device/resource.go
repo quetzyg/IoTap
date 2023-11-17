@@ -1,9 +1,6 @@
 package device
 
 import (
-	"encoding/json"
-	"io"
-	"log"
 	"net"
 	"net/http"
 	"strings"
@@ -26,33 +23,6 @@ type Resource interface {
 
 // Collection represents a collection of device resources.
 type Collection map[string]Resource
-
-// Fetcher performs an HTTP request to fetch a device resource.
-func Fetcher(client *http.Client, r *http.Request, dev Resource) (Resource, error) {
-	response, err := client.Do(r)
-	if err != nil {
-		return nil, err
-	}
-
-	defer func(body io.ReadCloser) {
-		err = body.Close()
-		if err != nil {
-			log.Printf("Error closing response body: %v", err)
-		}
-	}(response.Body)
-
-	b, err := io.ReadAll(response.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	err = json.Unmarshal(b, dev)
-	if err != nil {
-		return nil, err
-	}
-
-	return dev, nil
-}
 
 // Macify takes a non-delimited string representation of a MAC address as input
 // and returns a properly formatted MAC address with appropriate colon (:) separators.
