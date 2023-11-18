@@ -20,9 +20,14 @@ func (s *IoTScript) Name() string {
 	return s.name
 }
 
-// Code returns the contents of the script.
+// Code returns the content of the script.
 func (s *IoTScript) Code() []byte {
 	return s.code
+}
+
+// Length returns the length of the script content.
+func (s *IoTScript) Length() int {
+	return len(s.code)
 }
 
 // LoadScript from a local file path.

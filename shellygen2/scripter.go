@@ -71,10 +71,10 @@ func (d *Device) ScriptRequests(script *device.IoTScript) ([]*http.Request, erro
 
 	// Upload code in chunks
 	// See: https://shelly-api-docs.shelly.cloud/gen2/ComponentsAndServices/Script#scriptputcode
-	for start := 0; start < len(script.Code()); start += chunkSize {
+	for start := 0; start < script.Length(); start += chunkSize {
 		end := start + chunkSize
-		if end > len(script.Code()) {
-			end = len(script.Code())
+		if end > script.Length() {
+			end = script.Length()
 		}
 
 		r, err = request(d, "Script.PutCode", map[string]any{
