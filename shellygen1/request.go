@@ -19,7 +19,10 @@ func buildURL(ip net.IP, path string) string {
 
 // Create a Shelly Gen1 compliant request.
 func request(dev device.Resource, path string, params any) (*http.Request, error) {
-	values := structToValues(params)
+	values, ok := params.(url.Values)
+	if !ok {
+		values = structToValues(params)
+	}
 
 	r, err := http.NewRequest(http.MethodPost, buildURL(dev.IP(), path), strings.NewReader(values.Encode()))
 	if err != nil {
