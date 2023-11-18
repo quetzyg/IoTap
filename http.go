@@ -8,6 +8,12 @@ import (
 	"net/http"
 )
 
+// Constants for setting the 'Content-Type' header to 'application/json' for all outgoing HTTP requests.
+const (
+	ContentTypeHeader = "Content-Type"
+	JSONMimeType      = "application/json"
+)
+
 // Dispatch an HTTP request and (optionally) unmarshal the payload.
 func Dispatch(client *http.Client, r *http.Request, v any) error {
 	response, err := client.Do(r)
