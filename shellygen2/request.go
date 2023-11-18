@@ -14,7 +14,7 @@ import (
 
 const rpcPath = "rpc"
 
-// rpcRequest for the RPC endpoint.
+// rpcRequest represents a command to send to a device.
 // See: https://shelly-api-docs.shelly.cloud/gen2/General/RPCProtocol
 type rpcRequest struct {
 	ID         int    `json:"id"`
@@ -30,16 +30,16 @@ func buildURL(ip net.IP, path string) string {
 
 // Create a Shelly Gen2 compliant request.
 func request(dev device.Resource, method string, params any) (*http.Request, error) {
-	req := &rpcRequest{
+	rpc := &rpcRequest{
 		Source: "IoTune",
 		Method: method,
 	}
 
 	if params != nil {
-		req.Parameters = params
+		rpc.Parameters = params
 	}
 
-	body, err := json.Marshal(req)
+	body, err := json.Marshal(rpc)
 	if err != nil {
 		return nil, err
 	}
