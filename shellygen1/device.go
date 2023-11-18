@@ -9,13 +9,8 @@ import (
 )
 
 const (
-	// Driver name of this device implementation.
+	// Driver name for this device implementation.
 	Driver = "shelly_gen1"
-
-	// Endpoint paths
-	probePath  = "settings"
-	updatePath = "ota"
-	rebootPath = "reboot"
 )
 
 // Device implementation for the Shelly Gen1 driver.

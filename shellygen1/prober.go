@@ -8,6 +8,8 @@ import (
 	"github.com/Stowify/IoTune/device"
 )
 
+const probePath = "settings"
+
 // Prober implementation for the Shelly Gen1 driver.
 type Prober struct{}
 
