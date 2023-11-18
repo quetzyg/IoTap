@@ -20,16 +20,20 @@ func buildURL(ip net.IP, path string) string {
 // Create a Shelly Gen1 compliant request.
 func request(dev device.Resource, path string, params any) (*http.Request, error) {
 	values, ok := params.(url.Values)
-	if !ok {
+	if !ok && params != nil {
 		values = structToValues(params)
 	}
 
-	r, err := http.NewRequest(http.MethodPost, buildURL(dev.IP(), path), strings.NewReader(values.Encode()))
+	if len(values) > 0 {
+		path = fmt.Sprintf("%s?%s", path, values.Encode())
+	}
+
+	r, err := http.NewRequest(http.MethodGet, buildURL(dev.IP(), path), nil)
 	if err != nil {
 		return nil, err
 	}
 
-	r.Header.Set(iotune.ContentTypeHeader, iotune.URLEncodedFormMimeType)
+	r.Header.Set(iotune.ContentTypeHeader, iotune.JSONMimeType)
 
 	return r, nil
 }
