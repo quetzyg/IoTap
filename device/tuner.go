@@ -11,7 +11,7 @@ import (
 	iotune "github.com/Stowify/IoTune"
 )
 
-const probeTimeout = time.Second * 4
+const probeTimeout = time.Second * 8
 
 // The Tuner type maintains a record of the Devices discovered during a network
 // scan and has the capability to execute procedures on those devices.
