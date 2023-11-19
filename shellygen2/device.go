@@ -17,16 +17,17 @@ const (
 type Device struct {
 	ip net.IP
 
-	Key         string           `json:"id"`
-	Name        string           `json:"name"`
-	Model       string           `json:"model"`
-	Generation  uint8            `json:"gen"`
-	MAC         net.HardwareAddr `json:"mac"`
-	Firmware    string           `json:"fw_id"`
-	Version     string           `json:"ver"`
-	AppName     string           `json:"app"`
-	AuthEnabled bool             `json:"auth_en"`
-	AuthDomain  *string          `json:"auth_domain"`
+	Key         string
+	Name        string
+	Model       string
+	Generation  uint8
+	MAC         net.HardwareAddr
+	Firmware    string
+	Version     string
+	VersionNext string
+	AppName     string
+	AuthEnabled bool
+	AuthDomain  *string
 }
 
 // IP address of the Device.
@@ -46,13 +47,30 @@ func (d *Device) Driver() string {
 
 // UnmarshalJSON implements the Unmarshaler interface.
 func (d *Device) UnmarshalJSON(data []byte) error {
-	var tmp map[string]any
+	var m map[string]any
 
-	err := json.Unmarshal(data, &tmp)
+	err := json.Unmarshal(data, &m)
 	if err != nil {
 		return err
 	}
 
+	if maputil.KeyExists(m, "result") {
+		return d.unmarshalVersion(m)
+	}
+
+	return d.unmarshalDevice(m)
+}
+
+func (d *Device) unmarshalVersion(m map[string]any) (err error) {
+	if !maputil.KeyExists(m, "result.stable.version") {
+		return nil
+	}
+
+	d.VersionNext = m["result"].(map[string]any)["stable"].(map[string]any)["version"].(string)
+	return nil
+}
+
+func (d *Device) unmarshalDevice(m map[string]any) (err error) {
 	keys := []string{
 		"name",
 		"id",
@@ -67,28 +85,29 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 	}
 
 	for _, key := range keys {
-		if !maputil.KeyExists(tmp, key) {
+		if !maputil.KeyExists(m, key) {
 			return device.ErrUnexpected
 		}
 	}
 
-	d.Name = tmp["name"].(string)
-	d.Key = tmp["id"].(string)
+	d.Name = m["name"].(string)
+	d.Key = m["id"].(string)
 
-	mac := device.Macify(tmp["mac"].(string))
+	mac := device.Macify(m["mac"].(string))
 	d.MAC, err = net.ParseMAC(mac)
 	if err != nil {
 		return err
 	}
 
-	d.Model = tmp["model"].(string)
-	d.Generation = uint8(tmp["gen"].(float64))
-	d.Firmware = tmp["fw_id"].(string)
-	d.Version = tmp["ver"].(string)
-	d.AppName = tmp["app"].(string)
-	d.AuthEnabled = tmp["auth_en"].(bool)
+	d.Model = m["model"].(string)
+	d.Generation = uint8(m["gen"].(float64))
+	d.Firmware = m["fw_id"].(string)
+	d.Version = m["ver"].(string)
+	d.VersionNext = d.Version
+	d.AppName = m["app"].(string)
+	d.AuthEnabled = m["auth_en"].(bool)
 
-	authDomain := tmp["auth_domain"]
+	authDomain := m["auth_domain"]
 	if authDomain != nil {
 		d.AuthDomain = authDomain.(*string)
 	}
