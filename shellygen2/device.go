@@ -55,8 +55,11 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 	}
 
 	// Versioner unmarshal logic
-	if maputil.KeyExists(m, "result.stable.version") {
-		d.VersionNext = m["result"].(map[string]any)["stable"].(map[string]any)["version"].(string)
+	if maputil.KeyExists(m, "result") {
+		if maputil.KeyExists(m, "result.stable.version") {
+			d.VersionNext = m["result"].(map[string]any)["stable"].(map[string]any)["version"].(string)
+		}
+
 		return nil
 	}
 
