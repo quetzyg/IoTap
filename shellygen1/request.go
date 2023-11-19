@@ -42,27 +42,26 @@ func request(dev device.Resource, path string, params any) (*http.Request, error
 // Shelly Gen1 API doesn't support JSON requests, only HTTP GET with a query-string in
 // the URL or an HTTP POST with an application/x-www-form-urlencoded payload.
 // Read more at: https://shelly-api-docs.shelly.cloud/gen1/#common-http-api
-func structToValues(cfg any) url.Values {
-	cfgVal := reflect.Indirect(reflect.ValueOf(cfg))
-	cfgTyp := cfgVal.Type()
+func structToValues(params any) url.Values {
+	parValue := reflect.Indirect(reflect.ValueOf(params))
+	parType := parValue.Type()
 
 	var values = url.Values{}
 
-	for i := 0; i < cfgVal.NumField(); i++ {
-		fieldValue := cfgVal.Field(i)
+	for i := 0; i < parValue.NumField(); i++ {
+		fieldValue := parValue.Field(i)
 
-		// Ignore nil pointers
-		if cfgTyp.Field(i).Type.Kind() == reflect.Ptr && !fieldValue.Elem().CanAddr() {
+		// Skip nil pointers
+		if parType.Field(i).Type.Kind() == reflect.Ptr && !fieldValue.Elem().CanAddr() {
 			continue
 		}
 
+		key := strings.TrimSuffix(parType.Field(i).Tag.Get("json"), ",omitempty")
 		value := fmt.Sprint(reflect.Indirect(fieldValue).Interface())
 
-		// Convert the Schedule Rules array to string (i.e. CSV), since that's what
-		// the Shelly API expects. Otherwise, we'll get "Bad schedule rules!" errors
-		// when passing URL encoded arrays.
-		key := strings.TrimSuffix(cfgTyp.Field(i).Tag.Get("json"), ",omitempty")
-
+		// Convert the Schedule Rules array to a CSV string since that's what
+		// the Shelly API expects. Otherwise, we'll get "Bad schedule rules!"
+		// errors when passing URL encoded arrays.
 		if key == "schedule_rules" {
 			value = strings.Trim(value, "[]")
 			value = strings.ReplaceAll(value, " ", ",")
