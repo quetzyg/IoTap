@@ -54,23 +54,13 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	if maputil.KeyExists(m, "result") {
-		return d.unmarshalVersion(m)
-	}
-
-	return d.unmarshalDevice(m)
-}
-
-func (d *Device) unmarshalVersion(m map[string]any) (err error) {
-	if !maputil.KeyExists(m, "result.stable.version") {
+	// Versioner unmarshal logic
+	if maputil.KeyExists(m, "result.stable.version") {
+		d.VersionNext = m["result"].(map[string]any)["stable"].(map[string]any)["version"].(string)
 		return nil
 	}
 
-	d.VersionNext = m["result"].(map[string]any)["stable"].(map[string]any)["version"].(string)
-	return nil
-}
-
-func (d *Device) unmarshalDevice(m map[string]any) (err error) {
+	// Device unmarshal logic
 	keys := []string{
 		"name",
 		"id",
@@ -103,6 +93,8 @@ func (d *Device) unmarshalDevice(m map[string]any) (err error) {
 	d.Generation = uint8(m["gen"].(float64))
 	d.Firmware = m["fw_id"].(string)
 	d.Version = m["ver"].(string)
+
+	// Assume we're on the latest version, until the device is versioned.
 	d.VersionNext = d.Version
 	d.AppName = m["app"].(string)
 	d.AuthEnabled = m["auth_en"].(bool)
