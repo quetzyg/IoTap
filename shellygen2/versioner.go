@@ -3,6 +3,8 @@ package shellygen2
 import (
 	"fmt"
 	"net/http"
+
+	"github.com/Stowify/IoTune/device"
 )
 
 // VersionRequest returns a device version check HTTP request.
@@ -19,8 +21,8 @@ func (d *Device) VersionOutdated() bool {
 // UpgradeDetails prints the device version upgrade path (if available).
 func (d *Device) UpgradeDetails() string {
 	if d.VersionOutdated() {
-		return fmt.Sprintf("[%s] %s @ %s can be upgraded from %s to %s", d.Driver(), d.Name, d.ip, d.Version, d.VersionNext)
+		return fmt.Sprintf(device.UpgradeDetailsFormat, d.Driver(), d.Name, d.ip, d.Version, d.VersionNext)
 	}
 
-	return "N/A"
+	return device.UpgradeDetailsNone
 }

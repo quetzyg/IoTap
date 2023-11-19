@@ -14,6 +14,12 @@ type Versioner interface {
 	UpgradeDetails() string
 }
 
+// Upgrade detail strings
+const (
+	UpgradeDetailsFormat = "[%s] %s @ %s can be upgraded from %s to %s"
+	UpgradeDetailsNone   = "No upgrade available"
+)
+
 // Version is a procedure implementation designed to check the version of an IoT device.
 var Version = func(tun *Tuner, dev Resource, ch chan<- *ProcedureResult) {
 	res, ok := dev.(Versioner)
