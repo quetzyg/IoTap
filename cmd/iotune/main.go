@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	modeDump   = "dump"
+	modeList   = "list"
 	modeConfig = "config"
 	modeUpdate = "update"
 	modeScript = "script"
@@ -56,8 +56,8 @@ func init() {
 	log.Printf("Version %s (Build time %s)", iotune.Version, iotune.BuildTime)
 
 	// Flag setup
-	flag.StringVar(&mode, "m", modeDump, "Execution mode (default "+modeDump+")")
-	flag.StringVar(&mode, "mode", modeDump, "Execution mode (default "+modeDump+")")
+	flag.StringVar(&mode, "m", modeList, "Execution mode (default "+modeList+")")
+	flag.StringVar(&mode, "mode", modeList, "Execution mode (default "+modeList+")")
 
 	flag.StringVar(&driver, "d", device.Driver, "IoT driver name (default "+device.Driver+")")
 	flag.StringVar(&driver, "driver", device.Driver, "IoT driver name (default "+device.Driver+")")
@@ -72,17 +72,17 @@ func init() {
 		fmt.Printf(
 			usage,
 			os.Args[0],
-			modeDump,          // 1st mode
+			modeList,          // 1st mode
 			modeConfig,        // 2nd mode
 			modeUpdate,        // 3rd mode
 			modeScript,        // 4th mode
 			modeReboot,        // 5th mode
-			modeDump,          // default mode
+			modeList,          // default mode
 			device.Driver,     // 1st driver
 			shellygen1.Driver, // 2nd driver
 			shellygen2.Driver, // 3rd driver
 			device.Driver,     // default driver
-			modeDump,
+			modeList,
 		)
 	}
 	flag.Parse()
@@ -171,12 +171,12 @@ func execScan(tuner *device.Tuner) {
 	}
 }
 
-// execDump is a helper function that lists the detected devices.
-func execDump(devices device.Collection, separator string) {
+// execList is a helper function that lists the detected devices.
+func execList(devices device.Collection, separator string) {
 	if len(devices) > 0 {
-		log.Println("Dumping devices:")
+		log.Println("Listing found devices:")
 
-		// Find the appropriate padding for each column
+		// Compute the appropriate padding for each column
 		var widths device.ColWidths
 		for _, dev := range devices {
 			for i, w := range dev.(device.Tabler).ColWidths() {
@@ -316,7 +316,7 @@ func resolveProber(driver string) []device.Prober {
 
 func main() {
 	switch mode {
-	case modeDump, modeConfig, modeUpdate, modeScript, modeReboot:
+	case modeList, modeConfig, modeUpdate, modeScript, modeReboot:
 		log.Printf("Executing in %q mode\n", mode)
 	default:
 		log.Fatalf("Invalid execution mode: %s", mode)
@@ -344,8 +344,8 @@ func main() {
 	log.Printf("IoT devices found: %d\n", len(devices))
 
 	switch mode {
-	case modeDump:
-		execDump(devices, " ")
+	case modeList:
+		execList(devices, " ")
 	case modeConfig:
 		execConfig(tuner, devices)
 	case modeUpdate:
