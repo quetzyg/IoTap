@@ -22,6 +22,7 @@ type Device struct {
 	MAC          net.HardwareAddr
 	AuthEnabled  bool
 	Firmware     string
+	FirmwareNext string
 	Discoverable bool
 	NumOutputs   uint8
 }
@@ -43,13 +44,20 @@ func (d *Device) Driver() string {
 
 // UnmarshalJSON implements the Unmarshaler interface.
 func (d *Device) UnmarshalJSON(data []byte) error {
-	var tmp map[string]any
+	var m map[string]any
 
-	err := json.Unmarshal(data, &tmp)
+	err := json.Unmarshal(data, &m)
 	if err != nil {
 		return err
 	}
 
+	// Versioner unmarshal logic
+	if maputil.KeyExists(m, "new_version") {
+		d.FirmwareNext = m["new_version"].(string)
+		return nil
+	}
+
+	// Device unmarshal logic
 	keys := []string{
 		"device.type",
 		"device.mac",
@@ -61,24 +69,27 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 	}
 
 	for _, key := range keys {
-		if !maputil.KeyExists(tmp, key) {
+		if !maputil.KeyExists(m, key) {
 			return device.ErrUnexpected
 		}
 	}
 
-	d.Model = tmp["device"].(map[string]any)["type"].(string)
+	d.Model = m["device"].(map[string]any)["type"].(string)
 
-	mac := device.Macify(tmp["device"].(map[string]any)["mac"].(string))
+	mac := device.Macify(m["device"].(map[string]any)["mac"].(string))
 	d.MAC, err = net.ParseMAC(mac)
 	if err != nil {
 		return err
 	}
 
-	d.NumOutputs = uint8(tmp["device"].(map[string]any)["num_outputs"].(float64))
-	d.AuthEnabled = tmp["login"].(map[string]any)["enabled"].(bool)
-	d.Name = tmp["name"].(string)
-	d.Firmware = tmp["fw"].(string)
-	d.Discoverable = tmp["discoverable"].(bool)
+	d.NumOutputs = uint8(m["device"].(map[string]any)["num_outputs"].(float64))
+	d.AuthEnabled = m["login"].(map[string]any)["enabled"].(bool)
+	d.Name = m["name"].(string)
+	d.Firmware = m["fw"].(string)
+
+	// Assume we're on the latest version, until the device is versioned.
+	d.FirmwareNext = d.Firmware
+	d.Discoverable = m["discoverable"].(bool)
 
 	return nil
 }
