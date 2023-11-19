@@ -335,7 +335,7 @@ func execVersion(tuner *device.Tuner, devices device.Collection) {
 			log.Printf("A total of %d device(s) can be updated.\n", len(updatable))
 
 			for _, dev := range updatable {
-				log.Printf(dev.UpdateDetails())
+				log.Println(dev.UpdateDetails())
 			}
 
 			return
