@@ -10,14 +10,14 @@ import (
 // Versioner is an interface that provides a set of methods to aid in IoT device versioning.
 type Versioner interface {
 	VersionRequest() (*http.Request, error)
-	VersionOutdated() bool
-	UpgradeDetails() string
+	UpdateAvailable() bool
+	UpdateDetails() string
 }
 
-// Upgrade detail strings
+// Update detail strings
 const (
-	UpgradeDetailsFormat = "[%s] %s @ %s can be upgraded from %s to %s"
-	UpgradeDetailsNone   = "No upgrade available"
+	UpdateDetailsFormat = "[%s] %s @ %s can be updated from %s to %s"
+	UpdateDetailsNone   = "No updates available"
 )
 
 // Version is a procedure implementation designed to check the version of an IoT device.

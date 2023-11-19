@@ -13,16 +13,16 @@ func (d *Device) VersionRequest() (*http.Request, error) {
 	return request(d, "Shelly.CheckForUpdate", nil)
 }
 
-// VersionOutdated checks if the current device firmware version is out of date.
-func (d *Device) VersionOutdated() bool {
+// UpdateAvailable checks if the device firmware can be updated.
+func (d *Device) UpdateAvailable() bool {
 	return d.Version != d.VersionNext
 }
 
-// UpgradeDetails prints the device version upgrade path (if available).
-func (d *Device) UpgradeDetails() string {
-	if d.VersionOutdated() {
-		return fmt.Sprintf(device.UpgradeDetailsFormat, d.Driver(), d.Name, d.ip, d.Version, d.VersionNext)
+// UpdateDetails prints the device update information.
+func (d *Device) UpdateDetails() string {
+	if d.UpdateAvailable() {
+		return fmt.Sprintf(device.UpdateDetailsFormat, d.Driver(), d.Name, d.ip, d.Version, d.VersionNext)
 	}
 
-	return device.UpgradeDetailsNone
+	return device.UpdateDetailsNone
 }

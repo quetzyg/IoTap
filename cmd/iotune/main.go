@@ -323,26 +323,26 @@ func execVersion(tuner *device.Tuner, devices device.Collection) {
 
 		log.Println("All devices were successfully versioned!")
 
-		var upgradable []device.Versioner
+		var updatable []device.Versioner
 		for _, dev := range devices {
 			ver := dev.(device.Versioner)
-			if ver.VersionOutdated() {
-				upgradable = append(upgradable, ver)
+			if ver.UpdateAvailable() {
+				updatable = append(updatable, ver)
 			}
 		}
 
-		if len(upgradable) > 0 {
-			log.Println("The following devices can be upgraded:")
+		if len(updatable) > 0 {
+			log.Printf("A total of %d device(s) can be updated.\n", len(updatable))
 
-			for _, dev := range upgradable {
-				log.Printf(dev.UpgradeDetails())
+			for _, dev := range updatable {
+				log.Printf(dev.UpdateDetails())
 			}
 
 			return
 		}
 	}
 
-	log.Println("Nothing to upgrade")
+	log.Println("Nothing to update")
 }
 
 // resolveProber instances from a driver value.
