@@ -6,9 +6,12 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"time"
 
 	iotune "github.com/Stowify/IoTune"
 )
+
+const probeTimeout = time.Second * 8
 
 // The Tuner type maintains a record of the Devices discovered during a network
 // scan and has the capability to execute procedures on those devices.
@@ -77,7 +80,9 @@ type ProcedureResult struct {
 // probe an IP and send the result to a channel.
 func probe(ch chan<- *ProcedureResult, ip net.IP, probers []Prober) {
 	result := &ProcedureResult{}
-	client := &http.Client{}
+	client := &http.Client{
+		Timeout: probeTimeout,
+	}
 
 	for _, prober := range probers {
 		dev, err := Probe(client, ip, prober)
