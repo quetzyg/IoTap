@@ -14,11 +14,12 @@ import (
 )
 
 const (
-	modeList   = "list"
-	modeConfig = "config"
-	modeUpdate = "update"
-	modeScript = "script"
-	modeReboot = "reboot"
+	modeList    = "list"
+	modeConfig  = "config"
+	modeUpdate  = "update"
+	modeScript  = "script"
+	modeVersion = "version"
+	modeReboot  = "reboot"
 )
 
 var (
@@ -32,7 +33,7 @@ const usage = `Usage:
 %s [--mode MODE] [--driver DRIVER] [--config CONFIG] [--script SCRIPT]
 
 Options:
--m, --mode   MODE	Define the execution mode. (%s, %s, %s, %s, %s) (default: %s)
+-m, --mode   MODE	Define the execution mode. (%s, %s, %s, %s, %s, %s) (default: %s)
 -d, --driver DRIVER	Define the IoT device driver. (%s, %s, %s) (default: %s)
 -c, --config CONFIG	Define the IoT device configuration file path.
 -s, --script SCRIPT	Define the IoT device script file path.
@@ -74,9 +75,10 @@ func init() {
 			os.Args[0],
 			modeList,          // 1st mode
 			modeConfig,        // 2nd mode
-			modeUpdate,        // 3rd mode
-			modeScript,        // 4th mode
-			modeReboot,        // 5th mode
+			modeVersion,       // 3rd mode
+			modeUpdate,        // 4th mode
+			modeScript,        // 5th mode
+			modeReboot,        // 6th mode
 			modeList,          // default mode
 			device.Driver,     // 1st driver
 			shellygen1.Driver, // 2nd driver
@@ -300,6 +302,49 @@ func execReboot(tuner *device.Tuner, devices device.Collection) {
 	}
 }
 
+// execVersion encapsulates the execution of the device.Version procedure.
+func execVersion(tuner *device.Tuner, devices device.Collection) {
+	if len(devices) > 0 {
+		log.Print("Versioning IoT devices...")
+		err := tuner.Execute(device.Version)
+		log.Println("done!")
+
+		var e device.Errors
+		if errors.As(err, &e) && !e.Empty() {
+			log.Printf("Successfully versioned devices: %d\n", len(devices)-len(e))
+			log.Printf("Failed versioned devices: %d\n", len(e))
+
+			for _, err = range e {
+				log.Println(err)
+			}
+
+			return
+		}
+
+		log.Println("All devices were successfully versioned!")
+
+		var upgradable []device.Versioner
+		for _, dev := range devices {
+			ver := dev.(device.Versioner)
+			if ver.VersionOutdated() {
+				upgradable = append(upgradable, ver)
+			}
+		}
+
+		if len(upgradable) > 0 {
+			log.Println("The following devices can be upgraded:")
+
+			for _, dev := range upgradable {
+				log.Printf(dev.UpgradeDetails())
+			}
+
+			return
+		}
+	}
+
+	log.Println("Nothing to upgrade")
+}
+
 // resolveProber instances from a driver value.
 func resolveProber(driver string) []device.Prober {
 	switch driver {
@@ -316,7 +361,7 @@ func resolveProber(driver string) []device.Prober {
 
 func main() {
 	switch mode {
-	case modeList, modeConfig, modeUpdate, modeScript, modeReboot:
+	case modeList, modeConfig, modeVersion, modeUpdate, modeScript, modeReboot:
 		log.Printf("Executing in %q mode\n", mode)
 	default:
 		log.Fatalf("Invalid execution mode: %s", mode)
@@ -348,6 +393,8 @@ func main() {
 		execList(devices, " ")
 	case modeConfig:
 		execConfig(tuner, devices)
+	case modeVersion:
+		execVersion(tuner, devices)
 	case modeUpdate:
 		execUpdate(tuner, devices)
 	case modeScript:
