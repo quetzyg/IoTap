@@ -17,13 +17,13 @@ const (
 type Device struct {
 	ip net.IP
 
-	Model        string           `json:"type"`
-	Name         string           `json:"name"`
-	MAC          net.HardwareAddr `json:"mac"`
-	AuthEnabled  bool             `json:"auth"`
-	Firmware     string           `json:"fw"`
-	Discoverable bool             `json:"discoverable"`
-	NumOutputs   uint8            `json:"num_outputs"`
+	Model        string
+	Name         string
+	MAC          net.HardwareAddr
+	AuthEnabled  bool
+	Firmware     string
+	Discoverable bool
+	NumOutputs   uint8
 }
 
 // IP address of the Device.
