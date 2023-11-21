@@ -8,16 +8,14 @@ import "strings"
 // KeyExists returns true if the key (or nested key) is found in the map and false otherwise.
 // Note: This function only checks for the key's existence and does not consider its corresponding value.
 func KeyExists(m map[string]any, k string) bool {
-	levels := strings.Split(k, ".")
-
-	for _, level := range levels {
+	for _, level := range strings.Split(k, ".") {
 		val, exists := m[level]
 		if !exists {
 			return false
 		}
 
-		if nested, ok := val.(map[string]any); ok {
-			m = nested
+		if next, ok := val.(map[string]any); ok {
+			m = next
 		}
 	}
 
