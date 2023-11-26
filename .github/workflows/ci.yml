@@ -27,9 +27,6 @@ jobs:
       - name: Verify dependencies
         run: go mod verify
 
-      - name: Run Go vet
-        run: go vet ./...
-
       - name: Run Go imports
         run: |-
           go install golang.org/x/tools/cmd/goimports@latest
@@ -40,15 +37,10 @@ jobs:
             exit 1
           fi
 
-      - name: Run Go lint
-        run: |-
-          go install golang.org/x/lint/golint@latest
-          golint -set_exit_status ./...
-
-      - name: Run static check
-        run: |-
-          go install honnef.co/go/tools/cmd/staticcheck@latest
-          staticcheck ./...
+      - name: Go CI Lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: latest
 
       - name: Run tests
         run: |-
