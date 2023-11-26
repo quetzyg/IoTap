@@ -107,6 +107,13 @@ func (d *Device) ScriptRequests(script *device.IoTScript) ([]*http.Request, erro
 	if err != nil {
 		return nil, err
 	}
+	requests = append(requests, r)
+
+	// Reboot request
+	r, err = request(d, "Shelly.Reboot", nil)
+	if err != nil {
+		return nil, err
+	}
 
 	return append(requests, r), nil
 }
