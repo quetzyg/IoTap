@@ -26,17 +26,15 @@ const (
 
 var (
 	mode    string
-	network string
 	driver  string
 	cfgPath string
 	scrPath string
 )
 
 const usage = `Usage:
-%s --net NETWORK [--mode MODE] [--driver DRIVER] [--config CONFIG] [--script SCRIPT]
+%s NETWORK/MASK [--mode MODE] [--driver DRIVER] [--config CONFIG] [--script SCRIPT]
 
 Options:
--n  --net    NETWORK	Define the network/mask. (e.g. 192.168.0.0/24)
 -m, --mode   MODE	Define the execution mode. (%s, %s, %s, %s, %s, %s) (default: %s)
 -d, --driver DRIVER	Define the IoT device driver. (%s, %s, %s) (default: %s)
 -c, --config CONFIG	Define the IoT device configuration file path.
@@ -56,14 +54,11 @@ func init() {
 	log.Println(`8888888  "Y88P"  888   "Y88888 888  888  "Y8888`)
 	log.Println(``)
 
-	log.Printf("Version %s (Build time %s)", iotune.Version, iotune.BuildTime)
+	log.Printf("Version %s (Build time %s)\n\n", iotune.Version, iotune.BuildTime)
 
 	// Flag setup
 	flag.StringVar(&mode, "m", modeList, "Execution mode (default "+modeList+")")
 	flag.StringVar(&mode, "mode", modeList, "Execution mode (default "+modeList+")")
-
-	flag.StringVar(&network, "n", "", "Network/Mask (e.g. 192.168.0.0/24)")
-	flag.StringVar(&network, "net", "", "Network/Mask (e.g. 192.168.0.0/24)")
 
 	flag.StringVar(&driver, "d", device.Driver, "IoT driver name (default "+device.Driver+")")
 	flag.StringVar(&driver, "driver", device.Driver, "IoT driver name (default "+device.Driver+")")
@@ -91,7 +86,6 @@ func init() {
 			device.Driver,     // default driver
 		)
 	}
-	flag.Parse()
 }
 
 // loadConfig encapsulates the configuration loading logic, performing a series of checks,
@@ -364,19 +358,35 @@ func resolveProber(driver string) []device.Prober {
 }
 
 func main() {
-	if network == "" {
-		log.Printf("\nThe network/mask is required, please use -n or --net to pass its value\n\n")
+	if len(os.Args) < 2 {
+		log.Printf("Network/mask required (e.g. 192.168.0.0/24)\n\n")
 
 		flag.Usage()
 
 		os.Exit(1)
 	}
 
+	// Collect IP addresses for scanning
+	ips, err := ip.Resolve(os.Args[1])
+	if err != nil {
+		log.Fatalf("Unable to resolve IP addresses: %v", err)
+	}
+
+	// Parse from the second argument onward
+	err = flag.CommandLine.Parse(os.Args[2:])
+	if err != nil {
+		log.Fatalf("Unable parse arguments: %v", err)
+	}
+
 	switch mode {
 	case modeList, modeConfig, modeVersion, modeUpdate, modeScript, modeReboot:
 		log.Printf("Executing in %q mode\n", mode)
 	default:
-		log.Fatalf("Invalid execution mode: %s", mode)
+		log.Printf("Invalid execution mode: %s\n\n", mode)
+
+		flag.Usage()
+
+		os.Exit(1)
 	}
 
 	probers := resolveProber(driver)
@@ -392,12 +402,6 @@ func main() {
 
 	if mode == modeScript {
 		tuner.SetScript(loadScript(driver, scrPath))
-	}
-
-	// Collect IP addresses for scanning
-	ips, err := ip.Resolve(network)
-	if err != nil {
-		log.Fatalf("Unable to resolve IP addresses for scanning: %v", err)
 	}
 
 	execScan(tuner, ips)
