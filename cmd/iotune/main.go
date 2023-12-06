@@ -5,10 +5,12 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"net"
 	"os"
 
 	iotune "github.com/Stowify/IoTune"
 	"github.com/Stowify/IoTune/device"
+	"github.com/Stowify/IoTune/ip"
 	"github.com/Stowify/IoTune/shellygen1"
 	"github.com/Stowify/IoTune/shellygen2"
 )
@@ -24,21 +26,21 @@ const (
 
 var (
 	mode    string
+	network string
 	driver  string
 	cfgPath string
 	scrPath string
 )
 
 const usage = `Usage:
-%s [--mode MODE] [--driver DRIVER] [--config CONFIG] [--script SCRIPT]
+%s --net NETWORK [--mode MODE] [--driver DRIVER] [--config CONFIG] [--script SCRIPT]
 
 Options:
+-n  --net    NETWORK	Define the network/mask. (e.g. 192.168.0.0/24)
 -m, --mode   MODE	Define the execution mode. (%s, %s, %s, %s, %s, %s) (default: %s)
 -d, --driver DRIVER	Define the IoT device driver. (%s, %s, %s) (default: %s)
 -c, --config CONFIG	Define the IoT device configuration file path.
 -s, --script SCRIPT	Define the IoT device script file path.
-
-Without arguments, IoTune will execute in %q mode.
 `
 
 func init() {
@@ -59,6 +61,9 @@ func init() {
 	// Flag setup
 	flag.StringVar(&mode, "m", modeList, "Execution mode (default "+modeList+")")
 	flag.StringVar(&mode, "mode", modeList, "Execution mode (default "+modeList+")")
+
+	flag.StringVar(&network, "n", "", "Network/Mask (e.g. 192.168.0.0/24)")
+	flag.StringVar(&network, "net", "", "Network/Mask (e.g. 192.168.0.0/24)")
 
 	flag.StringVar(&driver, "d", device.Driver, "IoT driver name (default "+device.Driver+")")
 	flag.StringVar(&driver, "driver", device.Driver, "IoT driver name (default "+device.Driver+")")
@@ -84,7 +89,6 @@ func init() {
 			shellygen1.Driver, // 2nd driver
 			shellygen2.Driver, // 3rd driver
 			device.Driver,     // default driver
-			modeList,
 		)
 	}
 	flag.Parse()
@@ -158,9 +162,9 @@ func loadScript(driver string, path string) *device.IoTScript {
 }
 
 // execScan encapsulates the device scanning and error handling.
-func execScan(tuner *device.Tuner) {
+func execScan(tuner *device.Tuner, ips []net.IP) {
 	log.Println("Starting IoT device scan...")
-	err := tuner.Scan(iotune.Address())
+	err := tuner.Scan(ips)
 	log.Println("done!")
 
 	var ec device.Errors
@@ -360,6 +364,14 @@ func resolveProber(driver string) []device.Prober {
 }
 
 func main() {
+	if network == "" {
+		log.Printf("\nThe network/mask is required, please use -n or --net to pass its value\n\n")
+
+		flag.Usage()
+
+		os.Exit(1)
+	}
+
 	switch mode {
 	case modeList, modeConfig, modeVersion, modeUpdate, modeScript, modeReboot:
 		log.Printf("Executing in %q mode\n", mode)
@@ -382,7 +394,13 @@ func main() {
 		tuner.SetScript(loadScript(driver, scrPath))
 	}
 
-	execScan(tuner)
+	// Collect IP addresses for scanning
+	ips, err := ip.Resolve(network)
+	if err != nil {
+		log.Fatalf("Unable to resolve IP addresses for scanning: %v", err)
+	}
+
+	execScan(tuner, ips)
 
 	devices := tuner.Devices()
 

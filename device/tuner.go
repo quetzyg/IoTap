@@ -101,23 +101,20 @@ func probe(ch chan<- *ProcedureResult, ip net.IP, probers []Prober) {
 	ch <- result
 }
 
-// The usable IP addresses of a /24 subnet.
-const subnet24 = 254
-
 // Scan the network with an IoT device prober.
-func (t *Tuner) Scan(ip net.IP) error {
+func (t *Tuner) Scan(ips []net.IP) error {
 	// Cleanup before scanning
 	t.devices = Collection{}
 
 	ch := make(chan *ProcedureResult)
 
-	for octet := byte(1); octet <= subnet24; octet++ {
-		go probe(ch, net.IPv4(ip[0], ip[1], ip[2], octet), t.probers)
+	for _, ip := range ips {
+		go probe(ch, ip, t.probers)
 	}
 
 	errs := Errors{}
 
-	for i := 0; i < subnet24; i++ {
+	for i := 0; i < len(ips); i++ {
 		result := <-ch
 		if result.err != nil {
 			errs = append(errs, result.err)
