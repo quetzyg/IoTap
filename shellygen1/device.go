@@ -84,7 +84,13 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 
 	d.NumOutputs = uint8(m["device"].(map[string]any)["num_outputs"].(float64))
 	d.AuthEnabled = m["login"].(map[string]any)["enabled"].(bool)
-	d.Name = m["name"].(string)
+
+	// Handle a potential nil name value
+	name, ok := m["name"].(string)
+	if !ok {
+		name = "N/A"
+	}
+	d.Name = name
 	d.Firmware = m["fw"].(string)
 
 	// Assume we're on the latest version, until the device is versioned.

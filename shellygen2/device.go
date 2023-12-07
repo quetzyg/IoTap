@@ -83,7 +83,12 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 		}
 	}
 
-	d.Name = m["name"].(string)
+	// Handle a potential nil name value
+	name, ok := m["name"].(string)
+	if !ok {
+		name = "N/A"
+	}
+	d.Name = name
 	d.Key = m["id"].(string)
 
 	mac := device.Macify(m["mac"].(string))
