@@ -15,6 +15,7 @@ var paths = map[string]string{
 	"settings":         "settings",
 	"settings_ap":      "settings/ap",
 	"settings_sta":     "settings/sta",
+	"settings_sta1":    "settings/sta1",
 	"settings_login":   "settings/login",
 	"settings_cloud":   "settings/cloud",
 	"settings_actions": "settings/actions",

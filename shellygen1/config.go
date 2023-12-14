@@ -9,6 +9,7 @@ type Config struct {
 	Settings               *settings    `json:"settings,omitempty"`
 	SettingsAP             *settings    `json:"settings_ap,omitempty"`
 	SettingsSTA            *settings    `json:"settings_sta,omitempty"`
+	SettingsSTA1           *settings    `json:"settings_sta1,omitempty"`
 	SettingsLogin          *settings    `json:"settings_login,omitempty"`
 	SettingsCloud          *settings    `json:"settings_cloud,omitempty"`
 	SettingsActions        *[]*settings `json:"settings_actions,omitempty"`
