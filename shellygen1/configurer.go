@@ -49,32 +49,30 @@ func (d *Device) ConfigureRequests(config device.Config) ([]*http.Request, error
 
 		// Current setting tag
 		tag := strings.TrimSuffix(confVal.Type().Field(i).Tag.Get("json"), ",omitempty")
+		path := paths[tag]
 
-		path, ok := paths[tag]
-		if ok {
-			switch params := setting.Interface().(type) {
-			case *settings:
-				r, err := request(d, path, params)
+		switch params := setting.Interface().(type) {
+		case *settings:
+			r, err := request(d, path, params)
+			if err != nil {
+				return nil, err
+			}
+
+			requests = append(requests, r)
+
+		case *[]*settings:
+			for j, p := range *params {
+				// Handle paths that require an index
+				if strings.Contains(path, "%d") {
+					path = fmt.Sprintf(path, j)
+				}
+
+				r, err := request(d, path, p)
 				if err != nil {
 					return nil, err
 				}
 
 				requests = append(requests, r)
-
-			case *[]*settings:
-				for j, p := range *params {
-					// Handle paths that require an index
-					if strings.Contains(path, "%d") {
-						path = fmt.Sprintf(path, j)
-					}
-
-					r, err := request(d, path, p)
-					if err != nil {
-						return nil, err
-					}
-
-					requests = append(requests, r)
-				}
 			}
 		}
 	}
