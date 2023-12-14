@@ -5,7 +5,6 @@ import (
 	"net"
 	"net/http"
 	"net/url"
-	"reflect"
 	"strings"
 
 	iotune "github.com/Stowify/IoTune"
@@ -21,7 +20,7 @@ func buildURL(ip net.IP, path string) string {
 func request(dev device.Resource, path string, params any) (*http.Request, error) {
 	values, ok := params.(url.Values)
 	if !ok && params != nil {
-		values = structToValues(params)
+		values = settingsToValues(params)
 	}
 
 	if len(values) > 0 {
@@ -38,36 +37,41 @@ func request(dev device.Resource, path string, params any) (*http.Request, error
 	return r, nil
 }
 
-// structToValues returns the url.Values representation of a struct. Unfortunately, the
-// Shelly Gen1 API doesn't support JSON requests, only HTTP GET with a query-string in
-// the URL or an HTTP POST with an application/x-www-form-urlencoded payload.
+// settingsToValues returns the url.Values representation of a *settings type. Unfortunately,
+// the Shelly Gen1 API doesn't support JSON requests, only HTTP GET with a query-string URL
+// or an HTTP POST with an application/x-www-form-urlencoded body payload.
 // Read more at: https://shelly-api-docs.shelly.cloud/gen1/#common-http-api
-func structToValues(params any) url.Values {
-	parValue := reflect.Indirect(reflect.ValueOf(params))
-	parType := parValue.Type()
+func settingsToValues(params any) url.Values {
+	m, ok := params.(*settings)
+	if !ok {
+		return nil
+	}
 
 	var values = url.Values{}
 
-	for i := 0; i < parValue.NumField(); i++ {
-		fieldValue := parValue.Field(i)
+	for key, value := range *m {
+		switch val := value.(type) {
+		case []any:
+			// Convert the Schedule Rules array to a CSV
+			// since that's what the Shelly API expects.
+			if key == "schedule_rules" {
+				rules := strings.Trim(fmt.Sprint(val), "[]")
+				rules = strings.ReplaceAll(rules, " ", ",")
+				values.Add(key, rules)
+				continue
+			}
 
-		// Skip nil pointers
-		if parType.Field(i).Type.Kind() == reflect.Ptr && !fieldValue.Elem().CanAddr() {
-			continue
+			// Handle other slices as usual.
+			for _, v := range val {
+				values.Add(key, fmt.Sprint(v))
+			}
+
+		case nil:
+			values.Add(key, "null")
+
+		default:
+			values.Add(key, fmt.Sprint(val))
 		}
-
-		key := strings.TrimSuffix(parType.Field(i).Tag.Get("json"), ",omitempty")
-		value := fmt.Sprint(reflect.Indirect(fieldValue).Interface())
-
-		// Convert the Schedule Rules array to a CSV string since that's what
-		// the Shelly API expects. Otherwise, we'll get "Bad schedule rules!"
-		// errors when passing URL encoded arrays.
-		if key == "schedule_rules" {
-			value = strings.Trim(value, "[]")
-			value = strings.ReplaceAll(value, " ", ",")
-		}
-
-		values.Add(key, value)
 	}
 
 	return values
