@@ -15,13 +15,13 @@ const (
 
 // Device implementation for the Shelly Gen2 driver.
 type Device struct {
-	ip net.IP
+	ip  net.IP
+	mac net.HardwareAddr
 
 	Key         string
 	Name        string
 	Model       string
 	Generation  uint8
-	MAC         net.HardwareAddr
 	Firmware    string
 	Version     string
 	VersionNext string
@@ -35,9 +35,14 @@ func (d *Device) IP() net.IP {
 	return d.ip
 }
 
+// MAC address of the Device.
+func (d *Device) MAC() net.HardwareAddr {
+	return d.mac
+}
+
 // ID returns the Device's unique identifier.
 func (d *Device) ID() string {
-	return d.MAC.String()
+	return d.mac.String()
 }
 
 // Driver name of this Device implementation.
@@ -92,7 +97,7 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 	d.Key = m["id"].(string)
 
 	mac := device.Macify(m["mac"].(string))
-	d.MAC, err = net.ParseMAC(mac)
+	d.mac, err = net.ParseMAC(mac)
 	if err != nil {
 		return err
 	}

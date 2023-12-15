@@ -12,6 +12,7 @@ const Driver = "all"
 type Resource interface {
 	Driver() string
 	IP() net.IP
+	MAC() net.HardwareAddr
 	ID() string
 }
 

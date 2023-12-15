@@ -12,7 +12,7 @@ import (
 func (d *Device) ColWidths() device.ColWidths {
 	return device.ColWidths{
 		len(d.Driver()),
-		len(d.MAC.String()),
+		len(d.mac.String()),
 		len(d.ip.String()),
 		len(d.Firmware),
 		len(d.Model),
@@ -27,7 +27,7 @@ func (d *Device) Row(format string) string {
 	return fmt.Sprintf(
 		format,
 		d.Driver(),
-		d.MAC,
+		d.mac,
 		d.ip,
 		d.Firmware,
 		d.Model,
