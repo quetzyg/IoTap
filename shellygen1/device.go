@@ -23,8 +23,6 @@ type Device struct {
 	AuthEnabled  bool
 	Firmware     string
 	FirmwareNext string
-	Discoverable bool
-	NumOutputs   uint8
 }
 
 // IP address of the Device.
@@ -61,11 +59,9 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 	keys := []string{
 		"device.type",
 		"device.mac",
-		"device.num_outputs",
 		"login.enabled",
 		"name",
 		"fw",
-		"discoverable",
 	}
 
 	for _, key := range keys {
@@ -82,7 +78,6 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	d.NumOutputs = uint8(m["device"].(map[string]any)["num_outputs"].(float64))
 	d.AuthEnabled = m["login"].(map[string]any)["enabled"].(bool)
 
 	// Handle a potential nil name value
@@ -95,7 +90,6 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 
 	// Assume we're on the latest version, until the device is versioned.
 	d.FirmwareNext = d.Firmware
-	d.Discoverable = m["discoverable"].(bool)
 
 	return nil
 }
