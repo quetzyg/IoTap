@@ -23,6 +23,11 @@ var (
 	// ErrUnsupportedProcedure is an error type used in the execution of procedures against an IoT device.
 	// This error is returned when a device does not support a particular procedure that is being executed.
 	ErrUnsupportedProcedure = errors.New("unsupported device procedure")
+
+	// Strategy error types
+	errStrategyModeUndefined  = errors.New("the strategy mode is undefined")
+	errStrategyModeInvalid    = errors.New("the strategy mode is invalid")
+	errStrategyExcludedDevice = errors.New("strategy excluded device")
 )
 
 // ProbeError holds an IP address probe error.
