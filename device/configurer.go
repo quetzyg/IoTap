@@ -113,16 +113,6 @@ var Configure = func(tun *Tuner, dev Resource, ch chan<- *ProcedureResult) {
 		return
 	}
 
-	// A device without requests means it was
-	// excluded as part of the strategy logic
-	if len(rs) == 0 {
-		ch <- &ProcedureResult{
-			dev: dev,
-			err: errStrategyExcludedDevice,
-		}
-		return
-	}
-
 	client := &http.Client{}
 
 	for _, r := range rs {

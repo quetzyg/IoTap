@@ -24,10 +24,13 @@ var (
 	// This error is returned when a device does not support a particular procedure that is being executed.
 	ErrUnsupportedProcedure = errors.New("unsupported device procedure")
 
+	// ErrStrategyExcluded is an error type used during the configuration strategy logic,
+	// excluding a device from being configured.
+	ErrStrategyExcluded = errors.New("strategy excluded device")
+
 	// Strategy error types
-	errStrategyModeUndefined  = errors.New("the strategy mode is undefined")
-	errStrategyModeInvalid    = errors.New("the strategy mode is invalid")
-	errStrategyExcludedDevice = errors.New("strategy excluded device")
+	errStrategyModeUndefined = errors.New("the strategy mode is undefined")
+	errStrategyModeInvalid   = errors.New("the strategy mode is invalid")
 )
 
 // ProbeError holds an IP address probe error.
