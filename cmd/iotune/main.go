@@ -218,7 +218,7 @@ func execConfig(tuner *device.Tuner, devices device.Collection) {
 		var e device.Errors
 		if errors.As(err, &e) && !e.Empty() {
 			log.Printf("Successful device configurations: %d\n", len(devices)-len(e))
-			log.Printf("Failed device configurations: %d\n", len(e))
+			log.Printf("Failed/excluded device configurations: %d\n", len(e))
 
 			for _, err = range e {
 				log.Println(err)
