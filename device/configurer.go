@@ -21,8 +21,8 @@ type strategyMode string
 
 const (
 	undefined strategyMode = ""
-	blacklist              = "blacklist"
-	whitelist              = "whitelist"
+	blacklist strategyMode = "blacklist"
+	whitelist strategyMode = "whitelist"
 )
 
 // Strategy to use when configuring IoT devices.
