@@ -47,6 +47,16 @@ func validateNetworkMembership(network *net.IPNet) error {
 	return fmt.Errorf("%w: %s", errNetworkMembership, network.IP)
 }
 
+// next IP address.
+func next(addr net.IP) {
+	for i := len(addr) - 1; i >= 0; i-- {
+		addr[i]++
+		if addr[i] > 0 {
+			break
+		}
+	}
+}
+
 // Resolve the IP addresses of a given CIDR.
 func Resolve(cidr string) ([]net.IP, error) {
 	address, network, err := net.ParseCIDR(cidr)
@@ -65,14 +75,4 @@ func Resolve(cidr string) ([]net.IP, error) {
 	}
 
 	return ips, nil
-}
-
-// next IP address.
-func next(ip net.IP) {
-	for j := len(ip) - 1; j >= 0; j-- {
-		ip[j]++
-		if ip[j] > 0 {
-			break
-		}
-	}
 }
