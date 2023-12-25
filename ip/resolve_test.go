@@ -39,3 +39,32 @@ func TestValidateNetworkMembership(t *testing.T) {
 		})
 	}
 }
+
+func TestNext(t *testing.T) {
+	tests := []struct {
+		name string
+		cur  net.IP
+		next net.IP
+	}{
+		{
+			name: "success #1",
+			cur:  net.ParseIP("192.168.0.0"),
+			next: net.ParseIP("192.168.0.1"),
+		},
+		{
+			name: "success #2",
+			cur:  net.ParseIP("192.168.0.255"),
+			next: net.ParseIP("192.168.1.0"),
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			next(test.cur)
+
+			if test.cur.String() != test.next.String() {
+				t.Fatalf("expected %s, got %s", test.next, test.cur)
+			}
+		})
+	}
+}
