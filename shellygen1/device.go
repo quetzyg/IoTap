@@ -20,9 +20,9 @@ type Device struct {
 
 	Model        string
 	Name         string
-	AuthEnabled  bool
 	Firmware     string
 	FirmwareNext string
+	Secured      bool
 }
 
 // IP address of the Device.
@@ -54,7 +54,7 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	// Versioner unmarshal logic
+	// Unmarshal logic for the versioner implementation
 	if maputil.KeyExists(m, "new_version") {
 		d.FirmwareNext = m["new_version"].(string)
 		return nil
@@ -83,8 +83,6 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	d.AuthEnabled = m["login"].(map[string]any)["enabled"].(bool)
-
 	// Handle a potential nil name value
 	name, ok := m["name"].(string)
 	if !ok {
@@ -93,8 +91,10 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 	d.Name = name
 	d.Firmware = m["fw"].(string)
 
-	// Assume we're on the latest version, until the device is versioned.
+	// Assume we're on the latest version, until we version the device.
 	d.FirmwareNext = d.Firmware
+
+	d.Secured = m["login"].(map[string]any)["enabled"].(bool)
 
 	return nil
 }
