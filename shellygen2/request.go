@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	iotune "github.com/Stowify/IoTune"
-	"github.com/Stowify/IoTune/device"
 )
 
 const rpcPath = "rpc"
@@ -29,7 +28,7 @@ func buildURL(ip net.IP, path string) string {
 }
 
 // Create a Shelly Gen2 compliant request.
-func request(dev device.Resource, method string, params any) (*http.Request, error) {
+func request(dev *Device, method string, params any) (*http.Request, error) {
 	rpc := &rpcRequest{
 		Source: "IoTune",
 		Method: method,
