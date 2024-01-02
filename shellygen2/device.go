@@ -26,8 +26,7 @@ type Device struct {
 	Version     string
 	VersionNext string
 	AppName     string
-	AuthEnabled bool
-	AuthDomain  *string
+	Secured     bool
 }
 
 // IP address of the Device.
@@ -59,7 +58,7 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	// Versioner unmarshal logic
+	// Unmarshal logic for the versioner implementation
 	if maputil.KeyExists(m, "result") {
 		if maputil.KeyExists(m, "result.stable.version") {
 			d.VersionNext = m["result"].(map[string]any)["stable"].(map[string]any)["version"].(string)
@@ -79,7 +78,6 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 		"ver",
 		"app",
 		"auth_en",
-		"auth_domain",
 	}
 
 	for _, key := range keys {
@@ -107,15 +105,10 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 	d.Firmware = m["fw_id"].(string)
 	d.Version = m["ver"].(string)
 
-	// Assume we're on the latest version, until the device is versioned.
+	// Assume we're on the latest version, until we version the device.
 	d.VersionNext = d.Version
 	d.AppName = m["app"].(string)
-	d.AuthEnabled = m["auth_en"].(bool)
-
-	authDomain := m["auth_domain"]
-	if authDomain != nil {
-		d.AuthDomain = authDomain.(*string)
-	}
+	d.Secured = m["auth_en"].(bool)
 
 	return nil
 }
