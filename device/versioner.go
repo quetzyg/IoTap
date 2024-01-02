@@ -14,11 +14,8 @@ type Versioner interface {
 	UpdateDetails() string
 }
 
-// Update detail strings
-const (
-	UpdateDetailsFormat = "[%s] %s @ %s can be updated from %s to %s"
-	UpdateDetailsNone   = "No updates available"
-)
+// UpdateDetailsFormat string to be used with fmt.Sprintf()
+const UpdateDetailsFormat = "[%s] %s @ %s can be updated from %s to %s"
 
 // Version is a procedure implementation designed to check the version of an IoT device.
 var Version = func(tun *Tuner, dev Resource, ch chan<- *ProcedureResult) {

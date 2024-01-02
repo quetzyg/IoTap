@@ -24,5 +24,5 @@ func (d *Device) UpdateDetails() string {
 		return fmt.Sprintf(device.UpdateDetailsFormat, d.Driver(), d.Name, d.ip, d.Version, d.VersionNext)
 	}
 
-	return device.UpdateDetailsNone
+	return ""
 }
