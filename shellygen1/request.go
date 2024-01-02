@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	iotune "github.com/Stowify/IoTune"
-	"github.com/Stowify/IoTune/device"
 )
 
 // buildURL for Shelly Gen1 requests.
@@ -17,7 +16,7 @@ func buildURL(ip net.IP, path string) string {
 }
 
 // Create a Shelly Gen1 compliant request.
-func request(dev device.Resource, path string, params any) (*http.Request, error) {
+func request(dev *Device, path string, params any) (*http.Request, error) {
 	values, ok := params.(url.Values)
 	if !ok && params != nil {
 		values = settingsToValues(params)
