@@ -14,6 +14,7 @@ type Resource interface {
 	IP() net.IP
 	MAC() net.HardwareAddr
 	ID() string
+	Secured() bool
 }
 
 // Collection represents a collection of device resources.

@@ -15,14 +15,14 @@ const (
 
 // Device implementation for the Shelly Gen1 driver.
 type Device struct {
-	ip  net.IP
-	mac net.HardwareAddr
+	ip      net.IP
+	mac     net.HardwareAddr
+	secured bool
 
 	Model        string
 	Name         string
 	Firmware     string
 	FirmwareNext string
-	Secured      bool
 }
 
 // IP address of the Device.
@@ -43,6 +43,11 @@ func (d *Device) ID() string {
 // Driver name of this Device implementation.
 func (d *Device) Driver() string {
 	return Driver
+}
+
+// Secured returns true if the device requires authentication to be accessed, false otherwise.
+func (d *Device) Secured() bool {
+	return d.secured
 }
 
 // UnmarshalJSON implements the Unmarshaler interface.
@@ -94,7 +99,7 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 	// Assume we're on the latest version, until we version the device.
 	d.FirmwareNext = d.Firmware
 
-	d.Secured = m["login"].(map[string]any)["enabled"].(bool)
+	d.secured = m["login"].(map[string]any)["enabled"].(bool)
 
 	return nil
 }
