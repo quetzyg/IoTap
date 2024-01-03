@@ -113,6 +113,10 @@ func (d *device) ID() string {
 	return "test"
 }
 
+func (d *device) Secured() bool {
+	return false
+}
+
 var mac = net.HardwareAddr{20, 6, 18, 220, 122, 240}
 
 func TestStrategy_Listed(t *testing.T) {
