@@ -172,7 +172,7 @@ func execScan(tuner *device.Tuner, ips []net.IP) {
 }
 
 // execList is a helper function that lists the detected devices.
-func execList(devices device.Collection, separator string) {
+func execList(devices device.Collection) {
 	if len(devices) > 0 {
 		log.Println("Listing found devices:")
 
@@ -187,17 +187,12 @@ func execList(devices device.Collection, separator string) {
 		}
 
 		format := fmt.Sprintf(
-			"%%-%ds%s%%-%ds%s%%-%ds%s%%-%ds%s%%-%ds%s%%-%ds",
+			"%%-%ds %%-%ds %%-%ds %%-%ds %%-%ds %%-%ds %%s",
 			widths[0],
-			separator,
 			widths[1],
-			separator,
 			widths[2],
-			separator,
 			widths[3],
-			separator,
 			widths[4],
-			separator,
 			widths[5],
 		)
 
@@ -412,7 +407,7 @@ func main() {
 
 	switch mode {
 	case modeList:
-		execList(devices, " ")
+		execList(devices)
 	case modeConfig:
 		execConfig(tuner, devices)
 	case modeVersion:

@@ -32,5 +32,6 @@ func (d *Device) Row(format string) string {
 		d.Firmware,
 		d.Model,
 		d.Name,
+		device.SecuredEmoji(d),
 	)
 }
