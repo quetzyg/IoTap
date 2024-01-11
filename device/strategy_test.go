@@ -93,29 +93,17 @@ func TestStrategy_UnmarshalJSON(t *testing.T) {
 	}
 }
 
-type device struct {
-	mac net.HardwareAddr
-}
+type devStrategy struct{ mac net.HardwareAddr }
 
-func (d *device) Driver() string {
-	return "test"
-}
+func (d *devStrategy) Driver() string { return "" }
 
-func (d *device) IP() net.IP {
-	return net.IP{}
-}
+func (d *devStrategy) IP() net.IP { return nil }
 
-func (d *device) MAC() net.HardwareAddr {
-	return d.mac
-}
+func (d *devStrategy) MAC() net.HardwareAddr { return d.mac }
 
-func (d *device) ID() string {
-	return "test"
-}
+func (d *devStrategy) ID() string { return "" }
 
-func (d *device) Secured() bool {
-	return false
-}
+func (d *devStrategy) Secured() bool { return false }
 
 var mac = net.HardwareAddr{20, 6, 18, 220, 122, 240}
 
@@ -134,7 +122,7 @@ func TestStrategy_Listed(t *testing.T) {
 					mac,
 				},
 			},
-			dev: &device{},
+			dev: &devStrategy{},
 		},
 		{
 			name: "device is listed",
@@ -144,7 +132,7 @@ func TestStrategy_Listed(t *testing.T) {
 					mac,
 				},
 			},
-			dev:    &device{mac: mac},
+			dev:    &devStrategy{mac: mac},
 			listed: true,
 		},
 	}
@@ -174,7 +162,7 @@ func TestStrategy_Excluded(t *testing.T) {
 					mac,
 				},
 			},
-			dev:      &device{},
+			dev:      &devStrategy{},
 			excluded: true,
 		},
 		{
@@ -185,7 +173,7 @@ func TestStrategy_Excluded(t *testing.T) {
 					mac,
 				},
 			},
-			dev: &device{mac: mac},
+			dev: &devStrategy{mac: mac},
 		},
 		{
 			name: "blacklist: device is excluded",
@@ -195,7 +183,7 @@ func TestStrategy_Excluded(t *testing.T) {
 					mac,
 				},
 			},
-			dev:      &device{mac: mac},
+			dev:      &devStrategy{mac: mac},
 			excluded: true,
 		},
 		{
@@ -206,7 +194,7 @@ func TestStrategy_Excluded(t *testing.T) {
 					mac,
 				},
 			},
-			dev: &device{},
+			dev: &devStrategy{},
 		},
 	}
 
