@@ -359,7 +359,7 @@ func resolveProber(driver string) []device.Prober {
 
 func main() {
 	if len(os.Args) < 2 {
-		log.Printf("CIDR notation required (e.g. 192.168.0.0/24)\n\n")
+		log.Printf("CIDR notation value required (e.g. 192.168.0.0/24)\n\n")
 
 		flag.Usage()
 
