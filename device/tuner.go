@@ -170,8 +170,8 @@ func (t *Tuner) Execute(proc procedure) error {
 		result := <-ch
 		remaining--
 
-		if result.err != nil {
-			errs = append(errs, NewOperationError(result.dev, result.err))
+		if result.Failed() {
+			errs = append(errs, result)
 		}
 	}
 	close(ch)

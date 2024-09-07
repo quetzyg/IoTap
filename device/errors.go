@@ -52,32 +52,7 @@ func (pe *ProbeError) Error() string {
 	return fmt.Sprintf("%s: %v\n", pe.ip, pe.err)
 }
 
-// OperationError holds a device operation error.
-type OperationError struct {
-	dev Resource
-	err error
-}
-
-// NewOperationError creates an *OperationError instance.
-func NewOperationError(dev Resource, err error) *OperationError {
-	return &OperationError{
-		dev: dev,
-		err: err,
-	}
-}
-
-// Error interface implementation for OperationError.
-func (oe OperationError) Error() string {
-	return fmt.Sprintf(
-		"[%s] %s @ %s: %v\n",
-		oe.dev.Driver(),
-		oe.dev.ID(),
-		oe.dev.IP(),
-		oe.err,
-	)
-}
-
-// Errors represents an error collection.
+// Errors represents a device error collection.
 type Errors []error
 
 // Error interface implementation for Errors.
