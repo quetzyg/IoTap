@@ -3,6 +3,7 @@ package device
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net"
 	"net/http"
 	"net/url"
@@ -75,6 +76,22 @@ func Probe(client *http.Client, ip net.IP, prober Prober) (Resource, error) {
 type ProcedureResult struct {
 	dev Resource
 	err error
+}
+
+// Failed checks if the ProcedureResult execution has failed.
+func (pr *ProcedureResult) Failed() bool {
+	return pr.err != nil
+}
+
+// Error interface implementation for ProcedureResult.
+func (pr *ProcedureResult) Error() string {
+	return fmt.Sprintf(
+		"[%s] %s @ %s: %v\n",
+		pr.dev.Driver(),
+		pr.dev.ID(),
+		pr.dev.IP(),
+		pr.err,
+	)
 }
 
 // probe an IP and send the result to a channel.
