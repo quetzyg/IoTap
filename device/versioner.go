@@ -22,8 +22,8 @@ var Version = func(tun *Tuner, dev Resource, ch chan<- *ProcedureResult) {
 	res, ok := dev.(Versioner)
 	if !ok {
 		ch <- &ProcedureResult{
-			err: fmt.Errorf("%w: version", ErrUnsupportedProcedure),
 			dev: dev,
+			err: fmt.Errorf("%w: version", ErrUnsupportedProcedure),
 		}
 		return
 	}

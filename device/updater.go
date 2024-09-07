@@ -17,8 +17,8 @@ var Update = func(_ *Tuner, dev Resource, ch chan<- *ProcedureResult) {
 	res, ok := dev.(Updater)
 	if !ok {
 		ch <- &ProcedureResult{
-			err: fmt.Errorf("%w: update", ErrUnsupportedProcedure),
 			dev: dev,
+			err: fmt.Errorf("%w: update", ErrUnsupportedProcedure),
 		}
 		return
 	}

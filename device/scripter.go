@@ -53,8 +53,8 @@ var Script = func(tun *Tuner, dev Resource, ch chan<- *ProcedureResult) {
 	res, ok := dev.(Scripter)
 	if !ok {
 		ch <- &ProcedureResult{
-			err: fmt.Errorf("%w: script", ErrUnsupportedProcedure),
 			dev: dev,
+			err: fmt.Errorf("%w: script", ErrUnsupportedProcedure),
 		}
 		return
 	}

@@ -17,8 +17,8 @@ var Configure = func(tun *Tuner, dev Resource, ch chan<- *ProcedureResult) {
 	res, ok := dev.(Configurer)
 	if !ok {
 		ch <- &ProcedureResult{
-			err: fmt.Errorf("%w: configure", ErrUnsupportedProcedure),
 			dev: dev,
+			err: fmt.Errorf("%w: configure", ErrUnsupportedProcedure),
 		}
 		return
 	}

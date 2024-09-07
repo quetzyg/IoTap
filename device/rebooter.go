@@ -17,8 +17,8 @@ var Reboot = func(_ *Tuner, dev Resource, ch chan<- *ProcedureResult) {
 	res, ok := dev.(Rebooter)
 	if !ok {
 		ch <- &ProcedureResult{
-			err: fmt.Errorf("%w: reboot", ErrUnsupportedProcedure),
 			dev: dev,
+			err: fmt.Errorf("%w: reboot", ErrUnsupportedProcedure),
 		}
 		return
 	}
