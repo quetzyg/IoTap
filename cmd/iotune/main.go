@@ -15,6 +15,7 @@ import (
 	"github.com/Stowify/IoTune/shellygen2"
 )
 
+// Tool operating modes
 const (
 	modeList    = "list"
 	modeConfig  = "config"
@@ -57,29 +58,33 @@ func init() {
 	log.Printf("Version %s (Build time %s)\n\n", iotune.Version, iotune.BuildTime)
 
 	// Flag setup
-	flag.StringVar(&mode, "m", modeList, "Execution mode (default "+modeList+")")
-	flag.StringVar(&mode, "mode", modeList, "Execution mode (default "+modeList+")")
+	flag.StringVar(&mode, "m", modeList, "Execution mode (default: "+modeList+")")
+	flag.StringVar(&mode, "mode", modeList, "Execution mode (default: "+modeList+")")
 
-	flag.StringVar(&driver, "d", device.Driver, "IoT driver name (default "+device.Driver+")")
-	flag.StringVar(&driver, "driver", device.Driver, "IoT driver name (default "+device.Driver+")")
+	flag.StringVar(&driver, "d", device.Driver, "IoT device driver (default: "+device.Driver+")")
+	flag.StringVar(&driver, "driver", device.Driver, "IoT device driver (default: "+device.Driver+")")
 
-	flag.StringVar(&cfgPath, "c", "", "Location of the config file")
-	flag.StringVar(&cfgPath, "config", "", "Location of the config file")
+	flag.StringVar(&cfgPath, "c", "", "Config file path")
+	flag.StringVar(&cfgPath, "config", "", "Config file path")
 
-	flag.StringVar(&scrPath, "s", "", "Location of the script file")
-	flag.StringVar(&scrPath, "script", "", "Location of the script file")
+	flag.StringVar(&scrPath, "s", "", "Script file path")
+	flag.StringVar(&scrPath, "script", "", "Script file path")
 
 	flag.Usage = func() {
 		fmt.Printf(
 			usage,
 			os.Args[0],
-			modeList,          // 1st mode
-			modeConfig,        // 2nd mode
-			modeVersion,       // 3rd mode
-			modeUpdate,        // 4th mode
-			modeScript,        // 5th mode
-			modeReboot,        // 6th mode
-			modeList,          // default mode
+
+			// Execution modes
+			modeList,    // 1st mode
+			modeConfig,  // 2nd mode
+			modeVersion, // 3rd mode
+			modeUpdate,  // 4th mode
+			modeScript,  // 5th mode
+			modeReboot,  // 6th mode
+			modeList,    // default mode
+
+			// Device drivers
 			device.Driver,     // 1st driver
 			shellygen1.Driver, // 2nd driver
 			shellygen2.Driver, // 3rd driver
@@ -95,7 +100,7 @@ func loadConfig(driver, path string) device.Config {
 
 	switch driver {
 	case device.Driver:
-		log.Fatalf("The config mode isn't supported by the %q driver", driver)
+		log.Fatalf("The %q driver does not support config mode", driver)
 	case shellygen1.Driver:
 		config = &shellygen1.Config{}
 	case shellygen2.Driver:
@@ -134,7 +139,7 @@ func loadConfig(driver, path string) device.Config {
 func loadScript(driver string, path string) *device.IoTScript {
 	switch driver {
 	case device.Driver, shellygen1.Driver:
-		log.Fatalf("The script mode isn't supported by the %q driver", driver)
+		log.Fatalf("The %q driver does not support script mode", driver)
 	case shellygen2.Driver:
 		// All good!
 	default:
@@ -354,7 +359,7 @@ func resolveProber(driver string) []device.Prober {
 
 func main() {
 	if len(os.Args) < 2 {
-		log.Printf("Network/mask required (e.g. 192.168.0.0/24)\n\n")
+		log.Printf("CIDR notation required (e.g. 192.168.0.0/24)\n\n")
 
 		flag.Usage()
 
@@ -370,7 +375,7 @@ func main() {
 	// Parse from the second argument onward
 	err = flag.CommandLine.Parse(os.Args[2:])
 	if err != nil {
-		log.Fatalf("Unable parse arguments: %v", err)
+		log.Fatalf("Unable to parse arguments: %v", err)
 	}
 
 	switch mode {
@@ -391,6 +396,7 @@ func main() {
 
 	tuner := device.NewTuner(probers)
 
+	// Avoid scanning if the config/script loading fail
 	if mode == modeConfig {
 		tuner.SetConfig(loadConfig(driver, cfgPath))
 	}
