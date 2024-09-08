@@ -111,7 +111,10 @@ func probe(ch chan<- *ProcedureResult, ip net.IP, probers []Prober) {
 		}
 
 		if err != nil {
-			result.err = NewProbeError(ip, err)
+			result.err = &ProbeError{
+				ip:  ip,
+				err: err,
+			}
 		}
 	}
 

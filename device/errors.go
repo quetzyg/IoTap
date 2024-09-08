@@ -39,14 +39,6 @@ type ProbeError struct {
 	err error
 }
 
-// NewProbeError creates a *ProbeError instance.
-func NewProbeError(ip net.IP, err error) *ProbeError {
-	return &ProbeError{
-		ip:  ip,
-		err: err,
-	}
-}
-
 // Error interface implementation for ProbeError.
 func (pe *ProbeError) Error() string {
 	return fmt.Sprintf("%s: %v\n", pe.ip, pe.err)
