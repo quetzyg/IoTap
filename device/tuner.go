@@ -155,10 +155,10 @@ func (t *Tuner) Devices() Collection {
 	return t.devices
 }
 
-// procedure is a function type designed to encapsulate operations to be carried out on an IoT device.
+// procedure is a function type that encapsulates operations to be carried out on IoT devices.
 type procedure func(tun *Tuner, dev Resource, ch chan<- *ProcedureResult)
 
-// Execute a procedure implementation on all IoT devices we have found.
+// Execute a procedure implementation on the found IoT devices.
 func (t *Tuner) Execute(proc procedure) error {
 	ch := make(chan *ProcedureResult)
 
