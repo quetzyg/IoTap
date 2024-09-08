@@ -12,16 +12,16 @@ var (
 	// This error is returned when the configuration file data import results in an empty Config instance.
 	ErrConfigurationEmpty = errors.New("empty configuration")
 
-	// ErrUnexpected is an error type used in the process of probing IoT devices on the network.
-	// This error is returned when a device is found on the network but does not match an expected or target device.
+	// ErrUnexpected is an error type used when probing for IoT devices on the network.
+	// This error is returned when a device is found, but doesn't match an expected target device.
 	ErrUnexpected = errors.New("unexpected IoT device")
 
 	// ErrDriverMismatch is an error type used in the IoT device configuration process.
 	// This error is returned when a device tries to use a wrong Config value.
 	ErrDriverMismatch = errors.New("device driver mismatch")
 
-	// ErrUnsupportedProcedure is an error type used in the execution of procedures against an IoT device.
-	// This error is returned when a device does not support a particular procedure that is being executed.
+	// ErrUnsupportedProcedure is an error type used when executing procedures against IoT devices.
+	// This error is returned when a device does not support the procedure that is being executed.
 	ErrUnsupportedProcedure = errors.New("unsupported device procedure")
 
 	// ErrStrategyExcluded is an error type used during the configuration strategy logic,
