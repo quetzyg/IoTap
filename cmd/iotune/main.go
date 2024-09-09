@@ -278,21 +278,13 @@ func execVersion(tuner *device.Tuner, devices device.Collection) {
 	if len(devices) > 0 {
 		log.Print("Versioning IoT devices...")
 		err := tuner.Execute(device.Version)
-		log.Println("done!")
 
-		var e device.Errors
-		if errors.As(err, &e) && !e.Empty() {
-			log.Printf("Successfully versioned devices: %d\n", len(devices)-len(e))
-			log.Printf("Failed versioned devices: %d\n", len(e))
-
-			for _, err = range e {
-				log.Println(err)
-			}
+		var ec device.Errors
+		if errors.As(err, &ec) && !ec.Empty() {
+			ec.Print(devices)
 
 			return
 		}
-
-		log.Println("All devices were successfully versioned!")
 
 		var updatable []device.Versioner
 		for _, dev := range devices {
@@ -303,7 +295,7 @@ func execVersion(tuner *device.Tuner, devices device.Collection) {
 		}
 
 		if len(updatable) > 0 {
-			log.Printf("A total of %d device(s) can be updated.\n", len(updatable))
+			log.Printf("Found %d device(s) that can be updated!\n", len(updatable))
 
 			for _, dev := range updatable {
 				log.Println(dev.UpdateDetails())
@@ -313,7 +305,7 @@ func execVersion(tuner *device.Tuner, devices device.Collection) {
 		}
 	}
 
-	log.Println("Nothing to update")
+	log.Println("All versioned devices are up to date!")
 }
 
 // resolveProber instances from a driver value.
