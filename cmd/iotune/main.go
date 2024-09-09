@@ -259,23 +259,17 @@ func execScript(tuner *device.Tuner, devices device.Collection) {
 // execReboot encapsulates the execution of the device.Reboot procedure.
 func execReboot(tuner *device.Tuner, devices device.Collection) {
 	if len(devices) > 0 {
-		log.Print("Rebooting IoT devices...")
+		log.Print("Sending reboot signal to IoT devices...")
 		err := tuner.Execute(device.Reboot)
-		log.Println("done!")
 
-		var e device.Errors
-		if errors.As(err, &e) && !e.Empty() {
-			log.Printf("Successful device reboots: %d\n", len(devices)-len(e))
-			log.Printf("Failed device reboots: %d\n", len(e))
-
-			for _, err = range e {
-				log.Println(err)
-			}
+		var ec device.Errors
+		if errors.As(err, &ec) && !ec.Empty() {
+			ec.Print(devices)
 
 			return
 		}
 
-		log.Println("All devices were successfully rebooted!")
+		log.Println("Success!")
 	}
 }
 
