@@ -162,7 +162,7 @@ func loadScript(driver string, path string) *device.IoTScript {
 
 // execScan encapsulates the device scanning and error handling.
 func execScan(tuner *device.Tuner, ips []net.IP) {
-	log.Println("Scanning for IoT devices on the network...")
+	log.Println("Scanning the network for IoT devices...")
 	err := tuner.Scan(ips)
 	log.Println("done!")
 
