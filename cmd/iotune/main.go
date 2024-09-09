@@ -208,20 +208,17 @@ func execList(devices device.Collection) {
 // execConfig encapsulates the execution of the device.Configure procedure.
 func execConfig(tuner *device.Tuner, devices device.Collection) {
 	if len(devices) > 0 {
-		log.Print("Applying IoT device configurations...")
+		log.Print("Applying configuration to IoT devices...")
 		err := tuner.Execute(device.Configure)
-		log.Println("done!")
 
 		var ec device.Errors
 		if errors.As(err, &ec) && !ec.Empty() {
-			log.Printf("Successful IoT device configurations: %d\n", len(devices)-len(ec))
-			log.Printf("Failed IoT device configurations: %d\n", len(ec))
-			log.Println(ec.Error())
+			ec.Print(devices)
 
 			return
 		}
 
-		log.Println("Configurations successfully applied to all devices!")
+		log.Println("Success!")
 	}
 }
 
