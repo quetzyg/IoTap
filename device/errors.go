@@ -3,6 +3,7 @@ package device
 import (
 	"errors"
 	"fmt"
+	"log"
 	"net"
 	"strings"
 )
@@ -60,4 +61,13 @@ func (e Errors) Error() string {
 // Empty checks if the collection has any errors.
 func (e Errors) Empty() bool {
 	return len(e) == 0
+}
+
+// Print the success/failure stats and each error in the collection per line.
+func (e Errors) Print(devices Collection) {
+	log.Printf("Failed %d out of %d\n", len(e), len(devices))
+
+	for _, err := range e {
+		log.Println(err)
+	}
 }
