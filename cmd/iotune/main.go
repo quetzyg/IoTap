@@ -164,13 +164,16 @@ func loadScript(driver string, path string) *device.IoTScript {
 func execScan(tuner *device.Tuner, ips []net.IP) {
 	log.Println("Scanning the network for IoT devices...")
 	err := tuner.Scan(ips)
-	log.Println("done!")
 
 	var ec device.Errors
 	if errors.As(err, &ec) && !ec.Empty() {
 		log.Println("Errors were found during the network scan:")
 		log.Println(ec.Error())
+
+		return
 	}
+
+	log.Println("Success!")
 }
 
 // execList is a helper function that lists the detected devices.
