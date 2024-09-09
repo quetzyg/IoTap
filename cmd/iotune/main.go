@@ -209,7 +209,7 @@ func execList(devices device.Collection) {
 // execConfig encapsulates the execution of the device.Configure procedure.
 func execConfig(tuner *device.Tuner, devices device.Collection) {
 	if len(devices) > 0 {
-		log.Print("Applying configuration to IoT devices...")
+		log.Print("Applying configuration to devices...")
 		err := tuner.Execute(device.Configure)
 
 		var ec device.Errors
@@ -226,7 +226,7 @@ func execConfig(tuner *device.Tuner, devices device.Collection) {
 // execUpdate encapsulates the execution of the device.Update procedure.
 func execUpdate(tuner *device.Tuner, devices device.Collection) {
 	if len(devices) > 0 {
-		log.Print("Updating software on IoT devices...")
+		log.Print("Updating software on devices...")
 		err := tuner.Execute(device.Update)
 
 		var ec device.Errors
@@ -243,7 +243,7 @@ func execUpdate(tuner *device.Tuner, devices device.Collection) {
 // execUpdate encapsulates the execution of the device.Script procedure.
 func execScript(tuner *device.Tuner, devices device.Collection) {
 	if len(devices) > 0 {
-		log.Print("Uploading script to IoT devices...")
+		log.Print("Uploading script to devices...")
 		err := tuner.Execute(device.Script)
 
 		var ec device.Errors
@@ -260,7 +260,7 @@ func execScript(tuner *device.Tuner, devices device.Collection) {
 // execReboot encapsulates the execution of the device.Reboot procedure.
 func execReboot(tuner *device.Tuner, devices device.Collection) {
 	if len(devices) > 0 {
-		log.Print("Sending reboot signal to IoT devices...")
+		log.Print("Sending reboot signal to devices...")
 		err := tuner.Execute(device.Reboot)
 
 		var ec device.Errors
@@ -277,7 +277,7 @@ func execReboot(tuner *device.Tuner, devices device.Collection) {
 // execVersion encapsulates the execution of the device.Version procedure.
 func execVersion(tuner *device.Tuner, devices device.Collection) {
 	if len(devices) > 0 {
-		log.Print("Versioning IoT devices...")
+		log.Print("Versioning devices...")
 		err := tuner.Execute(device.Version)
 
 		var ec device.Errors
@@ -296,7 +296,7 @@ func execVersion(tuner *device.Tuner, devices device.Collection) {
 		}
 
 		if len(updatable) > 0 {
-			log.Printf("Found %d device(s) that can be updated!\n", len(updatable))
+			log.Printf("Updatable devices found: %d\n", len(updatable))
 
 			for _, dev := range updatable {
 				log.Println(dev.UpdateDetails())
