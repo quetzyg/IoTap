@@ -244,21 +244,15 @@ func execScript(tuner *device.Tuner, devices device.Collection) {
 	if len(devices) > 0 {
 		log.Print("Uploading script to IoT devices...")
 		err := tuner.Execute(device.Script)
-		log.Println("done!")
 
-		var e device.Errors
-		if errors.As(err, &e) && !e.Empty() {
-			log.Printf("Successful script uploads: %d\n", len(devices)-len(e))
-			log.Printf("Failed script uploads: %d\n", len(e))
-
-			for _, err = range e {
-				log.Println(err)
-			}
+		var ec device.Errors
+		if errors.As(err, &ec) && !ec.Empty() {
+			ec.Print(devices)
 
 			return
 		}
 
-		log.Println("The script has been successfully uploaded to all devices!")
+		log.Println("Success!")
 	}
 }
 
