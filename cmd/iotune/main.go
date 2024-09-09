@@ -176,8 +176,6 @@ func execScan(tuner *device.Tuner, ips []net.IP) {
 // execList is a helper function that lists the detected devices.
 func execList(devices device.Collection) {
 	if len(devices) > 0 {
-		log.Println("Listing found devices:")
-
 		// Compute the appropriate padding for each column
 		var widths device.ColWidths
 		for _, dev := range devices {
