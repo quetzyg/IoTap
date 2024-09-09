@@ -225,23 +225,17 @@ func execConfig(tuner *device.Tuner, devices device.Collection) {
 // execUpdate encapsulates the execution of the device.Update procedure.
 func execUpdate(tuner *device.Tuner, devices device.Collection) {
 	if len(devices) > 0 {
-		log.Print("Updating IoT devices...")
+		log.Print("Updating software on IoT devices...")
 		err := tuner.Execute(device.Update)
-		log.Println("done!")
 
-		var e device.Errors
-		if errors.As(err, &e) && !e.Empty() {
-			log.Printf("Successful device updates: %d\n", len(devices)-len(e))
-			log.Printf("Failed device updates: %d\n", len(e))
-
-			for _, err = range e {
-				log.Println(err)
-			}
+		var ec device.Errors
+		if errors.As(err, &ec) && !ec.Empty() {
+			ec.Print(devices)
 
 			return
 		}
 
-		log.Println("All devices were successfully updated!")
+		log.Println("Success!")
 	}
 }
 
