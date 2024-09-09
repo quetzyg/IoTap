@@ -49,12 +49,12 @@ type Errors []error
 
 // Error interface implementation for Errors.
 func (e Errors) Error() string {
-	var s strings.Builder
+	var b strings.Builder
 	for _, err := range e {
-		s.WriteString(err.Error())
+		b.WriteString(err.Error())
 	}
 
-	return s.String()
+	return b.String()
 }
 
 // Empty checks if the collection has any errors.
