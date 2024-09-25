@@ -2,9 +2,9 @@ package iotune
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 )
 
@@ -15,22 +15,19 @@ const (
 )
 
 // Dispatch an HTTP request and (optionally) unmarshal the payload.
-func Dispatch(client *http.Client, r *http.Request, v any) error {
+func Dispatch(client *http.Client, r *http.Request, v any) (err error) {
 	response, err := client.Do(r)
 	if err != nil {
-		return err
+		return
 	}
 
-	defer func(body io.ReadCloser) {
-		err = body.Close()
-		if err != nil {
-			log.Printf("Error closing response body: %v", err)
-		}
-	}(response.Body)
+	defer func() {
+		err = errors.Join(err, response.Body.Close())
+	}()
 
 	b, err := io.ReadAll(response.Body)
 	if err != nil {
-		return err
+		return
 	}
 
 	if v != nil {
