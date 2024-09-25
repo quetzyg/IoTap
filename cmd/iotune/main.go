@@ -114,12 +114,12 @@ func loadConfig(driver, path string) device.Config {
 	}
 
 	f, err := os.Open(path)
-	defer func(f *os.File) {
+	defer func() {
 		err = f.Close()
 		if err != nil {
 			log.Fatalf("Config close error: %v", err)
 		}
-	}(f)
+	}()
 
 	if err != nil {
 		log.Fatalf("Config open error: %s", err)
