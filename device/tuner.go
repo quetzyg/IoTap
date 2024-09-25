@@ -134,7 +134,7 @@ func (t *Tuner) Scan(ips []net.IP) error {
 
 	errs := Errors{}
 
-	for i := 0; i < len(ips); i++ {
+	for range ips {
 		result := <-ch
 		if result.err != nil {
 			errs = append(errs, result.err)
