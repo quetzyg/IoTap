@@ -1,0 +1,95 @@
+name: Build and Release
+
+on:
+  workflow_dispatch:
+    branches: [master]
+
+permissions:
+  contents: write
+
+jobs:
+  ci:
+    uses: ./.github/workflows/ci.yml
+
+  version:
+    runs-on: ubuntu-latest
+    needs: [ci]
+    outputs:
+      number: ${{ steps.version.outputs.number }}
+      time: ${{ steps.version.outputs.time }}
+      hash: ${{ steps.version.outputs.hash }}
+    steps:
+      - name: Checkout codebase
+        uses: actions/checkout@v4
+
+      - name: Generate version information
+        id: version
+        run: |-
+          echo "number=$(date +'%g.%m.%d')" >> "$GITHUB_OUTPUT"
+          echo "time=$(date +'%T')" >> "$GITHUB_OUTPUT"
+          echo "hash=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+
+  build:
+    runs-on: ubuntu-latest
+    needs: [version]
+    strategy:
+      matrix:
+        goos: [linux, windows]
+        goarch: [amd64]
+    steps:
+      - name: Checkout codebase
+        uses: actions/checkout@v4
+
+      - name: Set up Golang
+        uses: actions/setup-go@v5
+        with:
+          go-version: 'stable'
+
+      - run: go version
+
+      - name: Build binaries
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+        id: build
+        run: |-
+          BINARY="iotune"
+          if [ "${{ matrix.goos }}" = "windows" ]; then
+            BINARY=$BINARY_NAME.exe
+          fi
+          go build -v \
+          -trimpath \
+          -ldflags="-s -w -X github.com/Stowify/IoTune.Version=${{ needs.version.outputs.number }} \
+          -X github.com/Stowify/IoTune.Hash=${{ needs.version.outputs.hash }} \
+          -X github.com/Stowify/IoTune.BuildTime=${{ needs.version.outputs.time }}" \
+          -o $BINARY \
+          ./cmd/iotune/main.go
+
+      - name: Compress binaries
+        run: |-
+          BINARY="iotune"
+          if [ "${{ matrix.goos }}" = "windows" ]; then
+            BINARY=$BINARY_NAME.exe
+          fi
+          tar -zcvf iotune-${{ matrix.goos }}-${{ matrix.goarch }}.tar.gz $BINARY
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: iotune-${{ matrix.goos }}-${{ matrix.goarch }}
+          path: iotune-${{ matrix.goos }}-${{ matrix.goarch }}.tar.gz
+
+  release:
+    runs-on: ubuntu-latest
+    needs: [version, build]
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+
+      - name: Create release
+        uses: ncipollo/release-action@v1
+        with:
+          name: ${{ needs.version.outputs.number }}
+          tag: v${{ needs.version.outputs.number }}
+          artifacts: "iotune-*/*.tar.gz"
+          token: ${{ secrets.GITHUB_TOKEN }}
