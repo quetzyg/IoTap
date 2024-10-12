@@ -55,7 +55,7 @@ func init() {
 	log.Println(`8888888  "Y88P"  888   "Y88888 888  888  "Y8888`)
 	log.Println(``)
 
-	log.Printf("Version %s (Build time %s)\n\n", iotune.Version, iotune.BuildTime)
+	log.Printf("Version %s [%s] (Build time %s)\n\n", iotune.Version, iotune.Hash, iotune.BuildTime)
 
 	// Flag setup
 	flag.StringVar(&mode, "m", modeList, "Execution mode (default: "+modeList+")")
