@@ -43,6 +43,7 @@ jobs:
       - name: Set up Golang
         uses: actions/setup-go@v5
         with:
+          cache: false
           go-version: 'stable'
 
       - run: go version
