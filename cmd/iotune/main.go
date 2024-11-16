@@ -26,10 +26,11 @@ const (
 )
 
 var (
-	mode    string
-	driver  string
+	mode    *iotune.StrFlag
+	driver  *iotune.StrFlag
 	cfgPath string
 	scrPath string
+	sort    *iotune.StrFlag
 )
 
 const usage = `Usage:
@@ -40,6 +41,7 @@ Options:
 -d, --driver DRIVER	Define the IoT device driver. (%s, %s, %s) (default: %s)
 -c, --config CONFIG	Define the IoT device configuration file path.
 -s, --script SCRIPT	Define the IoT device script file path.
+    --sort   SORT	Define the field to sort devices by (%s, %s, %s, %s, %s) (default: %s)
 `
 
 func init() {
@@ -58,17 +60,22 @@ func init() {
 	log.Printf("Version %s [%s] (Build time %s)\n\n", iotune.Version, iotune.Hash, iotune.BuildTime)
 
 	// Flag setup
-	flag.StringVar(&mode, "m", modeList, "Execution mode (default: "+modeList+")")
-	flag.StringVar(&mode, "mode", modeList, "Execution mode (default: "+modeList+")")
+	mode = iotune.NewStrFlag(modeList, modeList, modeConfig, modeVersion, modeUpdate, modeScript, modeReboot)
+	flag.Var(mode, "m", "Execution mode (default: "+modeList+")")
+	flag.Var(mode, "mode", "Execution mode (default: "+modeList+")")
 
-	flag.StringVar(&driver, "d", device.Driver, "IoT device driver (default: "+device.Driver+")")
-	flag.StringVar(&driver, "driver", device.Driver, "IoT device driver (default: "+device.Driver+")")
+	driver = iotune.NewStrFlag(device.Driver, shellygen1.Driver, shellygen2.Driver)
+	flag.Var(driver, "d", "IoT device driver (default: "+device.Driver+")")
+	flag.Var(driver, "driver", "IoT device driver (default: "+device.Driver+")")
 
 	flag.StringVar(&cfgPath, "c", "", "Config file path")
 	flag.StringVar(&cfgPath, "config", "", "Config file path")
 
 	flag.StringVar(&scrPath, "s", "", "Script file path")
 	flag.StringVar(&scrPath, "script", "", "Script file path")
+
+	sort = iotune.NewStrFlag(device.FieldName, device.FieldDriver, device.FieldIP, device.FieldMAC, device.FieldName, device.FieldModel)
+	flag.Var(sort, "sort", "Order devices by field (default: "+device.FieldName+")")
 
 	flag.Usage = func() {
 		fmt.Printf(
@@ -89,6 +96,14 @@ func init() {
 			shellygen1.Driver, // 2nd driver
 			shellygen2.Driver, // 3rd driver
 			device.Driver,     // default driver
+
+			// Sort fields
+			device.FieldDriver,
+			device.FieldIP,
+			device.FieldMAC,
+			device.FieldName,
+			device.FieldModel,
+			device.FieldName, // default
 		)
 	}
 }
@@ -344,18 +359,9 @@ func main() {
 		log.Fatalf("Unable to parse arguments: %v", err)
 	}
 
-	switch mode {
-	case modeList, modeConfig, modeVersion, modeUpdate, modeScript, modeReboot:
-		log.Printf("Executing in %q mode\n", mode)
-	default:
-		log.Printf("Invalid execution mode: %s\n\n", mode)
+	log.Printf("Executing in %q mode\n", mode)
 
-		flag.Usage()
-
-		os.Exit(1)
-	}
-
-	probers := resolveProber(driver)
+	probers := resolveProber(driver.String())
 	if len(probers) == 0 {
 		log.Fatalf("Unable to resolve an IoT device prober with the %q driver", driver)
 	}
@@ -363,12 +369,12 @@ func main() {
 	tuner := device.NewTuner(probers)
 
 	// Avoid scanning if the config/script loading fail
-	if mode == modeConfig {
-		tuner.SetConfig(loadConfig(driver, cfgPath))
+	if mode.String() == modeConfig {
+		tuner.SetConfig(loadConfig(driver.String(), cfgPath))
 	}
 
-	if mode == modeScript {
-		tuner.SetScript(loadScript(driver, scrPath))
+	if mode.String() == modeScript {
+		tuner.SetScript(loadScript(driver.String(), scrPath))
 	}
 
 	execScan(tuner, ips)
@@ -377,7 +383,12 @@ func main() {
 
 	log.Printf("IoT devices found: %d\n", len(devices))
 
-	switch mode {
+	err = devices.SortBy(sort.String())
+	if err != nil {
+		log.Fatalf("Unable to sort devices: %v\n", err)
+	}
+
+	switch mode.String() {
 	case modeList:
 		execList(devices)
 	case modeConfig:
