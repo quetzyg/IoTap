@@ -16,9 +16,9 @@ const (
 	FieldModel  = "model"
 )
 
-// ErrUnknownSortByField is returned when an attempt is made to
+// ErrInvalidSortByField is returned when an attempt is made to
 // sort by a field that is not supported by the SortBy() method
-var ErrUnknownSortByField = errors.New("unknown field to sort by")
+var ErrInvalidSortByField = errors.New("invalid field to sort by")
 
 // Collection is a slice of device resources.
 type Collection []Resource
@@ -54,7 +54,7 @@ func (c Collection) SortBy(field string) ([]Resource, error) {
 		})
 
 	default:
-		return nil, fmt.Errorf("%w: %s", ErrUnknownSortByField, field)
+		return nil, fmt.Errorf("%w: %s", ErrInvalidSortByField, field)
 	}
 
 	return c, nil
