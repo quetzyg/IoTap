@@ -13,6 +13,8 @@ type Resource interface {
 	Driver() string
 	IP() net.IP
 	MAC() net.HardwareAddr
+	Name() string
+	Model() string
 	ID() string
 	Secured() bool
 }

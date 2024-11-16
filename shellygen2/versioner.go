@@ -21,7 +21,7 @@ func (d *Device) UpdateAvailable() bool {
 // UpdateDetails prints the device update information.
 func (d *Device) UpdateDetails() string {
 	if d.UpdateAvailable() {
-		return fmt.Sprintf(device.UpdateDetailsFormat, d.Driver(), d.Name, d.ip, d.Version, d.VersionNext)
+		return fmt.Sprintf(device.UpdateDetailsFormat, d.Driver(), d.Name(), d.ip, d.Version, d.VersionNext)
 	}
 
 	return ""

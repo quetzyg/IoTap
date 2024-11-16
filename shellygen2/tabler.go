@@ -15,8 +15,8 @@ func (d *Device) ColWidths() device.ColWidths {
 		len(d.mac.String()),
 		len(d.ip.String()),
 		len(d.Firmware),
-		len(d.Model),
-		len(d.Name),
+		len(d.Model()),
+		len(d.Name()),
 	}
 }
 
@@ -30,8 +30,8 @@ func (d *Device) Row(format string) string {
 		d.mac,
 		d.ip,
 		d.Firmware,
-		d.Model,
-		d.Name,
+		d.Model(),
+		d.Name(),
 		device.SecuredEmoji(d),
 	)
 }

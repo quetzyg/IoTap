@@ -17,11 +17,11 @@ const (
 type Device struct {
 	ip      net.IP
 	mac     net.HardwareAddr
+	name    string
+	model   string
 	secured bool
 
 	Key         string
-	Name        string
-	Model       string
 	Generation  uint8
 	Firmware    string
 	Version     string
@@ -37,6 +37,16 @@ func (d *Device) IP() net.IP {
 // MAC address of the Device.
 func (d *Device) MAC() net.HardwareAddr {
 	return d.mac
+}
+
+// Name of the Device.
+func (d *Device) Name() string {
+	return d.name
+}
+
+// Model of the Device.
+func (d *Device) Model() string {
+	return d.model
 }
 
 // ID returns the Device's unique identifier.
@@ -96,7 +106,7 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 	if !ok {
 		name = "N/A"
 	}
-	d.Name = name
+	d.name = name
 	d.Key = m["id"].(string)
 
 	mac := device.Macify(m["mac"].(string))
@@ -105,7 +115,7 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	d.Model = m["model"].(string)
+	d.model = m["model"].(string)
 	d.Generation = uint8(m["gen"].(float64))
 	d.Firmware = m["fw_id"].(string)
 	d.Version = m["ver"].(string)
