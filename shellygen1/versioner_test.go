@@ -85,7 +85,7 @@ func TestDevice_UpdateDetails(t *testing.T) {
 			name: "update details",
 			dev: &Device{
 				ip:           net.ParseIP("192.168.146.123"),
-				Name:         "stowify-A001",
+				name:         "stowify-A001",
 				Firmware:     "1.0",
 				FirmwareNext: "2.0",
 			},

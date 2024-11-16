@@ -41,6 +41,10 @@ func (d *devSecured) IP() net.IP { return nil }
 
 func (d *devSecured) MAC() net.HardwareAddr { return nil }
 
+func (d *devSecured) Name() string { return "" }
+
+func (d *devSecured) Model() string { return "" }
+
 func (d *devSecured) ID() string { return "" }
 
 func (d *devSecured) Secured() bool { return d.secure }

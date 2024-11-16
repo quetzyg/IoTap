@@ -101,6 +101,10 @@ func (d *devStrategy) IP() net.IP { return nil }
 
 func (d *devStrategy) MAC() net.HardwareAddr { return d.mac }
 
+func (d *devStrategy) Name() string { return "" }
+
+func (d *devStrategy) Model() string { return "" }
+
 func (d *devStrategy) ID() string { return "" }
 
 func (d *devStrategy) Secured() bool { return false }
