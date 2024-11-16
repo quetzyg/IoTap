@@ -54,9 +54,11 @@ func settingsToValues(params any) url.Values {
 			// Convert the Schedule Rules array to a CSV
 			// since that's what the Shelly API expects.
 			if key == "schedule_rules" {
-				rules := strings.Trim(fmt.Sprint(val), "[]")
-				rules = strings.ReplaceAll(rules, " ", ",")
-				values.Add(key, rules)
+				var rules []string
+				for _, rule := range val {
+					rules = append(rules, fmt.Sprint(rule))
+				}
+				values.Add(key, strings.Join(rules, ","))
 				continue
 			}
 
