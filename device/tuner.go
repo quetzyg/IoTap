@@ -141,7 +141,7 @@ func (t *Tuner) Scan(ips []net.IP) error {
 		}
 
 		if result.dev != nil {
-			t.devices[result.dev.ID()] = result.dev
+			t.devices = append(t.devices, result.dev)
 		}
 	}
 

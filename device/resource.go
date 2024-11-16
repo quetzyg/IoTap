@@ -18,7 +18,7 @@ type Resource interface {
 }
 
 // Collection represents a collection of device resources.
-type Collection map[string]Resource
+type Collection []Resource
 
 // Macify takes a non-delimited string representation of a MAC address as input
 // and returns a properly formatted MAC address with appropriate colon (:) separators.
