@@ -24,7 +24,7 @@ var ErrInvalidSortByField = errors.New("invalid field to sort by")
 type Collection []Resource
 
 // SortBy a resource field name.
-func (c Collection) SortBy(field string) ([]Resource, error) {
+func (c Collection) SortBy(field string) error {
 	switch field {
 	case FieldDriver:
 		sort.Slice(c, func(i, j int) bool {
@@ -54,8 +54,8 @@ func (c Collection) SortBy(field string) ([]Resource, error) {
 		})
 
 	default:
-		return nil, fmt.Errorf("%w: %s", ErrInvalidSortByField, field)
+		return fmt.Errorf("%w: %s", ErrInvalidSortByField, field)
 	}
 
-	return c, nil
+	return nil
 }
