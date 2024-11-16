@@ -1,10 +1,52 @@
 package shellygen1
 
 import (
+	"net"
 	"net/url"
 	"reflect"
 	"testing"
 )
+
+func TestBuildURL(t *testing.T) {
+	ip := net.ParseIP("192.168.146.12")
+
+	tests := []struct {
+		name     string
+		path     string
+		expected string
+	}{
+		{
+			name:     "success: path without prefix/suffix",
+			path:     "foo",
+			expected: "http://192.168.146.12/foo",
+		},
+		{
+			name:     "success: path with prefix",
+			path:     "/foo",
+			expected: "http://192.168.146.12/foo",
+		},
+		{
+			name:     "success: path with suffix",
+			path:     "foo/",
+			expected: "http://192.168.146.12/foo/",
+		},
+		{
+			name:     "success: path with prefix and suffix",
+			path:     "/foo/",
+			expected: "http://192.168.146.12/foo/",
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			uri := buildURL(ip, test.path)
+
+			if uri != test.expected {
+				t.Fatalf("expected %s, got %s", test.expected, uri)
+			}
+		})
+	}
+}
 
 func TestSettingsToValues(t *testing.T) {
 	tests := []struct {
