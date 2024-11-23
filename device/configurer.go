@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	iotune "github.com/Stowify/IoTune"
+	"github.com/Stowify/IoTune/httpclient"
 )
 
 // Configurer is an interface that provides a standard way to configure IoT devices.
@@ -35,7 +35,7 @@ var Configure = func(tun *Tuner, dev Resource, ch chan<- *ProcedureResult) {
 	client := &http.Client{}
 
 	for _, r := range rs {
-		if err = iotune.Dispatch(client, r, nil); err != nil {
+		if err = httpclient.Dispatch(client, r, nil); err != nil {
 			ch <- &ProcedureResult{
 				dev: dev,
 				err: err,

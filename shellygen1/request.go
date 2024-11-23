@@ -7,7 +7,7 @@ import (
 	"net/url"
 	"strings"
 
-	iotune "github.com/Stowify/IoTune"
+	"github.com/Stowify/IoTune/httpclient"
 )
 
 // buildURL for Shelly Gen1 requests.
@@ -31,7 +31,7 @@ func request(dev *Device, path string, params any) (*http.Request, error) {
 		return nil, err
 	}
 
-	r.Header.Set(iotune.ContentTypeHeader, iotune.JSONMimeType)
+	r.Header.Set(httpclient.ContentTypeHeader, httpclient.JSONMimeType)
 
 	return r, nil
 }

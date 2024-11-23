@@ -1,4 +1,4 @@
-package iotune
+package command
 
 import (
 	"fmt"

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	iotune "github.com/Stowify/IoTune"
+	"github.com/Stowify/IoTune/httpclient"
 )
 
 // Rebooter is an interface that provides a standard way to trigger a reboot on IoT devices.
@@ -32,7 +32,7 @@ var Reboot = func(_ *Tuner, dev Resource, ch chan<- *ProcedureResult) {
 		return
 	}
 
-	if err = iotune.Dispatch(&http.Client{}, r, nil); err != nil {
+	if err = httpclient.Dispatch(&http.Client{}, r, nil); err != nil {
 		ch <- &ProcedureResult{
 			dev: dev,
 			err: err,

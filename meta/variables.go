@@ -1,6 +1,6 @@
-package iotune
+package meta
 
-// Variables to hold build-time information.
+// Variables holding build-time information.
 var (
 	Version   = "<N/A>"
 	Hash      = "<N/A>"

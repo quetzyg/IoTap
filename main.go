@@ -8,9 +8,10 @@ import (
 	"net"
 	"os"
 
-	iotune "github.com/Stowify/IoTune"
+	"github.com/Stowify/IoTune/command"
 	"github.com/Stowify/IoTune/device"
 	"github.com/Stowify/IoTune/ip"
+	"github.com/Stowify/IoTune/meta"
 	"github.com/Stowify/IoTune/shellygen1"
 	"github.com/Stowify/IoTune/shellygen2"
 )
@@ -26,11 +27,11 @@ const (
 )
 
 var (
-	mode    *iotune.StrFlag
-	driver  *iotune.StrFlag
+	mode    *command.StrFlag
+	driver  *command.StrFlag
 	cfgPath string
 	scrPath string
-	sort    *iotune.StrFlag
+	sort    *command.StrFlag
 )
 
 const usage = `Usage:
@@ -57,14 +58,14 @@ func init() {
 	log.Println(`8888888  "Y88P"  888   "Y88888 888  888  "Y8888`)
 	log.Println(``)
 
-	log.Printf("Version %s [%s] (Build time %s)\n\n", iotune.Version, iotune.Hash, iotune.BuildTime)
+	log.Printf("Version %s [%s] (Build time %s)\n\n", meta.Version, meta.Hash, meta.BuildTime)
 
 	// Flag setup
-	mode = iotune.NewStrFlag(modeList, modeList, modeConfig, modeVersion, modeUpdate, modeScript, modeReboot)
+	mode = command.NewStrFlag(modeList, modeList, modeConfig, modeVersion, modeUpdate, modeScript, modeReboot)
 	flag.Var(mode, "m", "Execution mode (default: "+modeList+")")
 	flag.Var(mode, "mode", "Execution mode (default: "+modeList+")")
 
-	driver = iotune.NewStrFlag(device.Driver, shellygen1.Driver, shellygen2.Driver)
+	driver = command.NewStrFlag(device.Driver, shellygen1.Driver, shellygen2.Driver)
 	flag.Var(driver, "d", "IoT device driver (default: "+device.Driver+")")
 	flag.Var(driver, "driver", "IoT device driver (default: "+device.Driver+")")
 
@@ -74,7 +75,7 @@ func init() {
 	flag.StringVar(&scrPath, "s", "", "Script file path")
 	flag.StringVar(&scrPath, "script", "", "Script file path")
 
-	sort = iotune.NewStrFlag(device.FieldName, device.FieldDriver, device.FieldIP, device.FieldMAC, device.FieldName, device.FieldModel)
+	sort = command.NewStrFlag(device.FieldName, device.FieldDriver, device.FieldIP, device.FieldMAC, device.FieldName, device.FieldModel)
 	flag.Var(sort, "sort", "Order devices by field (default: "+device.FieldName+")")
 
 	flag.Usage = func() {

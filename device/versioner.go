@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	iotune "github.com/Stowify/IoTune"
+	"github.com/Stowify/IoTune/httpclient"
 )
 
 // Versioner is an interface that provides a set of methods to aid in IoT device versioning.
@@ -37,7 +37,7 @@ var Version = func(tun *Tuner, dev Resource, ch chan<- *ProcedureResult) {
 		return
 	}
 
-	if err = iotune.Dispatch(&http.Client{}, r, rsc); err != nil {
+	if err = httpclient.Dispatch(&http.Client{}, r, rsc); err != nil {
 		ch <- &ProcedureResult{
 			dev: dev,
 			err: err,

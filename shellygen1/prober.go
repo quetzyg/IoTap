@@ -4,8 +4,8 @@ import (
 	"net"
 	"net/http"
 
-	iotune "github.com/Stowify/IoTune"
 	"github.com/Stowify/IoTune/device"
+	"github.com/Stowify/IoTune/httpclient"
 )
 
 const probePath = "settings"
@@ -20,7 +20,7 @@ func (p *Prober) ProbeRequest(ip net.IP) (*http.Request, device.Resource, error)
 		return nil, nil, err
 	}
 
-	r.Header.Set(iotune.ContentTypeHeader, iotune.JSONMimeType)
+	r.Header.Set(httpclient.ContentTypeHeader, httpclient.JSONMimeType)
 
 	return r, &Device{ip: ip}, nil
 }

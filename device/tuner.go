@@ -9,7 +9,7 @@ import (
 	"net/url"
 	"time"
 
-	iotune "github.com/Stowify/IoTune"
+	"github.com/Stowify/IoTune/httpclient"
 )
 
 const probeTimeout = time.Second * 8
@@ -48,7 +48,7 @@ func Probe(client *http.Client, ip net.IP, prober Prober) (Resource, error) {
 		return nil, err
 	}
 
-	err = iotune.Dispatch(client, r, dev)
+	err = httpclient.Dispatch(client, r, dev)
 
 	var ue *url.Error
 	if errors.As(err, &ue) {

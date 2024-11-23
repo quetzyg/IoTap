@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"strings"
 
-	iotune "github.com/Stowify/IoTune"
+	"github.com/Stowify/IoTune/httpclient"
 )
 
 const rpcPath = "rpc"
@@ -48,7 +48,7 @@ func request(dev *Device, method string, params any) (*http.Request, error) {
 		return nil, err
 	}
 
-	r.Header.Set(iotune.ContentTypeHeader, iotune.JSONMimeType)
+	r.Header.Set(httpclient.ContentTypeHeader, httpclient.JSONMimeType)
 
 	return r, nil
 }

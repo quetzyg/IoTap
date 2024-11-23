@@ -6,7 +6,7 @@ import (
 	"os"
 	"path"
 
-	iotune "github.com/Stowify/IoTune"
+	"github.com/Stowify/IoTune/httpclient"
 )
 
 // IoTScript holds the name and the contents of an IoT device script.
@@ -71,7 +71,7 @@ var Script = func(tun *Tuner, dev Resource, ch chan<- *ProcedureResult) {
 	client := &http.Client{}
 
 	for _, r := range rs {
-		if err = iotune.Dispatch(client, r, nil); err != nil {
+		if err = httpclient.Dispatch(client, r, nil); err != nil {
 			ch <- &ProcedureResult{
 				dev: dev,
 				err: err,

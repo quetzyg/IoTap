@@ -3,8 +3,8 @@ package shellygen2
 import (
 	"net/http"
 
-	iotune "github.com/Stowify/IoTune"
 	"github.com/Stowify/IoTune/device"
+	"github.com/Stowify/IoTune/httpclient"
 )
 
 const (
@@ -34,7 +34,7 @@ func (d *Device) scripts() ([]*script, error) {
 	}
 
 	resp := &listResponse{}
-	err = iotune.Dispatch(&http.Client{}, r, resp)
+	err = httpclient.Dispatch(&http.Client{}, r, resp)
 	if err != nil {
 		return nil, err
 	}
