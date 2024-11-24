@@ -64,7 +64,7 @@ jobs:
           -X github.com/Stowify/IoTune/meta.Hash=${{ needs.version.outputs.hash }} \
           -X github.com/Stowify/IoTune/meta.BuildTime=${{ needs.version.outputs.time }}" \
           -o $BINARY \
-          ./cmd/iotune/main.go
+          ./main.go
 
       - name: Compress binaries
         run: |-
