@@ -60,9 +60,9 @@ jobs:
           fi
           go build -v \
           -trimpath \
-          -ldflags="-s -w -X github.com/Stowify/IoTune.Version=${{ needs.version.outputs.number }} \
-          -X github.com/Stowify/IoTune.Hash=${{ needs.version.outputs.hash }} \
-          -X github.com/Stowify/IoTune.BuildTime=${{ needs.version.outputs.time }}" \
+          -ldflags="-s -w -X github.com/Stowify/IoTune/meta.Version=${{ needs.version.outputs.number }} \
+          -X github.com/Stowify/IoTune/meta.Hash=${{ needs.version.outputs.hash }} \
+          -X github.com/Stowify/IoTune/meta.BuildTime=${{ needs.version.outputs.time }}" \
           -o $BINARY \
           ./cmd/iotune/main.go
 
