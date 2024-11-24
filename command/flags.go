@@ -68,7 +68,7 @@ Commands:
   script  Upload script file to compatible devices
   reboot  Restart detected devices
 
-Use %s <command> -h for more information about the command.
+Use %s <CIDR> <command> -h for more information about the command.
 `
 	commandUsage = `Usage of %s:
  %s <CIDR> %s [flags]
