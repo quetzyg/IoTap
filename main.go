@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"flag"
 	"fmt"
 	"log"
 	"net"
@@ -15,35 +14,6 @@ import (
 	"github.com/Stowify/IoTune/shellygen1"
 	"github.com/Stowify/IoTune/shellygen2"
 )
-
-// Tool operating modes
-const (
-	modeList    = "list"
-	modeConfig  = "config"
-	modeUpdate  = "update"
-	modeScript  = "script"
-	modeVersion = "version"
-	modeReboot  = "reboot"
-)
-
-var (
-	mode    *command.StrFlag
-	driver  *command.StrFlag
-	cfgPath string
-	scrPath string
-	sort    *command.StrFlag
-)
-
-const usage = `Usage:
-%s NETWORK/MASK [--mode MODE] [--driver DRIVER] [--config CONFIG] [--script SCRIPT]
-
-Options:
--m, --mode   MODE	Define the execution mode. (%s, %s, %s, %s, %s, %s) (default: %s)
--d, --driver DRIVER	Define the IoT device driver. (%s, %s, %s) (default: %s)
--c, --config CONFIG	Define the IoT device configuration file path.
--s, --script SCRIPT	Define the IoT device script file path.
-    --sort   SORT	Define the field to sort devices by (%s, %s, %s, %s, %s) (default: %s)
-`
 
 func init() {
 	log.SetFlags(0)
@@ -59,54 +29,6 @@ func init() {
 	log.Println(``)
 
 	log.Printf("Version %s [%s] (Build time %s)\n\n", meta.Version, meta.Hash, meta.BuildTime)
-
-	// Flag setup
-	mode = command.NewStrFlag(modeList, modeList, modeConfig, modeVersion, modeUpdate, modeScript, modeReboot)
-	flag.Var(mode, "m", "Execution mode (default: "+modeList+")")
-	flag.Var(mode, "mode", "Execution mode (default: "+modeList+")")
-
-	driver = command.NewStrFlag(device.Driver, shellygen1.Driver, shellygen2.Driver)
-	flag.Var(driver, "d", "IoT device driver (default: "+device.Driver+")")
-	flag.Var(driver, "driver", "IoT device driver (default: "+device.Driver+")")
-
-	flag.StringVar(&cfgPath, "c", "", "Config file path")
-	flag.StringVar(&cfgPath, "config", "", "Config file path")
-
-	flag.StringVar(&scrPath, "s", "", "Script file path")
-	flag.StringVar(&scrPath, "script", "", "Script file path")
-
-	sort = command.NewStrFlag(device.FieldName, device.FieldDriver, device.FieldIP, device.FieldMAC, device.FieldName, device.FieldModel)
-	flag.Var(sort, "sort", "Order devices by field (default: "+device.FieldName+")")
-
-	flag.Usage = func() {
-		fmt.Printf(
-			usage,
-			os.Args[0],
-
-			// Execution modes
-			modeList,    // 1st mode
-			modeConfig,  // 2nd mode
-			modeVersion, // 3rd mode
-			modeUpdate,  // 4th mode
-			modeScript,  // 5th mode
-			modeReboot,  // 6th mode
-			modeList,    // default mode
-
-			// Device drivers
-			device.Driver,     // 1st driver
-			shellygen1.Driver, // 2nd driver
-			shellygen2.Driver, // 3rd driver
-			device.Driver,     // default driver
-
-			// Sort fields
-			device.FieldDriver,
-			device.FieldIP,
-			device.FieldMAC,
-			device.FieldName,
-			device.FieldModel,
-			device.FieldName, // default
-		)
-	}
 }
 
 // loadConfig encapsulates the configuration loading logic, performing a series of checks,
@@ -340,10 +262,12 @@ func resolveProber(driver string) []device.Prober {
 }
 
 func main() {
+	flags := command.NewFlags()
+
 	if len(os.Args) < 2 {
 		log.Printf("CIDR notation value required (e.g. 192.168.0.0/24)\n\n")
 
-		flag.Usage()
+		flags.Usage()
 
 		os.Exit(1)
 	}
@@ -354,15 +278,16 @@ func main() {
 		log.Fatalf("Unable to resolve IP addresses: %v", err)
 	}
 
-	// Parse from the second argument onward
-	err = flag.CommandLine.Parse(os.Args[2:])
+	cmd, driver, err := flags.Parse(os.Args[2:])
 	if err != nil {
-		log.Fatalf("Unable to parse arguments: %v", err)
+		log.Printf("%v\n\n", err)
+
+		flags.Usage()
+
+		os.Exit(1)
 	}
 
-	log.Printf("Executing in %q mode\n", mode)
-
-	probers := resolveProber(driver.String())
+	probers := resolveProber(driver)
 	if len(probers) == 0 {
 		log.Fatalf("Unable to resolve an IoT device prober with the %q driver", driver)
 	}
@@ -370,12 +295,12 @@ func main() {
 	tuner := device.NewTuner(probers)
 
 	// Avoid scanning if the config/script loading fail
-	if mode.String() == modeConfig {
-		tuner.SetConfig(loadConfig(driver.String(), cfgPath))
+	if cmd == command.Config {
+		tuner.SetConfig(loadConfig(driver, flags.ConfigFile()))
 	}
 
-	if mode.String() == modeScript {
-		tuner.SetScript(loadScript(driver.String(), scrPath))
+	if cmd == command.Script {
+		tuner.SetScript(loadScript(driver, flags.ScriptFile()))
 	}
 
 	execScan(tuner, ips)
@@ -384,23 +309,28 @@ func main() {
 
 	log.Printf("IoT devices found: %d\n", len(devices))
 
-	err = devices.SortBy(sort.String())
-	if err != nil {
-		log.Fatalf("Unable to sort devices: %v\n", err)
-	}
+	switch cmd {
+	case command.Dump:
+		err = devices.SortBy(flags.SortField())
+		if err != nil {
+			log.Fatalf("Unable to sort devices: %v\n", err)
+		}
 
-	switch mode.String() {
-	case modeList:
 		execList(devices)
-	case modeConfig:
+
+	case command.Config:
 		execConfig(tuner, devices)
-	case modeVersion:
+
+	case command.Version:
 		execVersion(tuner, devices)
-	case modeUpdate:
+
+	case command.Update:
 		execUpdate(tuner, devices)
-	case modeScript:
+
+	case command.Script:
 		execScript(tuner, devices)
-	case modeReboot:
+
+	case command.Reboot:
 		execReboot(tuner, devices)
 	}
 }
