@@ -76,10 +76,11 @@ Flags:
 `
 )
 
-// Command errors
+// Parsing errors
 var (
-	errCommandExpected = errors.New("command expected")
-	errCommandUnknown  = errors.New("command unknown")
+	errArgumentMissing = errors.New("missing arguments")
+	errArgumentParsing = errors.New("error parsing arguments")
+	errCommandInvalid  = errors.New("invalid command")
 )
 
 // Flags used in the command.
@@ -206,7 +207,7 @@ func (p *Flags) ScriptFile() string {
 func (p *Flags) Parse(arguments []string) (string, string, error) {
 	err := flag.CommandLine.Parse(arguments)
 	if err != nil {
-		return "", "", err
+		return "", "", fmt.Errorf("%w: %s", errArgumentParsing, err)
 	}
 
 	// Check if a command has been provided
@@ -219,7 +220,7 @@ func (p *Flags) Parse(arguments []string) (string, string, error) {
 	case Dump:
 		err = p.dumpCmd.Parse(os.Args[3:])
 		if err != nil {
-			return "", "", err
+			return "", "", fmt.Errorf("%w: %s", errArgumentParsing, err)
 		}
 
 		return Dump, p.dumpDriver.String(), nil
@@ -227,7 +228,7 @@ func (p *Flags) Parse(arguments []string) (string, string, error) {
 	case Config:
 		err = p.configCmd.Parse(os.Args[3:])
 		if err != nil {
-			return "", "", err
+			return "", "", fmt.Errorf("%w: %s", errArgumentParsing, err)
 		}
 
 		return Config, p.configDriver.String(), nil
@@ -235,7 +236,7 @@ func (p *Flags) Parse(arguments []string) (string, string, error) {
 	case Version:
 		err = p.versionCmd.Parse(os.Args[3:])
 		if err != nil {
-			return "", "", err
+			return "", "", fmt.Errorf("%w: %s", errArgumentParsing, err)
 		}
 
 		return Version, p.versionDriver.String(), nil
@@ -243,7 +244,7 @@ func (p *Flags) Parse(arguments []string) (string, string, error) {
 	case Update:
 		err = p.updateCmd.Parse(os.Args[3:])
 		if err != nil {
-			return "", "", err
+			return "", "", fmt.Errorf("%w: %s", errArgumentParsing, err)
 		}
 
 		return Update, p.updateDriver.String(), nil
@@ -251,7 +252,7 @@ func (p *Flags) Parse(arguments []string) (string, string, error) {
 	case Script:
 		err = p.scriptCmd.Parse(os.Args[3:])
 		if err != nil {
-			return "", "", err
+			return "", "", fmt.Errorf("%w: %s", errArgumentParsing, err)
 		}
 
 		return Script, p.scriptDriver.String(), nil
@@ -259,12 +260,12 @@ func (p *Flags) Parse(arguments []string) (string, string, error) {
 	case Reboot:
 		err = p.rebootCmd.Parse(os.Args[3:])
 		if err != nil {
-			return "", "", err
+			return "", "", fmt.Errorf("%w: %s", errArgumentParsing, err)
 		}
 
 		return Reboot, p.rebootDriver.String(), nil
 
 	default:
-		return "", "", fmt.Errorf("%w: %s\n", errCommandUnknown, os.Args[2])
+		return "", "", fmt.Errorf("%w: %s", errCommandInvalid, arguments[0])
 	}
 }
