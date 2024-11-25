@@ -290,10 +290,12 @@ func main() {
 
 	cmd, driver, err := flags.Parse(os.Args[2:])
 	if err != nil {
-		// prevent displaying the help error
-		if !errors.Is(err, flag.ErrHelp) {
-			log.Printf("%v\n\n", err)
+		// Handle command help
+		if errors.Is(err, flag.ErrHelp) {
+			os.Exit(0)
 		}
+
+		log.Printf("%v\n\n", err)
 
 		flags.Usage()
 
