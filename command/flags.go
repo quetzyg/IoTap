@@ -210,15 +210,14 @@ func (p *Flags) Parse(arguments []string) (string, string, error) {
 		return "", "", fmt.Errorf("%w: %s", errArgumentParsing, err)
 	}
 
-	// Check if a command has been provided
-	if len(os.Args) < 3 {
-		return "", "", errCommandExpected
+	if len(arguments) == 0 {
+		return "", "", errArgumentMissing
 	}
 
 	// Handle commands
-	switch os.Args[2] {
+	switch arguments[0] {
 	case Dump:
-		err = p.dumpCmd.Parse(os.Args[3:])
+		err = p.dumpCmd.Parse(arguments[1:])
 		if err != nil {
 			return "", "", fmt.Errorf("%w: %s", errArgumentParsing, err)
 		}
@@ -226,7 +225,7 @@ func (p *Flags) Parse(arguments []string) (string, string, error) {
 		return Dump, p.dumpDriver.String(), nil
 
 	case Config:
-		err = p.configCmd.Parse(os.Args[3:])
+		err = p.configCmd.Parse(arguments[1:])
 		if err != nil {
 			return "", "", fmt.Errorf("%w: %s", errArgumentParsing, err)
 		}
@@ -234,7 +233,7 @@ func (p *Flags) Parse(arguments []string) (string, string, error) {
 		return Config, p.configDriver.String(), nil
 
 	case Version:
-		err = p.versionCmd.Parse(os.Args[3:])
+		err = p.versionCmd.Parse(arguments[1:])
 		if err != nil {
 			return "", "", fmt.Errorf("%w: %s", errArgumentParsing, err)
 		}
@@ -242,7 +241,7 @@ func (p *Flags) Parse(arguments []string) (string, string, error) {
 		return Version, p.versionDriver.String(), nil
 
 	case Update:
-		err = p.updateCmd.Parse(os.Args[3:])
+		err = p.updateCmd.Parse(arguments[1:])
 		if err != nil {
 			return "", "", fmt.Errorf("%w: %s", errArgumentParsing, err)
 		}
@@ -250,7 +249,7 @@ func (p *Flags) Parse(arguments []string) (string, string, error) {
 		return Update, p.updateDriver.String(), nil
 
 	case Script:
-		err = p.scriptCmd.Parse(os.Args[3:])
+		err = p.scriptCmd.Parse(arguments[1:])
 		if err != nil {
 			return "", "", fmt.Errorf("%w: %s", errArgumentParsing, err)
 		}
@@ -258,7 +257,7 @@ func (p *Flags) Parse(arguments []string) (string, string, error) {
 		return Script, p.scriptDriver.String(), nil
 
 	case Reboot:
-		err = p.rebootCmd.Parse(os.Args[3:])
+		err = p.rebootCmd.Parse(arguments[1:])
 		if err != nil {
 			return "", "", fmt.Errorf("%w: %s", errArgumentParsing, err)
 		}
