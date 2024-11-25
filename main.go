@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"flag"
 	"fmt"
 	"log"
 	"net"
@@ -289,7 +290,10 @@ func main() {
 
 	cmd, driver, err := flags.Parse(os.Args[2:])
 	if err != nil {
-		log.Printf("%v\n\n", err)
+		// prevent displaying the help error
+		if !errors.Is(err, flag.ErrHelp) {
+			log.Printf("%v\n\n", err)
+		}
 
 		flags.Usage()
 
