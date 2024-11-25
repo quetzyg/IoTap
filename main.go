@@ -278,6 +278,15 @@ func main() {
 		log.Fatalf("Unable to resolve IP addresses: %v", err)
 	}
 
+	// Check if a command has been provided
+	if len(os.Args) < 3 {
+		log.Printf("Command expected\n\n")
+
+		flags.Usage()
+
+		os.Exit(1)
+	}
+
 	cmd, driver, err := flags.Parse(os.Args[2:])
 	if err != nil {
 		log.Printf("%v\n\n", err)
