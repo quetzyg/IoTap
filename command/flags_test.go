@@ -2,6 +2,7 @@ package command
 
 import (
 	"errors"
+	"flag"
 	"testing"
 
 	"github.com/Stowify/IoTune/device"
@@ -50,10 +51,15 @@ func TestFlags_Parse(t *testing.T) {
 			err:  errArgumentParsing,
 		},
 		{
-			name:    "success: config command with defined flags",
+			name:    "success: config command with valid flags",
 			args:    []string{Dump, "-driver", device.Driver, "-sort", device.FieldIP},
 			command: Dump,
 			driver:  device.Driver,
+		},
+		{
+			name: "success: config command with valid + help flags",
+			args: []string{Dump, "-driver", device.Driver, "-sort", device.FieldIP, "-h"},
+			err:  flag.ErrHelp,
 		},
 
 		// Config
@@ -73,10 +79,15 @@ func TestFlags_Parse(t *testing.T) {
 			err:  errArgumentParsing,
 		},
 		{
-			name:    "success: config command with defined flags",
+			name:    "success: config command with valid flags",
 			args:    []string{Config, "-driver", shellygen1.Driver, "-f", "config.json"},
 			command: Config,
 			driver:  shellygen1.Driver,
+		},
+		{
+			name: "success: config command with valid + help flags",
+			args: []string{Config, "-driver", shellygen1.Driver, "-f", "config.json", "-h"},
+			err:  flag.ErrHelp,
 		},
 
 		// Version
@@ -91,10 +102,15 @@ func TestFlags_Parse(t *testing.T) {
 			err:  errArgumentParsing,
 		},
 		{
-			name:    "success: version command with defined flags",
+			name:    "success: version command with valid flags",
 			args:    []string{Version, "-driver", shellygen2.Driver},
 			command: Version,
 			driver:  shellygen2.Driver,
+		},
+		{
+			name: "success: version command with valid + help flags",
+			args: []string{Version, "-driver", shellygen2.Driver, "-h"},
+			err:  flag.ErrHelp,
 		},
 
 		// Update
@@ -109,10 +125,15 @@ func TestFlags_Parse(t *testing.T) {
 			err:  errArgumentParsing,
 		},
 		{
-			name:    "success: update command with defined flags",
+			name:    "success: update command with valid flags",
 			args:    []string{Update, "-driver", device.Driver},
 			command: Update,
 			driver:  device.Driver,
+		},
+		{
+			name: "success: update command with valid + help flags",
+			args: []string{Update, "-driver", device.Driver, "-h"},
+			err:  flag.ErrHelp,
 		},
 
 		// Script
@@ -132,10 +153,15 @@ func TestFlags_Parse(t *testing.T) {
 			err:  errArgumentParsing,
 		},
 		{
-			name:    "success: script command with defined flags",
+			name:    "success: script command with valid flags",
 			args:    []string{Script, "-driver", shellygen1.Driver, "-f", "script.js"},
 			command: Script,
 			driver:  shellygen1.Driver,
+		},
+		{
+			name: "success: script command with valid + help flags",
+			args: []string{Script, "-driver", shellygen1.Driver, "-f", "script.js", "-h"},
+			err:  flag.ErrHelp,
 		},
 
 		// Reboot
@@ -150,10 +176,15 @@ func TestFlags_Parse(t *testing.T) {
 			err:  errArgumentParsing,
 		},
 		{
-			name:    "success: reboot command with defined flags",
+			name:    "success: reboot command with valid flags",
 			args:    []string{Reboot, "-driver", shellygen2.Driver},
 			command: Reboot,
 			driver:  shellygen2.Driver,
+		},
+		{
+			name: "success: reboot command with valid + help flags",
+			args: []string{Reboot, "-driver", shellygen2.Driver, "-h"},
+			err:  flag.ErrHelp,
 		},
 	}
 
