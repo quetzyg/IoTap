@@ -10,6 +10,190 @@ import (
 	"github.com/Stowify/IoTune/shellygen2"
 )
 
+func TestFlags_Usage(t *testing.T) {
+	NewFlags().Usage()
+}
+
+func TestFlags_SortField(t *testing.T) {
+	tests := []struct {
+		name      string
+		args      []string
+		command   string
+		driver    string
+		err       error
+		sortField string
+	}{
+		{
+			name:      "get default sort field value",
+			args:      []string{Dump},
+			command:   Dump,
+			driver:    device.Driver,
+			sortField: "name",
+		},
+		{
+			name:      "get mac sort field value",
+			args:      []string{Dump, "-sort", "mac"},
+			command:   Dump,
+			driver:    device.Driver,
+			sortField: "mac",
+		},
+		{
+			name:      "get default sort field value when invalid field is passed",
+			args:      []string{Dump, "-sort", "foo"},
+			command:   "",
+			driver:    "",
+			err:       errArgumentParsing,
+			sortField: "name",
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			flags := NewFlags()
+
+			cmd, driver, err := flags.Parse(test.args)
+
+			if cmd != test.command {
+				t.Fatalf("Unexpected command. Got %s, expected %s", cmd, test.command)
+			}
+
+			if driver != test.driver {
+				t.Fatalf("Unexpected driver. Got %s, expected %s", driver, test.driver)
+			}
+
+			if !errors.Is(err, test.err) {
+				t.Fatalf("expected %#v, got %#v", test.err, err)
+			}
+
+			sort := flags.SortField()
+
+			if sort != test.sortField {
+				t.Fatalf("Unexpected sort field. Got %s, expected %s", sort, test.sortField)
+			}
+		})
+	}
+}
+
+func TestFlags_ConfigFile(t *testing.T) {
+	tests := []struct {
+		name       string
+		args       []string
+		command    string
+		driver     string
+		err        error
+		configFile string
+	}{
+		{
+			name:       "get empty config file path value",
+			args:       []string{Config},
+			command:    Config,
+			driver:     device.Driver,
+			configFile: "",
+		},
+		{
+			name:       "get config file path value",
+			args:       []string{Config, "-f", "config.json"},
+			command:    Config,
+			driver:     device.Driver,
+			configFile: "config.json",
+		},
+		{
+			name:       "get empty config file path value when argument is missing",
+			args:       []string{Config, "-f"},
+			command:    "",
+			driver:     "",
+			err:        errArgumentParsing,
+			configFile: "",
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			flags := NewFlags()
+
+			cmd, driver, err := flags.Parse(test.args)
+
+			if cmd != test.command {
+				t.Fatalf("Unexpected command. Got %s, expected %s", cmd, test.command)
+			}
+
+			if driver != test.driver {
+				t.Fatalf("Unexpected driver. Got %s, expected %s", driver, test.driver)
+			}
+
+			if !errors.Is(err, test.err) {
+				t.Fatalf("expected %#v, got %#v", test.err, err)
+			}
+
+			config := flags.ConfigFile()
+
+			if config != test.configFile {
+				t.Fatalf("Unexpected config file. Got %s, expected %s", config, test.configFile)
+			}
+		})
+	}
+}
+
+func TestFlags_ScriptFile(t *testing.T) {
+	tests := []struct {
+		name       string
+		args       []string
+		command    string
+		driver     string
+		err        error
+		scriptFile string
+	}{
+		{
+			name:       "get empty script file path value",
+			args:       []string{Script},
+			command:    Script,
+			driver:     device.Driver,
+			scriptFile: "",
+		},
+		{
+			name:       "get script file path value",
+			args:       []string{Script, "-f", "script.js"},
+			command:    Script,
+			driver:     device.Driver,
+			scriptFile: "script.js",
+		},
+		{
+			name:       "get empty script file path value when argument is missing",
+			args:       []string{Script, "-f"},
+			command:    "",
+			driver:     "",
+			err:        errArgumentParsing,
+			scriptFile: "",
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			flags := NewFlags()
+
+			cmd, driver, err := flags.Parse(test.args)
+
+			if cmd != test.command {
+				t.Fatalf("Unexpected command. Got %s, expected %s", cmd, test.command)
+			}
+
+			if driver != test.driver {
+				t.Fatalf("Unexpected driver. Got %s, expected %s", driver, test.driver)
+			}
+
+			if !errors.Is(err, test.err) {
+				t.Fatalf("expected %#v, got %#v", test.err, err)
+			}
+
+			script := flags.ScriptFile()
+
+			if script != test.scriptFile {
+				t.Fatalf("Unexpected script file. Got %s, expected %s", script, test.scriptFile)
+			}
+		})
+	}
+}
+
 func TestFlags_Parse(t *testing.T) {
 	tests := []struct {
 		name    string
