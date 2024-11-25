@@ -128,7 +128,7 @@ func NewFlags() *Flags {
 	}
 
 	// Dump
-	flags.dumpCmd = flag.NewFlagSet(Dump, flag.ExitOnError)
+	flags.dumpCmd = flag.NewFlagSet(Dump, flag.ContinueOnError)
 	flags.dumpDriver = setDriverFlag(flags.dumpCmd)
 	flags.dumpSortField = NewStrFlag(device.FieldName, device.FieldDriver, device.FieldIP, device.FieldMAC, device.FieldName, device.FieldModel)
 	flags.dumpCmd.Var(flags.dumpSortField, "sort", "Sort devices by field")
@@ -138,7 +138,7 @@ func NewFlags() *Flags {
 	}
 
 	// Config
-	flags.configCmd = flag.NewFlagSet(Config, flag.ExitOnError)
+	flags.configCmd = flag.NewFlagSet(Config, flag.ContinueOnError)
 	flags.configDriver = setDriverFlag(flags.configCmd)
 	flags.configFile = flags.configCmd.String("f", "", "Device configuration file path")
 	flags.configCmd.Usage = func() {
@@ -147,7 +147,7 @@ func NewFlags() *Flags {
 	}
 
 	// Version
-	flags.versionCmd = flag.NewFlagSet(Version, flag.ExitOnError)
+	flags.versionCmd = flag.NewFlagSet(Version, flag.ContinueOnError)
 	flags.versionDriver = setDriverFlag(flags.versionCmd)
 	flags.versionCmd.Usage = func() {
 		fmt.Printf(commandUsage, Version, os.Args[0], Version)
@@ -155,7 +155,7 @@ func NewFlags() *Flags {
 	}
 
 	// Update
-	flags.updateCmd = flag.NewFlagSet(Update, flag.ExitOnError)
+	flags.updateCmd = flag.NewFlagSet(Update, flag.ContinueOnError)
 	flags.updateDriver = setDriverFlag(flags.updateCmd)
 	flags.updateCmd.Usage = func() {
 		fmt.Printf(commandUsage, Update, os.Args[0], Update)
@@ -163,7 +163,7 @@ func NewFlags() *Flags {
 	}
 
 	// Script
-	flags.scriptCmd = flag.NewFlagSet(Script, flag.ExitOnError)
+	flags.scriptCmd = flag.NewFlagSet(Script, flag.ContinueOnError)
 	flags.scriptDriver = setDriverFlag(flags.scriptCmd)
 	flags.scriptFile = flags.scriptCmd.String("f", "", "Device script file path")
 	flags.scriptCmd.Usage = func() {
@@ -172,7 +172,7 @@ func NewFlags() *Flags {
 	}
 
 	// Reboot
-	flags.rebootCmd = flag.NewFlagSet(Reboot, flag.ExitOnError)
+	flags.rebootCmd = flag.NewFlagSet(Reboot, flag.ContinueOnError)
 	flags.rebootDriver = setDriverFlag(flags.rebootCmd)
 	flags.rebootCmd.Usage = func() {
 		fmt.Printf(commandUsage, Reboot, os.Args[0], Reboot)
