@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"flag"
 	"fmt"
@@ -115,8 +116,8 @@ func execScan(tuner *device.Tuner, ips []net.IP) {
 	log.Println("Success!")
 }
 
-// execList is a helper function that lists the detected devices.
-func execList(devices device.Collection) {
+// execDumpToStdout is a helper function that outputs the device results to STDOUT.
+func execDumpToStdout(devices device.Collection) {
 	if len(devices) == 0 {
 		return
 	}
@@ -145,6 +146,21 @@ func execList(devices device.Collection) {
 	for _, dev := range devices {
 		log.Println(dev.(device.Tabler).Row(format))
 	}
+}
+
+// execDumpToFile is a helper function that outputs the device results to a JSON file.
+func execDumpToFile(devices device.Collection, name string) {
+	b, err := json.MarshalIndent(devices, "", "  ")
+	if err != nil {
+		log.Fatalf("Failed to marshal results: %v", err)
+	}
+
+	err = os.WriteFile(name, b, 0644)
+	if err != nil {
+		log.Fatalf("Failed to write to %q: %v", name, err)
+	}
+
+	log.Printf("The device results have been saved to %q\n", name)
 }
 
 // execConfig encapsulates the execution of the device.Configure procedure.
@@ -343,7 +359,14 @@ func main() {
 			log.Fatalf("Unable to sort devices: %v\n", err)
 		}
 
-		execList(devices)
+		out := flags.DumpFile()
+		if out != "" {
+			execDumpToFile(devices, out)
+
+			return
+		}
+
+		execDumpToStdout(devices)
 
 	case command.Config:
 		execConfig(tuner, devices)
