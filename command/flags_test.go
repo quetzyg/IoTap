@@ -42,7 +42,7 @@ func TestFlags_SortField(t *testing.T) {
 			args:      []string{Dump, "-sort", "foo"},
 			command:   "",
 			driver:    "",
-			err:       errArgumentParsing,
+			err:       ErrArgumentParse,
 			sortField: "name",
 		},
 	}
@@ -102,7 +102,7 @@ func TestFlags_DumpFile(t *testing.T) {
 			args:     []string{Dump, "-f"},
 			command:  "",
 			driver:   "",
-			err:      errArgumentParsing,
+			err:      ErrArgumentParse,
 			dumpFile: "",
 		},
 	}
@@ -162,7 +162,7 @@ func TestFlags_ConfigFile(t *testing.T) {
 			args:       []string{Config, "-f"},
 			command:    "",
 			driver:     "",
-			err:        errArgumentParsing,
+			err:        ErrArgumentParse,
 			configFile: "",
 		},
 	}
@@ -222,7 +222,7 @@ func TestFlags_ScriptFile(t *testing.T) {
 			args:       []string{Script, "-f"},
 			command:    "",
 			driver:     "",
-			err:        errArgumentParsing,
+			err:        ErrArgumentParse,
 			scriptFile: "",
 		},
 	}
@@ -263,41 +263,46 @@ func TestFlags_Parse(t *testing.T) {
 		err     error
 	}{
 		{
-			name: "failure: nil argument",
+			name: "failure: command not found #1",
 			args: nil,
-			err:  errArgumentMissing,
+			err:  ErrNotFound,
 		},
 		{
-			name: "failure: empty argument",
+			name: "failure: command not found #2",
+			args: []string{},
+			err:  ErrNotFound,
+		},
+		{
+			name: "failure: invalid command #1",
 			args: []string{""},
-			err:  errCommandInvalid,
+			err:  ErrInvalid,
 		},
 		{
-			name: "failure: invalid command argument",
+			name: "failure: invalid command #2",
 			args: []string{"foo"},
-			err:  errCommandInvalid,
+			err:  ErrInvalid,
 		},
 
 		// Dump
 		{
 			name: "failure: dump command with undefined flag",
 			args: []string{Dump, "-foo"},
-			err:  errArgumentParsing,
+			err:  ErrArgumentParse,
 		},
 		{
 			name: "failure: dump command with invalid driver flag value",
 			args: []string{Dump, "-driver"},
-			err:  errArgumentParsing,
+			err:  ErrArgumentParse,
 		},
 		{
 			name: "failure: dump command with invalid sort flag value",
 			args: []string{Dump, "-sort"},
-			err:  errArgumentParsing,
+			err:  ErrArgumentParse,
 		},
 		{
 			name: "failure: dump command with invalid file flag value",
 			args: []string{Dump, "-f"},
-			err:  errArgumentParsing,
+			err:  ErrArgumentParse,
 		},
 		{
 			name:    "success: dump command with valid flags",
@@ -315,17 +320,17 @@ func TestFlags_Parse(t *testing.T) {
 		{
 			name: "failure: config command with undefined flag",
 			args: []string{Config, "-foo"},
-			err:  errArgumentParsing,
+			err:  ErrArgumentParse,
 		},
 		{
 			name: "failure: config command with invalid driver flag value",
 			args: []string{Config, "-driver"},
-			err:  errArgumentParsing,
+			err:  ErrArgumentParse,
 		},
 		{
 			name: "failure: config command with invalid file flag value",
 			args: []string{Config, "-f"},
-			err:  errArgumentParsing,
+			err:  ErrArgumentParse,
 		},
 		{
 			name:    "success: config command with valid flags",
@@ -343,12 +348,12 @@ func TestFlags_Parse(t *testing.T) {
 		{
 			name: "failure: version command with undefined flag",
 			args: []string{Version, "-foo"},
-			err:  errArgumentParsing,
+			err:  ErrArgumentParse,
 		},
 		{
 			name: "failure: version command with invalid driver flag value",
 			args: []string{Version, "-driver"},
-			err:  errArgumentParsing,
+			err:  ErrArgumentParse,
 		},
 		{
 			name:    "success: version command with valid flags",
@@ -366,12 +371,12 @@ func TestFlags_Parse(t *testing.T) {
 		{
 			name: "failure: update command with undefined flag",
 			args: []string{Update, "-foo"},
-			err:  errArgumentParsing,
+			err:  ErrArgumentParse,
 		},
 		{
 			name: "failure: update command with invalid driver flag value",
 			args: []string{Update, "-driver"},
-			err:  errArgumentParsing,
+			err:  ErrArgumentParse,
 		},
 		{
 			name:    "success: update command with valid flags",
@@ -389,17 +394,17 @@ func TestFlags_Parse(t *testing.T) {
 		{
 			name: "failure: script command with undefined flag",
 			args: []string{Script, "-foo"},
-			err:  errArgumentParsing,
+			err:  ErrArgumentParse,
 		},
 		{
 			name: "failure: script command with invalid driver flag value",
 			args: []string{Script, "-driver"},
-			err:  errArgumentParsing,
+			err:  ErrArgumentParse,
 		},
 		{
 			name: "failure: script command with invalid file flag value",
 			args: []string{Script, "-f"},
-			err:  errArgumentParsing,
+			err:  ErrArgumentParse,
 		},
 		{
 			name:    "success: script command with valid flags",
@@ -417,12 +422,12 @@ func TestFlags_Parse(t *testing.T) {
 		{
 			name: "failure: reboot command with undefined flag",
 			args: []string{Reboot, "-foo"},
-			err:  errArgumentParsing,
+			err:  ErrArgumentParse,
 		},
 		{
 			name: "failure: reboot command with invalid driver flag value",
 			args: []string{Reboot, "-driver"},
-			err:  errArgumentParsing,
+			err:  ErrArgumentParse,
 		},
 		{
 			name:    "success: reboot command with valid flags",
