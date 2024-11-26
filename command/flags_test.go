@@ -74,6 +74,66 @@ func TestFlags_SortField(t *testing.T) {
 	}
 }
 
+func TestFlags_DumpFile(t *testing.T) {
+	tests := []struct {
+		name     string
+		args     []string
+		command  string
+		driver   string
+		err      error
+		dumpFile string
+	}{
+		{
+			name:     "get empty dump file path value",
+			args:     []string{Dump},
+			command:  Dump,
+			driver:   device.Driver,
+			dumpFile: "",
+		},
+		{
+			name:     "get dump file path value",
+			args:     []string{Dump, "-f", "devices.json"},
+			command:  Dump,
+			driver:   device.Driver,
+			dumpFile: "devices.json",
+		},
+		{
+			name:     "get empty dump file path value when argument is missing",
+			args:     []string{Dump, "-f"},
+			command:  "",
+			driver:   "",
+			err:      errArgumentParsing,
+			dumpFile: "",
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			flags := NewFlags()
+
+			cmd, driver, err := flags.Parse(test.args)
+
+			if cmd != test.command {
+				t.Fatalf("Unexpected command. Got %s, expected %s", cmd, test.command)
+			}
+
+			if driver != test.driver {
+				t.Fatalf("Unexpected driver. Got %s, expected %s", driver, test.driver)
+			}
+
+			if !errors.Is(err, test.err) {
+				t.Fatalf("expected %#v, got %#v", test.err, err)
+			}
+
+			dump := flags.DumpFile()
+
+			if dump != test.dumpFile {
+				t.Fatalf("Unexpected dump file. Got %s, expected %s", dump, test.dumpFile)
+			}
+		})
+	}
+}
+
 func TestFlags_ConfigFile(t *testing.T) {
 	tests := []struct {
 		name       string
@@ -235,14 +295,19 @@ func TestFlags_Parse(t *testing.T) {
 			err:  errArgumentParsing,
 		},
 		{
-			name:    "success: config command with valid flags",
-			args:    []string{Dump, "-driver", device.Driver, "-sort", device.FieldIP},
+			name: "failure: dump command with invalid file flag value",
+			args: []string{Dump, "-f"},
+			err:  errArgumentParsing,
+		},
+		{
+			name:    "success: dump command with valid flags",
+			args:    []string{Dump, "-driver", device.Driver, "-sort", device.FieldIP, "-f", "devices.json"},
 			command: Dump,
 			driver:  device.Driver,
 		},
 		{
-			name: "success: config command with valid + help flags",
-			args: []string{Dump, "-driver", device.Driver, "-sort", device.FieldIP, "-h"},
+			name: "success: dump command with valid + help flags",
+			args: []string{Dump, "-driver", device.Driver, "-sort", device.FieldIP, "-f", "devices.json", "-h"},
 			err:  flag.ErrHelp,
 		},
 
