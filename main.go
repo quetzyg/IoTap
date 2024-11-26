@@ -245,11 +245,8 @@ func execVersion(tuner *device.Tuner, devices device.Collection) {
 		}
 	}
 
-	log.Println("All versioned devices are up to date!")
-}
-
-// resolveProber instances from a driver value.
-func resolveProber(driver string) []device.Prober {
+// resolveProbers for a given driver.
+func resolveProbers(driver string) []device.Prober {
 	switch driver {
 	case device.Driver:
 		return []device.Prober{&shellygen1.Prober{}, &shellygen2.Prober{}}
@@ -302,7 +299,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	probers := resolveProber(driver)
+	probers := resolveProbers(driver)
 	if len(probers) == 0 {
 		log.Fatalf("Unable to resolve an IoT device prober with the %q driver", driver)
 	}
