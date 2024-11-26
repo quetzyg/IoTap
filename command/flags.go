@@ -88,6 +88,7 @@ type Flags struct {
 	dumpCmd       *flag.FlagSet
 	dumpDriver    *StrFlag
 	dumpSortField *StrFlag
+	dumpFile      *string
 
 	configCmd    *flag.FlagSet
 	configDriver *StrFlag
@@ -133,6 +134,7 @@ func NewFlags() *Flags {
 	flags.dumpDriver = setDriverFlag(flags.dumpCmd)
 	flags.dumpSortField = NewStrFlag(device.FieldName, device.FieldDriver, device.FieldIP, device.FieldMAC, device.FieldName, device.FieldModel)
 	flags.dumpCmd.Var(flags.dumpSortField, "sort", "Sort devices by field")
+	flags.dumpFile = flags.dumpCmd.String("f", "", "Output the results to a JSON file")
 	flags.dumpCmd.Usage = func() {
 		fmt.Printf(commandUsage, Dump, os.Args[0], Dump)
 		flags.dumpCmd.PrintDefaults()
@@ -191,6 +193,11 @@ func (p *Flags) Usage() {
 // SortField returns the field by which the dump results should be sorted by.
 func (p *Flags) SortField() string {
 	return p.dumpSortField.String()
+}
+
+// DumpFile returns the JSON file path value.
+func (p *Flags) DumpFile() string {
+	return *p.dumpFile
 }
 
 // ConfigFile returns the configuration file path value.
