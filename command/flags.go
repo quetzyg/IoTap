@@ -1,7 +1,6 @@
 package command
 
 import (
-	"errors"
 	"flag"
 	"fmt"
 	"os"
@@ -74,13 +73,6 @@ Use %s <CIDR> <command> -h for more information about the command.
  %s <CIDR> %s [flags]
 Flags:
 `
-)
-
-// Parsing errors
-var (
-	errArgumentMissing = errors.New("missing arguments")
-	errArgumentParsing = errors.New("error parsing arguments")
-	errCommandInvalid  = errors.New("invalid command")
 )
 
 // Flags used in the command.
@@ -212,13 +204,13 @@ func (p *Flags) ScriptFile() string {
 
 // Parse the CLI arguments.
 func (p *Flags) Parse(arguments []string) (string, string, error) {
-	err := flag.CommandLine.Parse(arguments)
-	if err != nil {
-		return "", "", fmt.Errorf("%w: %w", errArgumentParsing, err)
+	if len(arguments) == 0 {
+		return "", "", ErrNotFound
 	}
 
-	if len(arguments) == 0 {
-		return "", "", errArgumentMissing
+	err := flag.CommandLine.Parse(arguments)
+	if err != nil {
+		return "", "", fmt.Errorf("%w: %w", ErrArgumentParse, err)
 	}
 
 	// Handle commands
@@ -226,7 +218,7 @@ func (p *Flags) Parse(arguments []string) (string, string, error) {
 	case Dump:
 		err = p.dumpCmd.Parse(arguments[1:])
 		if err != nil {
-			return "", "", fmt.Errorf("%w: %w", errArgumentParsing, err)
+			return "", "", fmt.Errorf("%w: %w", ErrArgumentParse, err)
 		}
 
 		return Dump, p.dumpDriver.String(), nil
@@ -234,7 +226,7 @@ func (p *Flags) Parse(arguments []string) (string, string, error) {
 	case Config:
 		err = p.configCmd.Parse(arguments[1:])
 		if err != nil {
-			return "", "", fmt.Errorf("%w: %w", errArgumentParsing, err)
+			return "", "", fmt.Errorf("%w: %w", ErrArgumentParse, err)
 		}
 
 		return Config, p.configDriver.String(), nil
@@ -242,7 +234,7 @@ func (p *Flags) Parse(arguments []string) (string, string, error) {
 	case Version:
 		err = p.versionCmd.Parse(arguments[1:])
 		if err != nil {
-			return "", "", fmt.Errorf("%w: %w", errArgumentParsing, err)
+			return "", "", fmt.Errorf("%w: %w", ErrArgumentParse, err)
 		}
 
 		return Version, p.versionDriver.String(), nil
@@ -250,7 +242,7 @@ func (p *Flags) Parse(arguments []string) (string, string, error) {
 	case Update:
 		err = p.updateCmd.Parse(arguments[1:])
 		if err != nil {
-			return "", "", fmt.Errorf("%w: %w", errArgumentParsing, err)
+			return "", "", fmt.Errorf("%w: %w", ErrArgumentParse, err)
 		}
 
 		return Update, p.updateDriver.String(), nil
@@ -258,7 +250,7 @@ func (p *Flags) Parse(arguments []string) (string, string, error) {
 	case Script:
 		err = p.scriptCmd.Parse(arguments[1:])
 		if err != nil {
-			return "", "", fmt.Errorf("%w: %w", errArgumentParsing, err)
+			return "", "", fmt.Errorf("%w: %w", ErrArgumentParse, err)
 		}
 
 		return Script, p.scriptDriver.String(), nil
@@ -266,12 +258,12 @@ func (p *Flags) Parse(arguments []string) (string, string, error) {
 	case Reboot:
 		err = p.rebootCmd.Parse(arguments[1:])
 		if err != nil {
-			return "", "", fmt.Errorf("%w: %w", errArgumentParsing, err)
+			return "", "", fmt.Errorf("%w: %w", ErrArgumentParse, err)
 		}
 
 		return Reboot, p.rebootDriver.String(), nil
 
 	default:
-		return "", "", fmt.Errorf("%w: %s", errCommandInvalid, arguments[0])
+		return "", "", fmt.Errorf("%w: %s", ErrInvalid, arguments[0])
 	}
 }
