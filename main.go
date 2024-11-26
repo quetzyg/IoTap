@@ -304,7 +304,11 @@ func main() {
 	// Collect IP addresses for scanning
 	ips, err := ip.Resolve(os.Args[1])
 	if err != nil {
-		log.Fatalf("Unable to resolve IP addresses: %v", err)
+		log.Printf("Unable to resolve IP addresses: %v\n\n", err)
+
+		flags.Usage()
+
+		os.Exit(1)
 	}
 
 	// Check if a command has been provided
