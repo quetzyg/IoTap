@@ -9,5 +9,5 @@ import (
 // devices on a given IP address. This request is dispatched during the
 // network scanning phase.
 type Prober interface {
-	ProbeRequest(ip net.IP) (*http.Request, Resource, error)
+	Request(ip net.IP) (*http.Request, Resource, error)
 }

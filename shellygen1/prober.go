@@ -13,8 +13,8 @@ const probePath = "settings"
 // Prober implementation for the Shelly Gen1 driver.
 type Prober struct{}
 
-// ProbeRequest function implementation for the Shelly Gen1 driver.
-func (p *Prober) ProbeRequest(ip net.IP) (*http.Request, device.Resource, error) {
+// Request for probing Shelly Gen1 devices on a given IP address.
+func (p *Prober) Request(ip net.IP) (*http.Request, device.Resource, error) {
 	r, err := http.NewRequest(http.MethodGet, buildURL(ip, probePath), nil)
 	if err != nil {
 		return nil, nil, err

@@ -8,16 +8,13 @@ import (
 	"github.com/Stowify/IoTune/httpclient"
 )
 
-const (
-	// Endpoint paths
-	probePath = "shelly"
-)
+const probePath = "shelly"
 
 // Prober implementation for the Shelly Gen2 driver.
 type Prober struct{}
 
-// ProbeRequest function implementation for the Shelly Gen2 driver.
-func (p *Prober) ProbeRequest(ip net.IP) (*http.Request, device.Resource, error) {
+// Request for probing Shelly Gen2 devices on a given IP address.
+func (p *Prober) Request(ip net.IP) (*http.Request, device.Resource, error) {
 	r, err := http.NewRequest(http.MethodGet, buildURL(ip, probePath), nil)
 	if err != nil {
 		return nil, nil, err
