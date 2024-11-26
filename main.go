@@ -329,7 +329,9 @@ func main() {
 
 		log.Printf("%v\n\n", err)
 
-		flags.Usage()
+		if errors.Is(err, command.ErrInvalid) {
+			flags.Usage()
+		}
 
 		os.Exit(1)
 	}
