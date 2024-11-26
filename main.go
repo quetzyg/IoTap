@@ -117,133 +117,148 @@ func execScan(tuner *device.Tuner, ips []net.IP) {
 
 // execList is a helper function that lists the detected devices.
 func execList(devices device.Collection) {
-	if len(devices) > 0 {
-		// Compute the appropriate padding for each column
-		var widths device.ColWidths
-		for _, dev := range devices {
-			for i, w := range dev.(device.Tabler).ColWidths() {
-				if w > widths[i] {
-					widths[i] = w
-				}
+	if len(devices) == 0 {
+		return
+	}
+
+	// Compute the appropriate padding for each column
+	var widths device.ColWidths
+	for _, dev := range devices {
+		for i, w := range dev.(device.Tabler).ColWidths() {
+			if w > widths[i] {
+				widths[i] = w
 			}
 		}
+	}
 
-		format := fmt.Sprintf(
-			"%%-%ds %%-%ds %%-%ds %%-%ds %%-%ds %%-%ds %%s",
-			widths[0],
-			widths[1],
-			widths[2],
-			widths[3],
-			widths[4],
-			widths[5],
-		)
+	format := fmt.Sprintf(
+		"%%-%ds %%-%ds %%-%ds %%-%ds %%-%ds %%-%ds %%s",
+		widths[0],
+		widths[1],
+		widths[2],
+		widths[3],
+		widths[4],
+		widths[5],
+	)
 
-		// Apply the computed format to each IoT device row
-		for _, dev := range devices {
-			log.Println(dev.(device.Tabler).Row(format))
-		}
+	// Apply the computed format to each IoT device row
+	for _, dev := range devices {
+		log.Println(dev.(device.Tabler).Row(format))
 	}
 }
 
 // execConfig encapsulates the execution of the device.Configure procedure.
 func execConfig(tuner *device.Tuner, devices device.Collection) {
-	if len(devices) > 0 {
-		log.Print("Applying configuration to devices...")
-		err := tuner.Execute(device.Configure)
-
-		var ec device.Errors
-		if errors.As(err, &ec) && !ec.Empty() {
-			ec.Print(devices)
-
-			return
-		}
-
-		log.Println("Success!")
+	if len(devices) == 0 {
+		return
 	}
+
+	log.Print("Applying configuration to devices...")
+	err := tuner.Execute(device.Configure)
+
+	var ec device.Errors
+	if errors.As(err, &ec) && !ec.Empty() {
+		ec.Print(devices)
+
+		return
+	}
+
+	log.Println("Success!")
 }
 
 // execUpdate encapsulates the execution of the device.Update procedure.
 func execUpdate(tuner *device.Tuner, devices device.Collection) {
-	if len(devices) > 0 {
-		log.Print("Updating software on devices...")
-		err := tuner.Execute(device.Update)
-
-		var ec device.Errors
-		if errors.As(err, &ec) && !ec.Empty() {
-			ec.Print(devices)
-
-			return
-		}
-
-		log.Println("Success!")
+	if len(devices) == 0 {
+		return
 	}
+
+	log.Print("Updating software on devices...")
+	err := tuner.Execute(device.Update)
+
+	var ec device.Errors
+	if errors.As(err, &ec) && !ec.Empty() {
+		ec.Print(devices)
+
+		return
+	}
+
+	log.Println("Success!")
 }
 
 // execUpdate encapsulates the execution of the device.Script procedure.
 func execScript(tuner *device.Tuner, devices device.Collection) {
-	if len(devices) > 0 {
-		log.Print("Uploading script to devices...")
-		err := tuner.Execute(device.Script)
-
-		var ec device.Errors
-		if errors.As(err, &ec) && !ec.Empty() {
-			ec.Print(devices)
-
-			return
-		}
-
-		log.Println("Success!")
+	if len(devices) == 0 {
+		return
 	}
+
+	log.Print("Uploading script to devices...")
+	err := tuner.Execute(device.Script)
+
+	var ec device.Errors
+	if errors.As(err, &ec) && !ec.Empty() {
+		ec.Print(devices)
+
+		return
+	}
+
+	log.Println("Success!")
 }
 
 // execReboot encapsulates the execution of the device.Reboot procedure.
 func execReboot(tuner *device.Tuner, devices device.Collection) {
-	if len(devices) > 0 {
-		log.Print("Sending reboot signal to devices...")
-		err := tuner.Execute(device.Reboot)
-
-		var ec device.Errors
-		if errors.As(err, &ec) && !ec.Empty() {
-			ec.Print(devices)
-
-			return
-		}
-
-		log.Println("Success!")
+	if len(devices) == 0 {
+		return
 	}
+
+	log.Print("Sending reboot signal to devices...")
+	err := tuner.Execute(device.Reboot)
+
+	var ec device.Errors
+	if errors.As(err, &ec) && !ec.Empty() {
+		ec.Print(devices)
+
+		return
+	}
+
+	log.Println("Success!")
 }
 
 // execVersion encapsulates the execution of the device.Version procedure.
 func execVersion(tuner *device.Tuner, devices device.Collection) {
-	if len(devices) > 0 {
-		log.Print("Versioning devices...")
-		err := tuner.Execute(device.Version)
+	if len(devices) == 0 {
+		log.Println("All versioned devices are up to date!")
 
-		var ec device.Errors
-		if errors.As(err, &ec) && !ec.Empty() {
-			ec.Print(devices)
+		return
+	}
 
-			return
-		}
+	log.Print("Versioning devices...")
+	err := tuner.Execute(device.Version)
 
-		var updatable []device.Versioner
-		for _, dev := range devices {
-			ver := dev.(device.Versioner)
-			if ver.UpdateAvailable() {
-				updatable = append(updatable, ver)
-			}
-		}
+	var ec device.Errors
+	if errors.As(err, &ec) && !ec.Empty() {
+		ec.Print(devices)
 
-		if len(updatable) > 0 {
-			log.Printf("Updatable devices found: %d\n", len(updatable))
+		return
+	}
 
-			for _, dev := range updatable {
-				log.Println(dev.UpdateDetails())
-			}
-
-			return
+	var updatable []device.Versioner
+	for _, dev := range devices {
+		ver := dev.(device.Versioner)
+		if ver.UpdateAvailable() {
+			updatable = append(updatable, ver)
 		}
 	}
+
+	if len(updatable) > 0 {
+		log.Printf("Updatable devices found: %d\n", len(updatable))
+
+		for _, dev := range updatable {
+			log.Println(dev.UpdateDetails())
+		}
+
+		return
+	}
+}
 
 // resolveProbers for a given driver.
 func resolveProbers(driver string) []device.Prober {
