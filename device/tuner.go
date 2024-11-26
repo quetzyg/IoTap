@@ -121,7 +121,7 @@ func probe(ch chan<- *ProcedureResult, ip net.IP, probers []Prober) {
 	ch <- result
 }
 
-// Scan the network with an IoT device prober.
+// Scan the network using IoT device probers.
 func (t *Tuner) Scan(ips []net.IP) error {
 	// Cleanup before scanning
 	t.devices = Collection{}

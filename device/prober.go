@@ -5,9 +5,9 @@ import (
 	"net/http"
 )
 
-// Prober defines a method to generate an HTTP request for probing an IoT
-// device based on a given IP address. This request is dispatched during
-// the scanning phase for detecting known devices.
+// Prober defines a method to generate an HTTP request to probe for IoT
+// devices on a given IP address. This request is dispatched during the
+// network scanning phase.
 type Prober interface {
 	ProbeRequest(ip net.IP) (*http.Request, Resource, error)
 }

@@ -34,7 +34,7 @@ var (
 	errStrategyModeInvalid   = errors.New("the strategy mode is invalid")
 )
 
-// ProbeError holds an IP address probe error.
+// ProbeError for an IP address.
 type ProbeError struct {
 	ip  net.IP
 	err error
