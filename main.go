@@ -281,7 +281,7 @@ func main() {
 
 	// Check if a command has been provided
 	if len(os.Args) < 3 {
-		log.Printf("Command expected\n\n")
+		log.Printf("Command not found\n\n")
 
 		flags.Usage()
 
