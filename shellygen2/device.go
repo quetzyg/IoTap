@@ -127,3 +127,15 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 
 	return nil
 }
+
+// MarshalJSON implements the Marshaler interface.
+func (d *Device) MarshalJSON() ([]byte, error) {
+	return json.Marshal(map[string]any{
+		"ip":       d.ip,
+		"mac":      d.mac.String(),
+		"name":     d.name,
+		"model":    d.model,
+		"secured":  d.secured,
+		"firmware": d.Firmware,
+	})
+}
