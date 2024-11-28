@@ -29,6 +29,13 @@ var (
 	// excluding a device from being configured.
 	ErrStrategyExcluded = errors.New("strategy excluded device")
 
+	// ErrInvalidSortByField is returned when an attempt is made to
+	// sort by a field that is not supported by the SortBy() method
+	ErrInvalidSortByField = errors.New("invalid field to sort by")
+
+	// ErrInvalidDumpFormat is returned when the dump format isn't correct.
+	ErrInvalidDumpFormat = errors.New("invalid dump format")
+
 	// Strategy error types
 	errStrategyModeUndefined = errors.New("the strategy mode is undefined")
 	errStrategyModeInvalid   = errors.New("the strategy mode is invalid")

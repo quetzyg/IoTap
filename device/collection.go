@@ -2,7 +2,6 @@ package device
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"sort"
 )
@@ -15,10 +14,6 @@ const (
 	FieldName   = "name"
 	FieldModel  = "model"
 )
-
-// ErrInvalidSortByField is returned when an attempt is made to
-// sort by a field that is not supported by the SortBy() method
-var ErrInvalidSortByField = errors.New("invalid field to sort by")
 
 // Collection is a slice of device resources.
 type Collection []Resource
