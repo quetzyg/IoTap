@@ -117,6 +117,7 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 // MarshalJSON implements the Marshaler interface.
 func (d *Device) MarshalJSON() ([]byte, error) {
 	return json.Marshal(map[string]any{
+		"driver":   d.Driver(),
 		"ip":       d.ip,
 		"mac":      d.mac.String(),
 		"name":     d.name,
