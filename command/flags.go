@@ -71,6 +71,7 @@ Use %s <CIDR> <command> -h for more information about the command.
 `
 	commandUsage = `Usage of %s:
  %s <CIDR> %s [flags]
+
 Flags:
 `
 )
@@ -80,6 +81,7 @@ type Flags struct {
 	dumpCmd       *flag.FlagSet
 	dumpDriver    *StrFlag
 	dumpSortField *StrFlag
+	dumpFormat    *StrFlag
 	dumpFile      *string
 
 	configCmd    *flag.FlagSet
@@ -126,7 +128,9 @@ func NewFlags() *Flags {
 	flags.dumpDriver = setDriverFlag(flags.dumpCmd)
 	flags.dumpSortField = NewStrFlag(device.FieldName, device.FieldDriver, device.FieldIP, device.FieldMAC, device.FieldName, device.FieldModel)
 	flags.dumpCmd.Var(flags.dumpSortField, "sort", "Sort devices by field")
-	flags.dumpFile = flags.dumpCmd.String("f", "", "Output the results to a JSON file")
+	flags.dumpFormat = NewStrFlag(device.FormatCSV, device.FormatCSV, device.FormatJSON)
+	flags.dumpCmd.Var(flags.dumpFormat, "format", "Dump output format")
+	flags.dumpFile = flags.dumpCmd.String("f", "", "Output the scan results to a file")
 	flags.dumpCmd.Usage = func() {
 		fmt.Printf(commandUsage, Dump, os.Args[0], Dump)
 		flags.dumpCmd.PrintDefaults()
@@ -187,7 +191,12 @@ func (p *Flags) SortField() string {
 	return p.dumpSortField.String()
 }
 
-// DumpFile returns the JSON file path value.
+// DumpFormat returns the dump data format value.
+func (p *Flags) DumpFormat() string {
+	return p.dumpFormat.String()
+}
+
+// DumpFile returns the file path value.
 func (p *Flags) DumpFile() string {
 	return *p.dumpFile
 }
