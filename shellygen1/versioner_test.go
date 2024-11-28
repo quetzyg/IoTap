@@ -7,12 +7,12 @@ import (
 	"testing"
 )
 
-func TestDevice_VersionRequest(t *testing.T) {
+func TestDevice_Request(t *testing.T) {
 	dev := &Device{
 		ip: net.ParseIP("192.168.146.123"),
 	}
 
-	r, err := dev.VersionRequest()
+	r, err := dev.Request()
 	if err != nil {
 		t.Fatalf("expected nil, got %v", err)
 	}
@@ -38,21 +38,21 @@ func TestDevice_VersionRequest(t *testing.T) {
 	}
 }
 
-func TestDevice_UpdateAvailable(t *testing.T) {
+func TestDevice_OutOfDate(t *testing.T) {
 	tests := []struct {
 		name      string
 		dev       *Device
 		available bool
 	}{
 		{
-			name: "update unavailable",
+			name: "up to date",
 			dev: &Device{
 				Firmware:     "1.0",
 				FirmwareNext: "1.0",
 			},
 		},
 		{
-			name: "update available",
+			name: "out of date",
 			dev: &Device{
 				Firmware:     "1.0",
 				FirmwareNext: "2.0",
@@ -63,7 +63,7 @@ func TestDevice_UpdateAvailable(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			available := test.dev.UpdateAvailable()
+			available := test.dev.OutOfDate()
 			if available != test.available {
 				t.Fatalf("expected %v, got %v", test.available, available)
 			}

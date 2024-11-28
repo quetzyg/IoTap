@@ -7,20 +7,20 @@ import (
 	"github.com/Stowify/IoTune/device"
 )
 
-// VersionRequest returns a device version check HTTP request.
+// Request for a device version check via HTTP.
 // See: https://shelly-api-docs.shelly.cloud/gen1/#ota
-func (d *Device) VersionRequest() (*http.Request, error) {
+func (d *Device) Request() (*http.Request, error) {
 	return request(d, updatePath, nil)
 }
 
-// UpdateAvailable checks if the device firmware can be updated.
-func (d *Device) UpdateAvailable() bool {
+// OutOfDate checks if the device's firmware is out of date.
+func (d *Device) OutOfDate() bool {
 	return d.Firmware != d.FirmwareNext
 }
 
 // UpdateDetails prints the device update information.
 func (d *Device) UpdateDetails() string {
-	if d.UpdateAvailable() {
+	if d.OutOfDate() {
 		return fmt.Sprintf(device.UpdateDetailsFormat, d.Driver(), d.Name(), d.ip, d.Firmware, d.FirmwareNext)
 	}
 
