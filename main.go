@@ -40,7 +40,7 @@ func loadConfig(driver, path string) device.Config {
 
 	switch driver {
 	case device.Driver:
-		log.Fatalf("The %q driver does not support config mode", driver)
+		log.Fatalf("The config command is not supported by the %q driver", driver)
 	case shellygen1.Driver:
 		config = &shellygen1.Config{}
 	case shellygen2.Driver:
@@ -77,7 +77,7 @@ func loadConfig(driver, path string) device.Config {
 func loadScript(driver string, path string) *device.IoTScript {
 	switch driver {
 	case device.Driver, shellygen1.Driver:
-		log.Fatalf("The %q driver does not support script mode", driver)
+		log.Fatalf("The script command is not supported by the %q driver", driver)
 	case shellygen2.Driver:
 		// All good!
 	}
