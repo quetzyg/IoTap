@@ -45,8 +45,6 @@ func loadConfig(driver, path string) device.Config {
 		config = &shellygen1.Config{}
 	case shellygen2.Driver:
 		config = &shellygen2.Config{}
-	default:
-		log.Fatalf("Unknown driver: %s", driver)
 	}
 
 	if path == "" {
@@ -82,8 +80,6 @@ func loadScript(driver string, path string) *device.IoTScript {
 		log.Fatalf("The %q driver does not support script mode", driver)
 	case shellygen2.Driver:
 		// All good!
-	default:
-		log.Fatalf("Unknown driver: %s", driver)
 	}
 
 	if path == "" {
@@ -305,15 +301,6 @@ func main() {
 	ips, err := ip.Resolve(os.Args[1])
 	if err != nil {
 		log.Printf("Unable to resolve IP addresses: %v\n\n", err)
-
-		flags.Usage()
-
-		os.Exit(1)
-	}
-
-	// Check if a command has been provided
-	if len(os.Args) < 3 {
-		log.Printf("Command not found\n\n")
 
 		flags.Usage()
 
