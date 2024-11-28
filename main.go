@@ -307,14 +307,13 @@ func main() {
 
 	cmd, driver, err := flags.Parse(os.Args[2:])
 	if err != nil {
-		// Handle command help
-		if errors.Is(err, flag.ErrHelp) {
+		switch {
+		// User explicitly passed -h or --help
+		case errors.Is(err, flag.ErrHelp):
 			os.Exit(0)
-		}
 
-		log.Printf("%v\n\n", err)
-
-		if errors.Is(err, command.ErrInvalid) {
+		case errors.Is(err, command.ErrInvalid), errors.Is(err, command.ErrNotFound):
+			log.Printf("%v\n\n", err)
 			flags.Usage()
 		}
 
