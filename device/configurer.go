@@ -48,3 +48,12 @@ var Configure = func(tun *Tuner, dev Resource, ch chan<- *ProcedureResult) {
 		dev: dev,
 	}
 }
+
+// ExecConfig encapsulates the execution of the device.Configure procedure.
+func ExecConfig(tuner *Tuner, devices Collection) error {
+	if len(devices) == 0 {
+		return nil
+	}
+
+	return tuner.Execute(Configure)
+}
