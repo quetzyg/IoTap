@@ -108,8 +108,6 @@ func execScan(tuner *device.Tuner, ips []net.IP) {
 
 		return
 	}
-
-	log.Println("Success!")
 }
 
 // execDumpToStdout is a helper function that outputs the device results to STDOUT.
@@ -325,7 +323,7 @@ func main() {
 
 	probers := resolveProbers(driver)
 	if len(probers) == 0 {
-		log.Fatalf("Unable to resolve an IoT device prober with the %q driver", driver)
+		log.Fatalf("Unable to resolve a device prober with the %q driver", driver)
 	}
 
 	tuner := device.NewTuner(probers)
@@ -349,7 +347,7 @@ func main() {
 	case command.Dump:
 		err = devices.SortBy(flags.SortField())
 		if err != nil {
-			log.Fatalf("Unable to sort devices: %v\n", err)
+			log.Fatalf("Unable to sort results: %v\n", err)
 		}
 
 		out := flags.DumpFile()
