@@ -1,10 +1,8 @@
 package main
 
 import (
-	"encoding/json"
 	"errors"
 	"flag"
-	"fmt"
 	"log"
 	"net"
 	"os"
@@ -110,166 +108,6 @@ func execScan(tuner *device.Tuner, ips []net.IP) {
 	}
 }
 
-// execDumpToStdout is a helper function that outputs the device results to STDOUT.
-func execDumpToStdout(devices device.Collection) {
-	if len(devices) == 0 {
-		return
-	}
-
-	// Compute the appropriate padding for each column
-	var widths device.ColWidths
-	for _, dev := range devices {
-		for i, w := range dev.(device.Tabler).ColWidths() {
-			if w > widths[i] {
-				widths[i] = w
-			}
-		}
-	}
-
-	format := fmt.Sprintf(
-		"%%-%ds %%-%ds %%-%ds %%-%ds %%-%ds %%-%ds %%s",
-		widths[0],
-		widths[1],
-		widths[2],
-		widths[3],
-		widths[4],
-		widths[5],
-	)
-
-	// Apply the computed format to each IoT device row
-	for _, dev := range devices {
-		log.Println(dev.(device.Tabler).Row(format))
-	}
-}
-
-// execDumpToFile is a helper function that outputs the device results to a JSON file.
-func execDumpToFile(devices device.Collection, name string) {
-	b, err := json.MarshalIndent(devices, "", "  ")
-	if err != nil {
-		log.Fatalf("Failed to marshal results: %v", err)
-	}
-
-	err = os.WriteFile(name, b, 0644)
-	if err != nil {
-		log.Fatalf("Failed to write to %q: %v", name, err)
-	}
-
-	log.Printf("The device results have been saved to %q\n", name)
-}
-
-// execConfig encapsulates the execution of the device.Configure procedure.
-func execConfig(tuner *device.Tuner, devices device.Collection) {
-	if len(devices) == 0 {
-		return
-	}
-
-	log.Print("Applying configuration to devices...")
-	err := tuner.Execute(device.Configure)
-
-	var ec device.Errors
-	if errors.As(err, &ec) && !ec.Empty() {
-		ec.Print(devices)
-
-		return
-	}
-
-	log.Println("Success!")
-}
-
-// execUpdate encapsulates the execution of the device.Update procedure.
-func execUpdate(tuner *device.Tuner, devices device.Collection) {
-	if len(devices) == 0 {
-		return
-	}
-
-	log.Print("Updating software on devices...")
-	err := tuner.Execute(device.Update)
-
-	var ec device.Errors
-	if errors.As(err, &ec) && !ec.Empty() {
-		ec.Print(devices)
-
-		return
-	}
-
-	log.Println("Success!")
-}
-
-// execUpdate encapsulates the execution of the device.Script procedure.
-func execScript(tuner *device.Tuner, devices device.Collection) {
-	if len(devices) == 0 {
-		return
-	}
-
-	log.Print("Uploading script to devices...")
-	err := tuner.Execute(device.Script)
-
-	var ec device.Errors
-	if errors.As(err, &ec) && !ec.Empty() {
-		ec.Print(devices)
-
-		return
-	}
-
-	log.Println("Success!")
-}
-
-// execReboot encapsulates the execution of the device.Reboot procedure.
-func execReboot(tuner *device.Tuner, devices device.Collection) {
-	if len(devices) == 0 {
-		return
-	}
-
-	log.Print("Sending reboot signal to devices...")
-	err := tuner.Execute(device.Reboot)
-
-	var ec device.Errors
-	if errors.As(err, &ec) && !ec.Empty() {
-		ec.Print(devices)
-
-		return
-	}
-
-	log.Println("Success!")
-}
-
-// execVersion encapsulates the execution of the device.Version procedure.
-func execVersion(tuner *device.Tuner, devices device.Collection) {
-	if len(devices) == 0 {
-		log.Println("All versioned devices are up to date!")
-
-		return
-	}
-
-	log.Print("Versioning devices...")
-	err := tuner.Execute(device.Version)
-
-	var ec device.Errors
-	if errors.As(err, &ec) && !ec.Empty() {
-		ec.Print(devices)
-
-		return
-	}
-
-	var updatable []device.Versioner
-	for _, dev := range devices {
-		ver := dev.(device.Versioner)
-		if ver.UpdateAvailable() {
-			updatable = append(updatable, ver)
-		}
-	}
-
-	if len(updatable) > 0 {
-		log.Printf("Updatable devices found: %d\n", len(updatable))
-
-		for _, dev := range updatable {
-			log.Println(dev.UpdateDetails())
-		}
-
-		return
-	}
-}
-
 // resolveProbers for a given driver.
 func resolveProbers(driver string) []device.Prober {
 	switch driver {
@@ -349,28 +187,62 @@ func main() {
 			log.Fatalf("Unable to sort results: %v\n", err)
 		}
 
-		out := flags.DumpFile()
-		if out != "" {
-			execDumpToFile(devices, out)
+		err = device.ExecDump(devices, flags.DumpFormat(), flags.DumpFile())
+
+	case command.Config:
+		log.Print("Applying configuration to devices...")
+
+		err = device.ExecConfig(tuner, devices)
+
+	case command.Version:
+		log.Print("Versioning devices...")
+
+		ood, err := device.ExecVersion(tuner, devices)
+
+		var ec device.Errors
+		if errors.As(err, &ec) && !ec.Empty() {
+			ec.Print(devices)
 
 			return
 		}
 
-		execDumpToStdout(devices)
+		if len(ood) > 0 {
+			log.Printf("Out of date devices: %d\n", len(ood))
 
-	case command.Config:
-		execConfig(tuner, devices)
+			for _, dev := range ood {
+				log.Println(dev.UpdateDetails())
+			}
 
-	case command.Version:
-		execVersion(tuner, devices)
+			return
+		}
 
 	case command.Update:
-		execUpdate(tuner, devices)
+		log.Print("Sending firmware update request to devices...")
+
+		err = device.ExecUpdate(tuner, devices)
 
 	case command.Script:
-		execScript(tuner, devices)
+		log.Print("Uploading script to devices...")
+
+		err = device.ExecScript(tuner, devices)
 
 	case command.Reboot:
-		execReboot(tuner, devices)
+		log.Print("Sending reboot request to devices...")
+
+		err = device.ExecReboot(tuner, devices)
+	}
+
+	// Command error handling
+	var ec device.Errors
+	if errors.As(err, &ec) && !ec.Empty() {
+		ec.Print(devices)
+
+		os.Exit(1)
+	}
+
+	if err != nil {
+		log.Print(err)
+
+		os.Exit(1)
 	}
 }
