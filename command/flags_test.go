@@ -360,19 +360,24 @@ func TestFlags_Parse(t *testing.T) {
 			err:  ErrArgumentParse,
 		},
 		{
+			name: "failure: dump command with invalid format flag value",
+			args: []string{Dump, "-format"},
+			err:  ErrArgumentParse,
+		},
+		{
 			name: "failure: dump command with invalid file flag value",
 			args: []string{Dump, "-f"},
 			err:  ErrArgumentParse,
 		},
 		{
 			name:    "success: dump command with valid flags",
-			args:    []string{Dump, "-driver", device.Driver, "-sort", device.FieldIP, "-f", "devices.json"},
+			args:    []string{Dump, "-driver", device.Driver, "-sort", device.FieldIP, "-format", device.FormatCSV, "-f", "devices.csv"},
 			command: Dump,
 			driver:  device.Driver,
 		},
 		{
 			name: "success: dump command with valid + help flags",
-			args: []string{Dump, "-driver", device.Driver, "-sort", device.FieldIP, "-f", "devices.json", "-h"},
+			args: []string{Dump, "-driver", device.Driver, "-sort", device.FieldIP, "-format", device.FormatCSV, "-f", "devices.csv", "-h"},
 			err:  flag.ErrHelp,
 		},
 
