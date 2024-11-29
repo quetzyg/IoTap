@@ -84,12 +84,3 @@ var Script = func(tun *Tuner, dev Resource, ch chan<- *ProcedureResult) {
 		dev: dev,
 	}
 }
-
-// ExecScript encapsulates the execution of the device.Script procedure.
-func ExecScript(tuner *Tuner, devices Collection) error {
-	if len(devices) == 0 {
-		return nil
-	}
-
-	return tuner.Execute(Script)
-}

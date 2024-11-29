@@ -44,12 +44,3 @@ var Reboot = func(_ *Tuner, dev Resource, ch chan<- *ProcedureResult) {
 		dev: dev,
 	}
 }
-
-// ExecReboot encapsulates the execution of the device.Reboot procedure.
-func ExecReboot(tuner *Tuner, devices Collection) error {
-	if len(devices) == 0 {
-		return nil
-	}
-
-	return tuner.Execute(Reboot)
-}

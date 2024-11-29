@@ -49,25 +49,3 @@ var Version = func(tun *Tuner, dev Resource, ch chan<- *ProcedureResult) {
 		dev: dev,
 	}
 }
-
-// ExecVersion encapsulates the execution of the device.Version procedure.
-func ExecVersion(tuner *Tuner, devices Collection) ([]Versioner, error) {
-	if len(devices) == 0 {
-		return nil, nil
-	}
-
-	err := tuner.Execute(Version)
-	if err != nil {
-		return nil, err
-	}
-
-	var outdated []Versioner
-	for _, dev := range devices {
-		ver := dev.(Versioner)
-		if ver.OutOfDate() {
-			outdated = append(outdated, ver)
-		}
-	}
-
-	return outdated, nil
-}

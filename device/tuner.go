@@ -20,7 +20,6 @@ type Tuner struct {
 	probers []Prober
 	config  Config
 	script  *IoTScript
-	devices Collection
 }
 
 // SetConfig field value.
@@ -37,7 +36,6 @@ func (t *Tuner) SetScript(scr *IoTScript) {
 func NewTuner(probers []Prober) *Tuner {
 	return &Tuner{
 		probers: probers,
-		devices: Collection{},
 	}
 }
 
@@ -121,11 +119,8 @@ func probe(ch chan<- *ProcedureResult, ip net.IP, probers []Prober) {
 	ch <- result
 }
 
-// Scan the network using IoT device probers.
-func (t *Tuner) Scan(ips []net.IP) error {
-	// Cleanup before scanning
-	t.devices = Collection{}
-
+// Scan the network for IoT devices and return a Collection on success, error on failure.
+func (t *Tuner) Scan(ips []net.IP) (Collection, error) {
 	ch := make(chan *ProcedureResult)
 
 	for _, ip := range ips {
@@ -133,6 +128,7 @@ func (t *Tuner) Scan(ips []net.IP) error {
 	}
 
 	errs := Errors{}
+	devices := Collection{}
 
 	for range ips {
 		result := <-ch
@@ -141,38 +137,37 @@ func (t *Tuner) Scan(ips []net.IP) error {
 		}
 
 		if result.dev != nil {
-			t.devices = append(t.devices, result.dev)
+			devices = append(devices, result.dev)
 		}
 	}
 
 	close(ch)
 
 	if errs.Empty() {
-		return nil
+		return devices, nil
 	}
 
-	return errs
-}
-
-// Devices that were found during the network scan.
-func (t *Tuner) Devices() Collection {
-	return t.devices
+	return nil, errs
 }
 
 // procedure is a function type that encapsulates operations to be carried out on IoT devices.
 type procedure func(tun *Tuner, dev Resource, ch chan<- *ProcedureResult)
 
 // Execute a procedure implementation on the found IoT devices.
-func (t *Tuner) Execute(proc procedure) error {
+func (t *Tuner) Execute(proc procedure, devices Collection) error {
+	if len(devices) == 0 {
+		return nil
+	}
+
 	ch := make(chan *ProcedureResult)
 
-	for _, dev := range t.devices {
+	for _, dev := range devices {
 		go proc(t, dev, ch)
 	}
 
 	errs := Errors{}
 
-	remaining := len(t.devices)
+	remaining := len(devices)
 	for remaining != 0 {
 		result := <-ch
 		remaining--
