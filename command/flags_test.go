@@ -125,10 +125,10 @@ func TestFlags_DumpFile(t *testing.T) {
 				t.Fatalf("expected %#v, got %#v", test.err, err)
 			}
 
-			dump := flags.DumpFile()
+			file := flags.DumpFile()
 
-			if dump != test.dumpFile {
-				t.Fatalf("Unexpected dump file. Got %s, expected %s", dump, test.dumpFile)
+			if file != test.dumpFile {
+				t.Fatalf("Unexpected dump file. Got %s, expected %s", file, test.dumpFile)
 			}
 		})
 	}
@@ -185,10 +185,10 @@ func TestFlags_ConfigFile(t *testing.T) {
 				t.Fatalf("expected %#v, got %#v", test.err, err)
 			}
 
-			config := flags.ConfigFile()
+			file := flags.ConfigFile()
 
-			if config != test.configFile {
-				t.Fatalf("Unexpected config file. Got %s, expected %s", config, test.configFile)
+			if file != test.configFile {
+				t.Fatalf("Unexpected config file. Got %s, expected %s", file, test.configFile)
 			}
 		})
 	}
@@ -245,10 +245,10 @@ func TestFlags_ScriptFile(t *testing.T) {
 				t.Fatalf("expected %#v, got %#v", test.err, err)
 			}
 
-			script := flags.ScriptFile()
+			file := flags.ScriptFile()
 
-			if script != test.scriptFile {
-				t.Fatalf("Unexpected script file. Got %s, expected %s", script, test.scriptFile)
+			if file != test.scriptFile {
+				t.Fatalf("Unexpected script file. Got %s, expected %s", file, test.scriptFile)
 			}
 		})
 	}
