@@ -71,8 +71,8 @@ func (e Errors) Empty() bool {
 }
 
 // Print the success/failure stats and each error in the collection per line.
-func (e Errors) Print(devices Collection) {
-	log.Printf("Failed %d out of %d\n", len(e), len(devices))
+func (e Errors) Print() {
+	log.Printf("Failures: %d\n", len(e))
 
 	for _, err := range e {
 		log.Println(err)
