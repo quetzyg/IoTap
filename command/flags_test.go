@@ -28,14 +28,14 @@ func TestFlags_SortField(t *testing.T) {
 			args:      []string{Dump},
 			command:   Dump,
 			driver:    device.Driver,
-			sortField: "name",
+			sortField: device.FieldName,
 		},
 		{
-			name:      "get mac sort field value",
-			args:      []string{Dump, "-sort", "mac"},
+			name:      "get MAC sort field value",
+			args:      []string{Dump, "-sort", device.FieldMAC},
 			command:   Dump,
 			driver:    device.Driver,
-			sortField: "mac",
+			sortField: device.FieldMAC,
 		},
 		{
 			name:      "get default sort field value when invalid field is passed",
@@ -43,7 +43,7 @@ func TestFlags_SortField(t *testing.T) {
 			command:   "",
 			driver:    "",
 			err:       ErrArgumentParse,
-			sortField: "name",
+			sortField: device.FieldName,
 		},
 	}
 
@@ -92,10 +92,10 @@ func TestFlags_DumpFile(t *testing.T) {
 		},
 		{
 			name:     "get dump file path value",
-			args:     []string{Dump, "-f", "devices.json"},
+			args:     []string{Dump, "-f", "devices.csv"},
 			command:  Dump,
 			driver:   device.Driver,
-			dumpFile: "devices.json",
+			dumpFile: "devices.csv",
 		},
 		{
 			name:     "get empty dump file path value when argument is missing",
