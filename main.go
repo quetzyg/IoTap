@@ -4,7 +4,6 @@ import (
 	"errors"
 	"flag"
 	"log"
-	"net"
 	"os"
 
 	"github.com/Stowify/IoTune/command"
@@ -94,20 +93,6 @@ func loadScript(driver string, path string) *device.IoTScript {
 	return script
 }
 
-// execScan encapsulates the device scanning and error handling.
-func execScan(tuner *device.Tuner, ips []net.IP) {
-	log.Println("Scanning the network for IoT devices...")
-	err := tuner.Scan(ips)
-
-	var ec device.Errors
-	if errors.As(err, &ec) && !ec.Empty() {
-		log.Println("Errors were found during the network scan:")
-		log.Println(ec.Error())
-
-		return
-	}
-}
-
 // resolveProbers for a given driver.
 func resolveProbers(driver string) []device.Prober {
 	switch driver {
@@ -174,9 +159,12 @@ func main() {
 		tuner.SetScript(loadScript(driver, flags.ScriptFile()))
 	}
 
-	execScan(tuner, ips)
+	log.Println("Scanning the network for IoT devices...")
 
-	devices := tuner.Devices()
+	devices, err := tuner.Scan(ips)
+	if err != nil {
+		goto ErrorHandling
+	}
 
 	log.Printf("IoT devices found: %d\n", len(devices))
 
@@ -192,50 +180,52 @@ func main() {
 	case command.Config:
 		log.Print("Applying configuration to devices...")
 
-		err = device.ExecConfig(tuner, devices)
+		err = tuner.Execute(device.Configure, devices)
 
 	case command.Version:
 		log.Print("Versioning devices...")
 
-		ood, err := device.ExecVersion(tuner, devices)
-
-		var ec device.Errors
-		if errors.As(err, &ec) && !ec.Empty() {
-			ec.Print(devices)
-
-			return
+		err = tuner.Execute(device.Version, devices)
+		if err != nil {
+			goto ErrorHandling
 		}
 
-		if len(ood) > 0 {
-			log.Printf("Out of date devices: %d\n", len(ood))
+		var outdated []device.Versioner
+		for _, dev := range devices {
+			ver := dev.(device.Versioner)
+			if ver.Outdated() {
+				outdated = append(outdated, ver)
+			}
+		}
 
-			for _, dev := range ood {
+		if len(outdated) > 0 {
+			log.Printf("Outdated devices: %d\n", len(outdated))
+
+			for _, dev := range outdated {
 				log.Println(dev.UpdateDetails())
 			}
-
-			return
 		}
 
 	case command.Update:
 		log.Print("Sending firmware update request to devices...")
 
-		err = device.ExecUpdate(tuner, devices)
+		err = tuner.Execute(device.Update, devices)
 
 	case command.Script:
 		log.Print("Uploading script to devices...")
 
-		err = device.ExecScript(tuner, devices)
+		err = tuner.Execute(device.Script, devices)
 
 	case command.Reboot:
 		log.Print("Sending reboot request to devices...")
 
-		err = device.ExecReboot(tuner, devices)
+		err = tuner.Execute(device.Reboot, devices)
 	}
 
-	// Command error handling
+ErrorHandling:
 	var ec device.Errors
 	if errors.As(err, &ec) && !ec.Empty() {
-		ec.Print(devices)
+		ec.Print()
 
 		os.Exit(1)
 	}
