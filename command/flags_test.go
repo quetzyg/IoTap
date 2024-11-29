@@ -74,6 +74,66 @@ func TestFlags_SortField(t *testing.T) {
 	}
 }
 
+func TestFlags_DumpFormat(t *testing.T) {
+	tests := []struct {
+		name       string
+		args       []string
+		command    string
+		driver     string
+		err        error
+		dumpFormat string
+	}{
+		{
+			name:       "get default dump format value",
+			args:       []string{Dump},
+			command:    Dump,
+			driver:     device.Driver,
+			dumpFormat: device.FormatCSV,
+		},
+		{
+			name:       "get JSON dump format value",
+			args:       []string{Dump, "-format", device.FormatJSON},
+			command:    Dump,
+			driver:     device.Driver,
+			dumpFormat: device.FormatJSON,
+		},
+		{
+			name:       "get default dump format value when invalid format is passed",
+			args:       []string{Dump, "-format", "foo"},
+			command:    "",
+			driver:     "",
+			err:        ErrArgumentParse,
+			dumpFormat: device.FormatCSV,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			flags := NewFlags()
+
+			cmd, driver, err := flags.Parse(test.args)
+
+			if cmd != test.command {
+				t.Fatalf("Unexpected command. Got %s, expected %s", cmd, test.command)
+			}
+
+			if driver != test.driver {
+				t.Fatalf("Unexpected driver. Got %s, expected %s", driver, test.driver)
+			}
+
+			if !errors.Is(err, test.err) {
+				t.Fatalf("expected %#v, got %#v", test.err, err)
+			}
+
+			format := flags.DumpFormat()
+
+			if format != test.dumpFormat {
+				t.Fatalf("Unexpected dump format. Got %s, expected %s", format, test.dumpFormat)
+			}
+		})
+	}
+}
+
 func TestFlags_DumpFile(t *testing.T) {
 	tests := []struct {
 		name     string
