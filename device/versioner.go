@@ -10,7 +10,7 @@ import (
 // Versioner is an interface that provides a set of methods to aid in IoT device versioning.
 type Versioner interface {
 	Request() (*http.Request, error)
-	OutOfDate() bool
+	Outdated() bool
 	UpdateDetails() string
 }
 

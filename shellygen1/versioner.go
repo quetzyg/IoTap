@@ -13,14 +13,14 @@ func (d *Device) Request() (*http.Request, error) {
 	return request(d, updatePath, nil)
 }
 
-// OutOfDate checks if the device's firmware is out of date.
-func (d *Device) OutOfDate() bool {
+// Outdated checks if the device's firmware is out of date.
+func (d *Device) Outdated() bool {
 	return d.Firmware != d.FirmwareNext
 }
 
 // UpdateDetails prints the device update information.
 func (d *Device) UpdateDetails() string {
-	if d.OutOfDate() {
+	if d.Outdated() {
 		return fmt.Sprintf(device.UpdateDetailsFormat, d.Driver(), d.Name(), d.ip, d.Firmware, d.FirmwareNext)
 	}
 

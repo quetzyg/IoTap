@@ -45,7 +45,7 @@ func TestDevice_Request(t *testing.T) {
 	}
 }
 
-func TestDevice_OutOfDate(t *testing.T) {
+func TestDevice_Outdated(t *testing.T) {
 	tests := []struct {
 		name      string
 		dev       *Device
@@ -70,7 +70,7 @@ func TestDevice_OutOfDate(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			available := test.dev.OutOfDate()
+			available := test.dev.Outdated()
 			if available != test.available {
 				t.Fatalf("expected %v, got %v", test.available, available)
 			}
