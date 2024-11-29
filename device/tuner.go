@@ -147,6 +147,10 @@ func (t *Tuner) Scan(ips []net.IP) error {
 
 	close(ch)
 
+	if errs.Empty() {
+		return nil
+	}
+
 	return errs
 }
 
@@ -178,6 +182,10 @@ func (t *Tuner) Execute(proc procedure) error {
 		}
 	}
 	close(ch)
+
+	if errs.Empty() {
+		return nil
+	}
 
 	return errs
 }
