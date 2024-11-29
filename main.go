@@ -198,12 +198,10 @@ func main() {
 			}
 		}
 
-		if len(outdated) > 0 {
-			log.Printf("Outdated devices: %d\n", len(outdated))
+		log.Printf("Outdated devices: %d\n", len(outdated))
 
-			for _, dev := range outdated {
-				log.Println(dev.UpdateDetails())
-			}
+		for _, dev := range outdated {
+			log.Println(dev.UpdateDetails())
 		}
 
 	case command.Update:
