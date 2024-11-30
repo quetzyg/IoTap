@@ -30,45 +30,6 @@ func init() {
 	log.Printf("Version %s [%s] (Build time %s)\n\n", meta.Version, meta.Hash, meta.BuildTime)
 }
 
-// loadConfig encapsulates the configuration loading logic, performing a series of checks,
-// including verifying the driver, checking the file path, and error handling.
-func loadConfig(driver, path string) device.Config {
-	var config device.Config
-
-	switch driver {
-	case device.Driver:
-		log.Fatalf("The config command is not supported by the %q driver", driver)
-	case shellygen1.Driver:
-		config = &shellygen1.Config{}
-	case shellygen2.Driver:
-		config = &shellygen2.Config{}
-	}
-
-	if path == "" {
-		log.Fatalln("The configuration file path is empty")
-	}
-
-	f, err := os.Open(path)
-	defer func() {
-		err = f.Close()
-		if err != nil {
-			log.Fatalf("Config close error: %v", err)
-		}
-	}()
-
-	if err != nil {
-		log.Fatalf("Config open error: %s", err)
-	}
-
-	if err = device.LoadConfig(f, config); err != nil {
-		log.Fatalf("%s config load error: %v", driver, err)
-	}
-
-	log.Printf("Successfully loaded %q configuration from %s\n", driver, path)
-
-	return config
-}
-
 // loadScript encapsulates the script loading logic, performing a series of checks,
 // including verifying the driver, checking the file path, and error handling.
 func loadScript(driver string, path string) *device.IoTScript {
@@ -152,7 +113,23 @@ func main() {
 
 	// Avoid scanning if the config/script loading fail
 	if cmd == command.Config {
-		tuner.SetConfig(loadConfig(driver, flags.ConfigFile()))
+		var config device.Config
+
+		switch driver {
+		case device.Driver:
+			log.Fatalf("The config command is not supported by the %q driver", driver)
+		case shellygen1.Driver:
+			config = &shellygen1.Config{}
+		case shellygen2.Driver:
+			config = &shellygen2.Config{}
+		}
+
+		err = device.LoadConfigFromPath(flags.ConfigFile(), config)
+		if err != nil {
+			log.Fatalf("Unable to load config file: %v\n\n", err)
+		}
+
+		tuner.SetConfig(config)
 	}
 
 	if cmd == command.Script {
