@@ -7,9 +7,9 @@ import (
 	"github.com/Stowify/IoTune/device"
 )
 
-// Request for a device version check via HTTP.
+// VersionRequest for a device version check via HTTP.
 // See: https://shelly-api-docs.shelly.cloud/gen1/#ota
-func (d *Device) Request() (*http.Request, error) {
+func (d *Device) VersionRequest() (*http.Request, error) {
 	return request(d, updatePath, nil)
 }
 

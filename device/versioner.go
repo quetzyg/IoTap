@@ -9,7 +9,7 @@ import (
 
 // Versioner is an interface that provides a set of methods to aid in IoT device versioning.
 type Versioner interface {
-	Request() (*http.Request, error)
+	VersionRequest() (*http.Request, error)
 	Outdated() bool
 	UpdateDetails() string
 }
@@ -28,7 +28,7 @@ var Version = func(tun *Tuner, dev Resource, ch chan<- *ProcedureResult) {
 		return
 	}
 
-	r, err := ver.Request()
+	r, err := ver.VersionRequest()
 	if err != nil {
 		ch <- &ProcedureResult{
 			dev: dev,

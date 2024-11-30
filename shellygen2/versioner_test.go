@@ -8,12 +8,12 @@ import (
 	"testing"
 )
 
-func TestDevice_Request(t *testing.T) {
+func TestDevice_VersionRequest(t *testing.T) {
 	dev := &Device{
 		ip: net.ParseIP("192.168.146.123"),
 	}
 
-	r, err := dev.Request()
+	r, err := dev.VersionRequest()
 	if err != nil {
 		t.Fatalf("expected nil, got %v", err)
 	}
