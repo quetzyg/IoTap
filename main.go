@@ -127,14 +127,14 @@ func main() {
 		tuner.SetScript(script)
 	}
 
-	log.Println("Scanning the network for IoT devices...")
+	log.Println("Scanning the network...")
 
 	devices, err := tuner.Scan(ips)
 	if err != nil {
 		goto ErrorHandling
 	}
 
-	log.Printf("IoT devices found: %d\n", len(devices))
+	log.Printf("Devices found: %d\n", len(devices))
 
 	switch cmd {
 	case command.Dump:
@@ -146,12 +146,12 @@ func main() {
 		err = device.ExecDump(devices, flags.DumpFormat(), flags.DumpFile())
 
 	case command.Config:
-		log.Print("Applying configuration to devices...")
+		log.Print("Deploying configuration to devices...")
 
 		err = tuner.Execute(device.Configure, devices)
 
 	case command.Version:
-		log.Print("Versioning devices...")
+		log.Print("Verifying device versions...")
 
 		err = tuner.Execute(device.Version, devices)
 		if err != nil {
@@ -178,7 +178,7 @@ func main() {
 		err = tuner.Execute(device.Update, devices)
 
 	case command.Script:
-		log.Print("Uploading script to devices...")
+		log.Print("Deploying script to devices...")
 
 		err = tuner.Execute(device.Script, devices)
 
