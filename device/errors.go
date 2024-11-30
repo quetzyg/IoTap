@@ -13,6 +13,10 @@ var (
 	// This error is returned when the configuration file data import results in an empty Config instance.
 	ErrConfigurationEmpty = errors.New("empty configuration")
 
+	// ErrScriptEmpty is an error type used when loading a script file.
+	// This error is returned when the script code is empty.
+	ErrScriptEmpty = errors.New("empty IoT script")
+
 	// ErrUnexpected is an error type used when probing for IoT devices on the network.
 	// This error is returned when a device is found, but doesn't match an expected target device.
 	ErrUnexpected = errors.New("unexpected IoT device")
