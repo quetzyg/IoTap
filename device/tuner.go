@@ -32,7 +32,7 @@ func (t *Tuner) SetScript(scr *IoTScript) {
 	t.script = scr
 }
 
-// NewTuner creates a new tuner instance.
+// NewTuner creates a new *Tuner instance.
 func NewTuner(probers []Prober) *Tuner {
 	return &Tuner{
 		probers: probers,

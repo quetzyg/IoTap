@@ -36,7 +36,7 @@ func (f *StrFlag) Set(value string) error {
 	return fmt.Errorf("expected one of: %s", strings.Join(f.options, ", "))
 }
 
-// NewStrFlag creates a new StrFlag instance.
+// NewStrFlag creates a new *StrFlag instance.
 func NewStrFlag(def string, options ...string) *StrFlag {
 	return &StrFlag{
 		options: options,
@@ -110,7 +110,7 @@ func setDriverFlag(flagSet *flag.FlagSet) *StrFlag {
 	return driver
 }
 
-// NewFlags creates a new Flags instance.
+// NewFlags creates a new *Flags instance.
 func NewFlags() *Flags {
 	flags := &Flags{}
 
