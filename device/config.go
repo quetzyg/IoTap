@@ -15,18 +15,18 @@ type Config interface {
 }
 
 // loadConfig from an I/O reader and unmarshal the data into a Config instance.
-func loadConfig(reader io.Reader, config Config) error {
-	b, err := io.ReadAll(reader)
+func loadConfig(r io.Reader, cfg Config) error {
+	data, err := io.ReadAll(r)
 	if err != nil {
 		return err
 	}
 
-	err = json.Unmarshal(b, &config)
+	err = json.Unmarshal(data, &cfg)
 	if err != nil {
 		return err
 	}
 
-	if config.Empty() {
+	if cfg.Empty() {
 		return ErrConfigurationEmpty
 	}
 
@@ -36,12 +36,12 @@ func loadConfig(reader io.Reader, config Config) error {
 // LoadConfigFromPath reads and loads a configuration from the specified file path.
 // It opens the file, ensures it's closed after reading, and processes the configuration.
 // Returns an error if the file cannot be opened or the configuration cannot be loaded.
-func LoadConfigFromPath(path string, config Config) error {
-	if path == "" {
+func LoadConfigFromPath(fp string, cfg Config) error {
+	if fp == "" {
 		return fmt.Errorf("the configuration file path cannot be empty")
 	}
 
-	f, err := os.Open(path)
+	f, err := os.Open(fp)
 	if err != nil {
 		return err
 	}
@@ -53,5 +53,5 @@ func LoadConfigFromPath(path string, config Config) error {
 		}
 	}()
 
-	return loadConfig(f, config)
+	return loadConfig(f, cfg)
 }
