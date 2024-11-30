@@ -82,7 +82,7 @@ func main() {
 	}
 
 	probers := resolveProbers(driver)
-	if len(probers) == 0 {
+	if probers == nil {
 		log.Fatalf("Unable to resolve a device prober with the %q driver", driver)
 	}
 
