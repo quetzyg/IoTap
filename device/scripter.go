@@ -81,20 +81,20 @@ type Scripter interface {
 }
 
 // Script is a procedure implementation designed to upload a script to an IoT device.
-var Script = func(tun *Tuner, dev Resource, ch chan<- *ProcedureResult) {
-	rsc, ok := dev.(Scripter)
+var Script = func(tun *Tuner, res Resource, ch chan<- *ProcedureResult) {
+	dev, ok := res.(Scripter)
 	if !ok {
 		ch <- &ProcedureResult{
-			dev: dev,
+			dev: res,
 			err: fmt.Errorf("%w: script", ErrUnsupportedProcedure),
 		}
 		return
 	}
 
-	rs, err := rsc.ScriptRequests(tun.script)
+	rs, err := dev.ScriptRequests(tun.script)
 	if err != nil {
 		ch <- &ProcedureResult{
-			dev: dev,
+			dev: res,
 			err: err,
 		}
 		return
@@ -105,7 +105,7 @@ var Script = func(tun *Tuner, dev Resource, ch chan<- *ProcedureResult) {
 	for _, r := range rs {
 		if err = httpclient.Dispatch(client, r, nil); err != nil {
 			ch <- &ProcedureResult{
-				dev: dev,
+				dev: res,
 				err: err,
 			}
 			return
@@ -113,6 +113,6 @@ var Script = func(tun *Tuner, dev Resource, ch chan<- *ProcedureResult) {
 	}
 
 	ch <- &ProcedureResult{
-		dev: dev,
+		dev: res,
 	}
 }

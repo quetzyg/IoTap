@@ -18,34 +18,34 @@ type Versioner interface {
 const UpdateDetailsFormat = "[%s] %s @ %s can be updated from %s to %s"
 
 // Version is a procedure implementation designed to check the version of an IoT device.
-var Version = func(tun *Tuner, dev Resource, ch chan<- *ProcedureResult) {
-	ver, ok := dev.(Versioner)
+var Version = func(tun *Tuner, res Resource, ch chan<- *ProcedureResult) {
+	dev, ok := res.(Versioner)
 	if !ok {
 		ch <- &ProcedureResult{
-			dev: dev,
+			dev: res,
 			err: fmt.Errorf("%w: version", ErrUnsupportedProcedure),
 		}
 		return
 	}
 
-	r, err := ver.VersionRequest()
+	r, err := dev.VersionRequest()
 	if err != nil {
 		ch <- &ProcedureResult{
-			dev: dev,
+			dev: res,
 			err: err,
 		}
 		return
 	}
 
-	if err = httpclient.Dispatch(&http.Client{}, r, ver); err != nil {
+	if err = httpclient.Dispatch(&http.Client{}, r, dev); err != nil {
 		ch <- &ProcedureResult{
-			dev: dev,
+			dev: res,
 			err: err,
 		}
 		return
 	}
 
 	ch <- &ProcedureResult{
-		dev: dev,
+		dev: res,
 	}
 }

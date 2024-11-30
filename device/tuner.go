@@ -151,7 +151,7 @@ func (t *Tuner) Scan(ips []net.IP) (Collection, error) {
 }
 
 // procedure is a function type that encapsulates operations to be carried out on IoT devices.
-type procedure func(tun *Tuner, dev Resource, ch chan<- *ProcedureResult)
+type procedure func(tun *Tuner, res Resource, ch chan<- *ProcedureResult)
 
 // Execute a procedure implementation on the found IoT devices.
 func (t *Tuner) Execute(proc procedure, devices Collection) error {

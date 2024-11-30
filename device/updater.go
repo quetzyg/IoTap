@@ -13,20 +13,20 @@ type Updater interface {
 }
 
 // Update is a procedure implementation designed to update the firmware of an IoT device.
-var Update = func(_ *Tuner, dev Resource, ch chan<- *ProcedureResult) {
-	rsc, ok := dev.(Updater)
+var Update = func(_ *Tuner, res Resource, ch chan<- *ProcedureResult) {
+	dev, ok := res.(Updater)
 	if !ok {
 		ch <- &ProcedureResult{
-			dev: dev,
+			dev: res,
 			err: fmt.Errorf("%w: update", ErrUnsupportedProcedure),
 		}
 		return
 	}
 
-	r, err := rsc.UpdateRequest()
+	r, err := dev.UpdateRequest()
 	if err != nil {
 		ch <- &ProcedureResult{
-			dev: dev,
+			dev: res,
 			err: err,
 		}
 		return
@@ -34,13 +34,13 @@ var Update = func(_ *Tuner, dev Resource, ch chan<- *ProcedureResult) {
 
 	if err = httpclient.Dispatch(&http.Client{}, r, nil); err != nil {
 		ch <- &ProcedureResult{
-			dev: dev,
+			dev: res,
 			err: err,
 		}
 		return
 	}
 
 	ch <- &ProcedureResult{
-		dev: dev,
+		dev: res,
 	}
 }
