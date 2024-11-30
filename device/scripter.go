@@ -2,9 +2,10 @@ package device
 
 import (
 	"fmt"
+	"io"
+	"log"
 	"net/http"
 	"os"
-	"path"
 
 	"github.com/Stowify/IoTune/httpclient"
 )
@@ -30,17 +31,48 @@ func (s *IoTScript) Length() int {
 	return len(s.code)
 }
 
-// LoadScript from a local file path.
-func LoadScript(file string) (*IoTScript, error) {
-	content, err := os.ReadFile(file)
+// NewIoTScript creates a new *IoTScript instance.
+func NewIoTScript(name string) *IoTScript {
+	return &IoTScript{
+		name: name,
+	}
+}
+
+// loadScript from an I/O reader and read the data into an *IoTScript instance.
+func loadScript(r io.Reader, scr *IoTScript) (err error) {
+	scr.code, err = io.ReadAll(r)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return &IoTScript{
-		name: path.Base(file),
-		code: content,
-	}, nil
+	if scr.Length() == 0 {
+		return ErrScriptEmpty
+	}
+
+	return nil
+}
+
+// LoadScriptFromPath reads and loads a script from the specified file path.
+// It opens the file, ensures it's closed after reading, and processes the script.
+// Returns an error if the file cannot be opened or the script cannot be loaded.
+func LoadScriptFromPath(fp string, scr *IoTScript) error {
+	if fp == "" {
+		return fmt.Errorf("the script file path cannot be empty")
+	}
+
+	f, err := os.Open(fp)
+	if err != nil {
+		return err
+	}
+
+	defer func() {
+		err = f.Close()
+		if err != nil {
+			log.Printf("Script close error: %v", err)
+		}
+	}()
+
+	return loadScript(f, scr)
 }
 
 // Scripter is an interface that provides a standard way to set a script on IoT devices.

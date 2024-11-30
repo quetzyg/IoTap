@@ -5,6 +5,7 @@ import (
 	"flag"
 	"log"
 	"os"
+	"path"
 
 	"github.com/Stowify/IoTune/command"
 	"github.com/Stowify/IoTune/device"
@@ -28,30 +29,6 @@ func init() {
 	log.Println(``)
 
 	log.Printf("Version %s [%s] (Build time %s)\n\n", meta.Version, meta.Hash, meta.BuildTime)
-}
-
-// loadScript encapsulates the script loading logic, performing a series of checks,
-// including verifying the driver, checking the file path, and error handling.
-func loadScript(driver string, path string) *device.IoTScript {
-	switch driver {
-	case device.Driver, shellygen1.Driver:
-		log.Fatalf("The script command is not supported by the %q driver", driver)
-	case shellygen2.Driver:
-		// All good!
-	}
-
-	if path == "" {
-		log.Fatalln("The script file path is empty")
-	}
-
-	script, err := device.LoadScript(path)
-	if err != nil {
-		log.Fatalf("%s script loading error: %v", driver, err)
-	}
-
-	log.Printf("Successfully loaded script for %q from %s\n", driver, path)
-
-	return script
 }
 
 // resolveProbers for a given driver.
@@ -133,7 +110,21 @@ func main() {
 	}
 
 	if cmd == command.Script {
-		tuner.SetScript(loadScript(driver, flags.ScriptFile()))
+		switch driver {
+		case device.Driver, shellygen1.Driver:
+			log.Fatalf("The script command is not supported by the %q driver", driver)
+		case shellygen2.Driver:
+			// All good!
+		}
+
+		script := device.NewIoTScript(path.Base(flags.ScriptFile()))
+
+		err = device.LoadScriptFromPath(flags.ScriptFile(), script)
+		if err != nil {
+			log.Fatalf("Unable to load script file: %v\n\n", err)
+		}
+
+		tuner.SetScript(script)
 	}
 
 	log.Println("Scanning the network for IoT devices...")
