@@ -1,5 +1,5 @@
-# IoTune
-A command line interface tool that allows you to automate several management tasks to multiple IoT devices at once in a reproducible manner.
+# IoTap
+A command line interface tool that allows you to automate management tasks to multiple IoT devices at once in a reproducible manner.
 
 ## Successfully tested devices:
 - **Shelly**
