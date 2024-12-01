@@ -3,32 +3,38 @@ package main
 import (
 	"errors"
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"path"
 
-	"github.com/Stowify/IoTune/command"
-	"github.com/Stowify/IoTune/device"
-	"github.com/Stowify/IoTune/ip"
-	"github.com/Stowify/IoTune/meta"
-	"github.com/Stowify/IoTune/shellygen1"
-	"github.com/Stowify/IoTune/shellygen2"
+	"github.com/Stowify/IoTap/command"
+	"github.com/Stowify/IoTap/device"
+	"github.com/Stowify/IoTap/ip"
+	"github.com/Stowify/IoTap/meta"
+	"github.com/Stowify/IoTap/shellygen1"
+	"github.com/Stowify/IoTap/shellygen2"
 )
 
 func init() {
 	log.SetFlags(0)
+}
 
-	log.Println(`8888888      88888888888`)
-	log.Println(`  888            888`)
-	log.Println(`  888            888`)
-	log.Println(`  888    .d88b.  888  888  888 88888b.   .d88b.`)
-	log.Println(`  888   d88""88b 888  888  888 888 "88b d8P  Y8b`)
-	log.Println(`  888   888  888 888  888  888 888  888 88888888`)
-	log.Println(`  888   Y88..88P 888  Y88b 888 888  888 Y8b.`)
-	log.Println(`8888888  "Y88P"  888   "Y88888 888  888  "Y8888`)
-	log.Println(``)
+// banner with the CLI version information and ASCII art.
+func banner() {
+	fmt.Println(`8888888      88888888888`)
+	fmt.Println(`  888            888`)
+	fmt.Println(`  888            888`)
+	fmt.Println(`  888    .d88b.  888   8888b.  88888b.`)
+	fmt.Println(`  888   d88""88b 888      "88b 888 "88b`)
+	fmt.Println(`  888   888  888 888  .d888888 888  888`)
+	fmt.Println(`  888   Y88..88P 888  888  888 888 d88P`)
+	fmt.Println(`8888888  "Y88P"  888  "Y888888 88888P"`)
+	fmt.Println(`                               888`)
+	fmt.Println(`                               888`)
+	fmt.Println(`                               888`)
 
-	log.Printf("Version %s [%s] (Build time %s)\n\n", meta.Version, meta.Hash, meta.BuildTime)
+	fmt.Printf("\nVersion %s [%s] (Build time %s)\n\n", meta.Version, meta.Hash, meta.BuildTime)
 }
 
 // resolveProbers for a given driver.
@@ -46,6 +52,8 @@ func resolveProbers(driver string) []device.Prober {
 }
 
 func main() {
+	banner()
+
 	flags := command.NewFlags()
 
 	if len(os.Args) < 2 {

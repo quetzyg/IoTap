@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"net"
 
-	"github.com/Stowify/IoTune/device"
-	"github.com/Stowify/IoTune/maputil"
+	"github.com/Stowify/IoTap/device"
+	"github.com/Stowify/IoTap/maputil"
 )
 
 const (

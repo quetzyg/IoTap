@@ -9,7 +9,7 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/Stowify/IoTune/httpclient"
+	"github.com/Stowify/IoTap/httpclient"
 )
 
 const probeTimeout = time.Second * 8

@@ -7,7 +7,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/Stowify/IoTune/httpclient"
+	"github.com/Stowify/IoTap/httpclient"
 )
 
 // buildURL for Shelly Gen1 requests.

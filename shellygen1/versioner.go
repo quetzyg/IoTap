@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/Stowify/IoTune/device"
+	"github.com/Stowify/IoTap/device"
 )
 
 // VersionRequest for a device version check via HTTP.

@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/Stowify/IoTune/device"
+	"github.com/Stowify/IoTap/device"
 )
 
 // ConfigureRequests generates a slice of *http.Requests that are to be executed in order to configure an IoT device.

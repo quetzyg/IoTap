@@ -6,9 +6,9 @@ import (
 	"os"
 	"strings"
 
-	"github.com/Stowify/IoTune/device"
-	"github.com/Stowify/IoTune/shellygen1"
-	"github.com/Stowify/IoTune/shellygen2"
+	"github.com/Stowify/IoTap/device"
+	"github.com/Stowify/IoTap/shellygen1"
+	"github.com/Stowify/IoTap/shellygen2"
 )
 
 // StrFlag is a custom flag type representing a string,

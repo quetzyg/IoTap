@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"strings"
 
-	"github.com/Stowify/IoTune/device"
+	"github.com/Stowify/IoTap/device"
 )
 
 // DelimitedRow returns a string representation of the resource,

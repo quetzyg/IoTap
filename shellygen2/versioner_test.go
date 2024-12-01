@@ -39,7 +39,7 @@ func TestDevice_VersionRequest(t *testing.T) {
 		t.Fatalf("expected nil, got %v", err)
 	}
 
-	expectedBody := `{"id":0,"src":"IoTune","method":"Shelly.CheckForUpdate"}`
+	expectedBody := `{"id":0,"src":"IoTap","method":"Shelly.CheckForUpdate"}`
 	if string(body) != expectedBody {
 		t.Fatalf("expected %s, got %s", expectedBody, body)
 	}

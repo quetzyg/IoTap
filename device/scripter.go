@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/Stowify/IoTune/httpclient"
+	"github.com/Stowify/IoTap/httpclient"
 )
 
 // IoTScript holds the name and the contents of an IoT device script.

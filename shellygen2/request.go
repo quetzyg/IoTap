@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/Stowify/IoTune/httpclient"
+	"github.com/Stowify/IoTap/httpclient"
 )
 
 const rpcPath = "rpc"
@@ -30,7 +30,7 @@ func buildURL(ip net.IP, path string) string {
 // Create a Shelly Gen2 compliant request.
 func request(dev *Device, method string, params any) (*http.Request, error) {
 	rpc := &rpcRequest{
-		Source: "IoTune",
+		Source: "IoTap",
 		Method: method,
 	}
 

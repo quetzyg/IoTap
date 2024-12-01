@@ -54,31 +54,31 @@ jobs:
           GOARCH: ${{ matrix.goarch }}
         id: build
         run: |-
-          BINARY="iotune"
+          BINARY="iotap"
           if [ "${{ matrix.goos }}" = "windows" ]; then
             BINARY=$BINARY_NAME.exe
           fi
           go build -v \
           -trimpath \
-          -ldflags="-s -w -X github.com/Stowify/IoTune/meta.Version=${{ needs.version.outputs.number }} \
-          -X github.com/Stowify/IoTune/meta.Hash=${{ needs.version.outputs.hash }} \
-          -X github.com/Stowify/IoTune/meta.BuildTime=${{ needs.version.outputs.time }}" \
+          -ldflags="-s -w -X github.com/Stowify/IoTap/meta.Version=${{ needs.version.outputs.number }} \
+          -X github.com/Stowify/IoTap/meta.Hash=${{ needs.version.outputs.hash }} \
+          -X github.com/Stowify/IoTap/meta.BuildTime=${{ needs.version.outputs.time }}" \
           -o $BINARY \
           ./main.go
 
       - name: Compress binaries
         run: |-
-          BINARY="iotune"
+          BINARY="iotap"
           if [ "${{ matrix.goos }}" = "windows" ]; then
             BINARY=$BINARY_NAME.exe
           fi
-          tar -zcvf iotune-${{ matrix.goos }}-${{ matrix.goarch }}.tar.gz $BINARY
+          tar -zcvf iotap-${{ matrix.goos }}-${{ matrix.goarch }}.tar.gz $BINARY
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: iotune-${{ matrix.goos }}-${{ matrix.goarch }}
-          path: iotune-${{ matrix.goos }}-${{ matrix.goarch }}.tar.gz
+          name: iotap-${{ matrix.goos }}-${{ matrix.goarch }}
+          path: iotap-${{ matrix.goos }}-${{ matrix.goarch }}.tar.gz
 
   release:
     runs-on: ubuntu-latest
@@ -92,5 +92,5 @@ jobs:
         with:
           name: ${{ needs.version.outputs.number }}
           tag: v${{ needs.version.outputs.number }}
-          artifacts: "iotune-*/*.tar.gz"
+          artifacts: "iotap-*/*.tar.gz"
           token: ${{ secrets.GITHUB_TOKEN }}

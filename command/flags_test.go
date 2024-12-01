@@ -5,9 +5,9 @@ import (
 	"flag"
 	"testing"
 
-	"github.com/Stowify/IoTune/device"
-	"github.com/Stowify/IoTune/shellygen1"
-	"github.com/Stowify/IoTune/shellygen2"
+	"github.com/Stowify/IoTap/device"
+	"github.com/Stowify/IoTap/shellygen1"
+	"github.com/Stowify/IoTap/shellygen2"
 )
 
 func TestFlags_Usage(t *testing.T) {

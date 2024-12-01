@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/Stowify/IoTune/httpclient"
+	"github.com/Stowify/IoTap/httpclient"
 )
 
 // Configurer is an interface that provides a standard way to configure IoT devices.

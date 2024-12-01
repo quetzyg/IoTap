@@ -1,3 +1,3 @@
-module github.com/Stowify/IoTune
+module github.com/Stowify/IoTap
 
 go 1.23
