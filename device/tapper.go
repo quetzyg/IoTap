@@ -16,9 +16,10 @@ const probeTimeout = time.Second * 8
 
 // Tapper knows how to tap into devices and execute procedures on them.
 type Tapper struct {
-	probers []Prober
-	config  Config
-	script  *IoTScript
+	probers   []Prober
+	config    Config
+	script    *IoTScript
+	transport http.RoundTripper
 }
 
 // SetConfig field value.
@@ -90,14 +91,15 @@ func (pr *ProcedureResult) Error() string {
 	)
 }
 
-// probe an IP and send the result to a channel.
-func probe(ch chan<- *ProcedureResult, ip net.IP, probers []Prober) {
+// probe an IP and return the probe result to a channel.
+func (t *Tapper) probe(ch chan<- *ProcedureResult, ip net.IP) {
 	result := &ProcedureResult{}
 	client := &http.Client{
-		Timeout: probeTimeout,
+		Transport: t.transport,
+		Timeout:   probeTimeout,
 	}
 
-	for _, prober := range probers {
+	for _, prober := range t.probers {
 		dev, err := probeIP(client, prober, ip)
 
 		// Device found!
@@ -122,7 +124,7 @@ func (t *Tapper) Scan(ips []net.IP) (Collection, error) {
 	ch := make(chan *ProcedureResult)
 
 	for _, ip := range ips {
-		go probe(ch, ip, t.probers)
+		go t.probe(ch, ip)
 	}
 
 	errs := Errors{}
