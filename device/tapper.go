@@ -38,15 +38,14 @@ func NewTapper(probers []Prober) *Tapper {
 	}
 }
 
-// Probe an IP address for a specific IoT device.
-func Probe(client *http.Client, ip net.IP, prober Prober) (Resource, error) {
+// probeIP for a specific IoT device.
+func probeIP(client *http.Client, prober Prober, ip net.IP) (Resource, error) {
 	r, dev, err := prober.Request(ip)
 	if err != nil {
 		return nil, err
 	}
 
 	err = httpclient.Dispatch(client, r, dev)
-
 	var ue *url.Error
 	if errors.As(err, &ue) {
 		// Ignore timeouts, refused connections and other classic HTTP shenanigans,
@@ -99,7 +98,7 @@ func probe(ch chan<- *ProcedureResult, ip net.IP, probers []Prober) {
 	}
 
 	for _, prober := range probers {
-		dev, err := Probe(client, ip, prober)
+		dev, err := probeIP(client, prober, ip)
 
 		// Device found!
 		if dev != nil {
