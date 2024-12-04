@@ -13,7 +13,7 @@ type Rebooter interface {
 }
 
 // Reboot is a procedure implementation designed to reboot an IoT device.
-var Reboot = func(_ *Tuner, res Resource, ch chan<- *ProcedureResult) {
+var Reboot = func(_ *Tapper, res Resource, ch chan<- *ProcedureResult) {
 	dev, ok := res.(Rebooter)
 	if !ok {
 		ch <- &ProcedureResult{

@@ -14,27 +14,26 @@ import (
 
 const probeTimeout = time.Second * 8
 
-// The Tuner type maintains a record of the Devices discovered during a network
-// scan and has the capability to execute procedures on those devices.
-type Tuner struct {
+// Tapper knows how to tap into devices and execute procedures on them.
+type Tapper struct {
 	probers []Prober
 	config  Config
 	script  *IoTScript
 }
 
 // SetConfig field value.
-func (t *Tuner) SetConfig(cfg Config) {
+func (t *Tapper) SetConfig(cfg Config) {
 	t.config = cfg
 }
 
 // SetScript field value.
-func (t *Tuner) SetScript(scr *IoTScript) {
+func (t *Tapper) SetScript(scr *IoTScript) {
 	t.script = scr
 }
 
-// NewTuner creates a new *Tuner instance.
-func NewTuner(probers []Prober) *Tuner {
-	return &Tuner{
+// NewTapper creates a new *Tapper instance.
+func NewTapper(probers []Prober) *Tapper {
+	return &Tapper{
 		probers: probers,
 	}
 }
@@ -120,7 +119,7 @@ func probe(ch chan<- *ProcedureResult, ip net.IP, probers []Prober) {
 }
 
 // Scan the network for IoT devices and return a Collection on success, error on failure.
-func (t *Tuner) Scan(ips []net.IP) (Collection, error) {
+func (t *Tapper) Scan(ips []net.IP) (Collection, error) {
 	ch := make(chan *ProcedureResult)
 
 	for _, ip := range ips {
@@ -151,11 +150,11 @@ func (t *Tuner) Scan(ips []net.IP) (Collection, error) {
 }
 
 // procedure is a function type that encapsulates operations to be carried out on IoT devices.
-type procedure func(tun *Tuner, res Resource, ch chan<- *ProcedureResult)
+type procedure func(tap *Tapper, res Resource, ch chan<- *ProcedureResult)
 
-// Execute a procedure implementation on the found IoT devices.
-func (t *Tuner) Execute(proc procedure, devices Collection) error {
-	if len(devices) == 0 {
+// Execute a procedure on a device collection.
+func (t *Tapper) Execute(proc procedure, devices Collection) error {
+	if devices.Empty() {
 		return nil
 	}
 

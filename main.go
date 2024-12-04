@@ -94,7 +94,7 @@ func main() {
 		log.Fatalf("Unable to resolve a device prober with the %q driver", driver)
 	}
 
-	tuner := device.NewTuner(probers)
+	tapper := device.NewTapper(probers)
 
 	// Avoid scanning if the config/script loading fail
 	if cmd == command.Config {
@@ -114,7 +114,7 @@ func main() {
 			log.Fatalf("Unable to load config file: %v\n\n", err)
 		}
 
-		tuner.SetConfig(config)
+		tapper.SetConfig(config)
 	}
 
 	if cmd == command.Script {
@@ -132,12 +132,12 @@ func main() {
 			log.Fatalf("Unable to load script file: %v\n\n", err)
 		}
 
-		tuner.SetScript(script)
+		tapper.SetScript(script)
 	}
 
 	log.Println("Scanning the network...")
 
-	devices, err := tuner.Scan(ips)
+	devices, err := tapper.Scan(ips)
 	if err != nil {
 		goto ErrorHandling
 	}
@@ -156,12 +156,12 @@ func main() {
 	case command.Config:
 		log.Print("Deploying configuration to devices...")
 
-		err = tuner.Execute(device.Configure, devices)
+		err = tapper.Execute(device.Configure, devices)
 
 	case command.Version:
 		log.Print("Verifying device versions...")
 
-		err = tuner.Execute(device.Version, devices)
+		err = tapper.Execute(device.Version, devices)
 		if err != nil {
 			goto ErrorHandling
 		}
@@ -183,17 +183,17 @@ func main() {
 	case command.Update:
 		log.Print("Sending firmware update request to devices...")
 
-		err = tuner.Execute(device.Update, devices)
+		err = tapper.Execute(device.Update, devices)
 
 	case command.Script:
 		log.Print("Deploying script to devices...")
 
-		err = tuner.Execute(device.Script, devices)
+		err = tapper.Execute(device.Script, devices)
 
 	case command.Reboot:
 		log.Print("Sending reboot request to devices...")
 
-		err = tuner.Execute(device.Reboot, devices)
+		err = tapper.Execute(device.Reboot, devices)
 	}
 
 ErrorHandling:

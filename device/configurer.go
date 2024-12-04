@@ -13,7 +13,7 @@ type Configurer interface {
 }
 
 // Configure is a procedure implementation designed to apply configuration settings to an IoT device.
-var Configure = func(tun *Tuner, res Resource, ch chan<- *ProcedureResult) {
+var Configure = func(tap *Tapper, res Resource, ch chan<- *ProcedureResult) {
 	dev, ok := res.(Configurer)
 	if !ok {
 		ch <- &ProcedureResult{
@@ -23,7 +23,7 @@ var Configure = func(tun *Tuner, res Resource, ch chan<- *ProcedureResult) {
 		return
 	}
 
-	rs, err := dev.ConfigureRequests(tun.config)
+	rs, err := dev.ConfigureRequests(tap.config)
 	if err != nil {
 		ch <- &ProcedureResult{
 			dev: res,
