@@ -18,6 +18,11 @@ const (
 // Collection is a slice of device resources.
 type Collection []Resource
 
+// Empty returns true if the Collection is empty, false otherwise.
+func (c Collection) Empty() bool {
+	return len(c) == 0
+}
+
 // SortBy a resource field name.
 func (c Collection) SortBy(field string) error {
 	switch field {
