@@ -65,22 +65,25 @@ func dumpJSON(devices Collection, w io.WriteCloser) error {
 }
 
 // ExecDump is a wrapper function to easily dump device scan results to multiple formats and outputs.
-func ExecDump(devices Collection, format string, file string) (err error) {
-	w := os.Stdout
+func ExecDump(devices Collection, format string, file string) error {
+	var (
+		w   io.WriteCloser = os.Stdout
+		err error
+	)
 
 	if file != "" {
 		w, err = os.Create(file)
 		if err != nil {
-			return
+			return err
 		}
-	}
 
-	defer func() {
-		err := w.Close()
-		if err != nil {
-			log.Fatalf("Writer close error: %v", err)
-		}
-	}()
+		defer func() {
+			err = w.Close()
+			if err != nil {
+				log.Fatalf("Writer close error: %v", err)
+			}
+		}()
+	}
 
 	switch format {
 	case FormatCSV:
