@@ -111,7 +111,7 @@ type Flags struct {
 
 	deployCmd    *flag.FlagSet
 	deployDriver *StrFlag
-	deployFile   *string
+	deployFiles  StrSliceFlag
 
 	rebootCmd    *flag.FlagSet
 	rebootDriver *StrFlag
@@ -179,7 +179,7 @@ func NewFlags() *Flags {
 	// Deploy
 	flags.deployCmd = flag.NewFlagSet(Deploy, flag.ContinueOnError)
 	flags.deployDriver = setDriverFlag(flags.deployCmd)
-	flags.deployFile = flags.deployCmd.String("f", "", "Deploy file path")
+	flags.deployCmd.Var(&flags.deployFiles, "f", "Deploy script file path (allows multiple calls)")
 	flags.deployCmd.Usage = func() {
 		fmt.Printf(commandUsage, Deploy, os.Args[0], Deploy)
 		flags.deployCmd.PrintDefaults()
@@ -221,9 +221,9 @@ func (p *Flags) ConfigFile() string {
 	return *p.configFile
 }
 
-// DeployFile returns the deploy file path value.
-func (p *Flags) DeployFile() string {
-	return *p.deployFile
+// DeployFiles returns the script files paths for deployment.
+func (p *Flags) DeployFiles() []string {
+	return p.deployFiles
 }
 
 // Parse the CLI arguments.
