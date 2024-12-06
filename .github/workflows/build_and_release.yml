@@ -34,8 +34,19 @@ jobs:
     needs: [version]
     strategy:
       matrix:
-        goos: [linux, windows]
-        goarch: [amd64]
+        include:
+          # Linux amd64
+          - goos: linux
+            goarch: amd64
+
+          # Windows amd64
+          - goos: windows
+            goarch: amd64
+
+          # macOS arm64 (Apple Silicon)
+          - goos: darwin
+            goarch: arm64
+
     steps:
       - name: Checkout codebase
         uses: actions/checkout@v4
