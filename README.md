@@ -8,10 +8,10 @@ A command line interface (CLI) tool designed to simplify the management and conf
 
 - Network-wide device scanning
 - Multi-device management commands
-- Support for Shelly relays (Gen1 and Gen2)*
+- Support for Shelly relays (Gen1 and Gen2)
 - Flexible filtering by device driver
 - Multiple output formats
-- Easy configuration and script deployment**
+- Easy configuration and script deployment
 
 ## Prerequisites
 - Go (version 1.23 or later)
@@ -85,8 +85,11 @@ iotap 192.168.1.0/24 update -driver shelly_gen1
 #### Deploy
 Deploy scripts to devices
 ```bash
-# Deploy script to all Shelly Gen2 devices
+# Deploy a script to all Shelly Gen2 devices
 iotap 192.168.1.0/24 deploy -driver shelly_gen2 -f script.js
+
+# Deploy multiple scripts to all Shelly Gen2 devices
+iotap 192.168.1.0/24 deploy -driver shelly_gen2 -f script1.js -f script2.js -f script3.js
 ```
 
 #### Reboot
