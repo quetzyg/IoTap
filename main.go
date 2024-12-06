@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"path"
 
 	"github.com/Stowify/IoTap/command"
 	"github.com/Stowify/IoTap/device"
@@ -125,7 +124,7 @@ func main() {
 			// All good!
 		}
 
-		script := device.NewIoTScript(path.Base(flags.DeployFile()))
+		script := &device.Script{}
 
 		err = device.LoadScriptFromPath(flags.DeployFile(), script)
 		if err != nil {

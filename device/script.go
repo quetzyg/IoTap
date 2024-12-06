@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"path"
 )
 
 // Script holds the name and the contents of an IoT device script.
@@ -26,13 +27,6 @@ func (s *Script) Code() []byte {
 // Length returns the length of the script content.
 func (s *Script) Length() int {
 	return len(s.code)
-}
-
-// NewIoTScript creates a new *Script instance.
-func NewIoTScript(name string) *Script {
-	return &Script{
-		name: name,
-	}
 }
 
 // loadScript from an I/O reader and read the data into an *Script instance.
@@ -68,6 +62,8 @@ func LoadScriptFromPath(fp string, src *Script) error {
 			log.Printf("Script close error: %v", err)
 		}
 	}()
+
+	src.name = path.Base(fp)
 
 	return loadScript(f, src)
 }
