@@ -44,6 +44,21 @@ func NewStrFlag(def string, options ...string) *StrFlag {
 	}
 }
 
+// StrSliceFlag is a custom flag type for storing multiple string values.
+type StrSliceFlag []string
+
+// String implements the Stringer interface.
+func (f *StrSliceFlag) String() string {
+	return fmt.Sprint(*f)
+}
+
+// Set the flag value.
+func (f *StrSliceFlag) Set(value string) error {
+	*f = append(*f, value)
+
+	return nil
+}
+
 // Commands
 const (
 	Dump    = "dump"
