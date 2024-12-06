@@ -117,17 +117,17 @@ func main() {
 		tapper.SetConfig(config)
 	}
 
-	if cmd == command.Script {
+	if cmd == command.Deploy {
 		switch driver {
 		case device.Driver, shellygen1.Driver:
-			log.Fatalf("The script command is not supported by the %q driver", driver)
+			log.Fatalf("The deploy command is not supported by the %q driver", driver)
 		case shellygen2.Driver:
 			// All good!
 		}
 
-		script := device.NewIoTScript(path.Base(flags.ScriptFile()))
+		script := device.NewIoTScript(path.Base(flags.DeployFile()))
 
-		err = device.LoadScriptFromPath(flags.ScriptFile(), script)
+		err = device.LoadScriptFromPath(flags.DeployFile(), script)
 		if err != nil {
 			log.Fatalf("Unable to load script file: %v\n\n", err)
 		}
@@ -185,10 +185,10 @@ func main() {
 
 		err = tapper.Execute(device.Update, devices)
 
-	case command.Script:
+	case command.Deploy:
 		log.Print("Deploying script to devices...")
 
-		err = tapper.Execute(device.Script, devices)
+		err = tapper.Execute(device.Deploy, devices)
 
 	case command.Reboot:
 		log.Print("Sending reboot request to devices...")

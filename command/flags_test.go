@@ -254,36 +254,36 @@ func TestFlags_ConfigFile(t *testing.T) {
 	}
 }
 
-func TestFlags_ScriptFile(t *testing.T) {
+func TestFlags_DeployFile(t *testing.T) {
 	tests := []struct {
 		name       string
 		args       []string
 		command    string
 		driver     string
 		err        error
-		scriptFile string
+		deployFile string
 	}{
 		{
-			name:       "get empty script file path value",
-			args:       []string{Script},
-			command:    Script,
+			name:       "get empty deploy file path value",
+			args:       []string{Deploy},
+			command:    Deploy,
 			driver:     device.Driver,
-			scriptFile: "",
+			deployFile: "",
 		},
 		{
-			name:       "get script file path value",
-			args:       []string{Script, "-f", "script.js"},
-			command:    Script,
+			name:       "get deploy file path value",
+			args:       []string{Deploy, "-f", "script.js"},
+			command:    Deploy,
 			driver:     device.Driver,
-			scriptFile: "script.js",
+			deployFile: "script.js",
 		},
 		{
-			name:       "get empty script file path value when argument is missing",
-			args:       []string{Script, "-f"},
+			name:       "get empty deploy file path value when argument is missing",
+			args:       []string{Deploy, "-f"},
 			command:    "",
 			driver:     "",
 			err:        ErrArgumentParse,
-			scriptFile: "",
+			deployFile: "",
 		},
 	}
 
@@ -305,10 +305,10 @@ func TestFlags_ScriptFile(t *testing.T) {
 				t.Fatalf("expected %#v, got %#v", test.err, err)
 			}
 
-			file := flags.ScriptFile()
+			file := flags.DeployFile()
 
-			if file != test.scriptFile {
-				t.Fatalf("Unexpected script file. Got %s, expected %s", file, test.scriptFile)
+			if file != test.deployFile {
+				t.Fatalf("Unexpected deploy file. Got %s, expected %s", file, test.deployFile)
 			}
 		})
 	}
@@ -455,31 +455,31 @@ func TestFlags_Parse(t *testing.T) {
 			err:  flag.ErrHelp,
 		},
 
-		// Script
+		// Deploy
 		{
-			name: "failure: script command with undefined flag",
-			args: []string{Script, "-foo"},
+			name: "failure: deploy command with undefined flag",
+			args: []string{Deploy, "-foo"},
 			err:  ErrArgumentParse,
 		},
 		{
-			name: "failure: script command with invalid driver flag value",
-			args: []string{Script, "-driver"},
+			name: "failure: deploy command with invalid driver flag value",
+			args: []string{Deploy, "-driver"},
 			err:  ErrArgumentParse,
 		},
 		{
-			name: "failure: script command with invalid file flag value",
-			args: []string{Script, "-f"},
+			name: "failure: deploy command with invalid file flag value",
+			args: []string{Deploy, "-f"},
 			err:  ErrArgumentParse,
 		},
 		{
-			name:    "success: script command with valid flags",
-			args:    []string{Script, "-driver", shellygen1.Driver, "-f", "script.js"},
-			command: Script,
+			name:    "success: deploy command with valid flags",
+			args:    []string{Deploy, "-driver", shellygen1.Driver, "-f", "script.js"},
+			command: Deploy,
 			driver:  shellygen1.Driver,
 		},
 		{
-			name: "success: script command with valid + help flags",
-			args: []string{Script, "-driver", shellygen1.Driver, "-f", "script.js", "-h"},
+			name: "success: deploy command with valid + help flags",
+			args: []string{Deploy, "-driver", shellygen1.Driver, "-f", "script.js", "-h"},
 			err:  flag.ErrHelp,
 		},
 

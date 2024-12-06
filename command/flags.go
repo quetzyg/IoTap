@@ -50,7 +50,7 @@ const (
 	Config  = "config"
 	Version = "version"
 	Update  = "update"
-	Script  = "script"
+	Deploy  = "deploy"
 	Reboot  = "reboot"
 )
 
@@ -64,7 +64,7 @@ Commands:
   config  Apply configuration settings to detected devices
   version Show firmware version of detected devices
   update  Perform firmware update on detected devices
-  script  Upload script file to compatible devices
+  deploy  Deploy a script to compatible devices
   reboot  Restart detected devices
 
 Use %s <CIDR> <command> -h for more information about the command.
@@ -94,9 +94,9 @@ type Flags struct {
 	updateCmd    *flag.FlagSet
 	updateDriver *StrFlag
 
-	scriptCmd    *flag.FlagSet
-	scriptDriver *StrFlag
-	scriptFile   *string
+	deployCmd    *flag.FlagSet
+	deployDriver *StrFlag
+	deployFile   *string
 
 	rebootCmd    *flag.FlagSet
 	rebootDriver *StrFlag
@@ -161,13 +161,13 @@ func NewFlags() *Flags {
 		flags.updateCmd.PrintDefaults()
 	}
 
-	// Script
-	flags.scriptCmd = flag.NewFlagSet(Script, flag.ContinueOnError)
-	flags.scriptDriver = setDriverFlag(flags.scriptCmd)
-	flags.scriptFile = flags.scriptCmd.String("f", "", "Device script file path")
-	flags.scriptCmd.Usage = func() {
-		fmt.Printf(commandUsage, Script, os.Args[0], Script)
-		flags.scriptCmd.PrintDefaults()
+	// Deploy
+	flags.deployCmd = flag.NewFlagSet(Deploy, flag.ContinueOnError)
+	flags.deployDriver = setDriverFlag(flags.deployCmd)
+	flags.deployFile = flags.deployCmd.String("f", "", "Deploy file path")
+	flags.deployCmd.Usage = func() {
+		fmt.Printf(commandUsage, Deploy, os.Args[0], Deploy)
+		flags.deployCmd.PrintDefaults()
 	}
 
 	// Reboot
@@ -206,9 +206,9 @@ func (p *Flags) ConfigFile() string {
 	return *p.configFile
 }
 
-// ScriptFile returns the script file path value.
-func (p *Flags) ScriptFile() string {
-	return *p.scriptFile
+// DeployFile returns the deploy file path value.
+func (p *Flags) DeployFile() string {
+	return *p.deployFile
 }
 
 // Parse the CLI arguments.
@@ -256,13 +256,13 @@ func (p *Flags) Parse(arguments []string) (string, string, error) {
 
 		return Update, p.updateDriver.String(), nil
 
-	case Script:
-		err = p.scriptCmd.Parse(arguments[1:])
+	case Deploy:
+		err = p.deployCmd.Parse(arguments[1:])
 		if err != nil {
 			return "", "", fmt.Errorf("%w: %w", ErrArgumentParse, err)
 		}
 
-		return Script, p.scriptDriver.String(), nil
+		return Deploy, p.deployDriver.String(), nil
 
 	case Reboot:
 		err = p.rebootCmd.Parse(arguments[1:])

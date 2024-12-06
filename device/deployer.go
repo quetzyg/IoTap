@@ -75,23 +75,23 @@ func LoadScriptFromPath(fp string, scr *IoTScript) error {
 	return loadScript(f, scr)
 }
 
-// Scripter is an interface that provides a standard way to set a script on IoT devices.
-type Scripter interface {
-	ScriptRequests(*IoTScript) ([]*http.Request, error)
+// Deployer is an interface that provides a standard way to deploy a script on supported IoT devices.
+type Deployer interface {
+	DeployRequests(*IoTScript) ([]*http.Request, error)
 }
 
-// Script is a procedure implementation designed to upload a script to an IoT device.
-var Script = func(tap *Tapper, res Resource, ch chan<- *ProcedureResult) {
-	dev, ok := res.(Scripter)
+// Deploy is a procedure implementation designed to deploy a script to an IoT device.
+var Deploy = func(tap *Tapper, res Resource, ch chan<- *ProcedureResult) {
+	dev, ok := res.(Deployer)
 	if !ok {
 		ch <- &ProcedureResult{
 			dev: res,
-			err: fmt.Errorf("%w: script", ErrUnsupportedProcedure),
+			err: fmt.Errorf("%w: deploy", ErrUnsupportedProcedure),
 		}
 		return
 	}
 
-	rs, err := dev.ScriptRequests(tap.script)
+	rs, err := dev.DeployRequests(tap.script)
 	if err != nil {
 		ch <- &ProcedureResult{
 			dev: res,

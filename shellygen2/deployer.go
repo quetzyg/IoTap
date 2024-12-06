@@ -42,8 +42,8 @@ func (d *Device) scripts() ([]*script, error) {
 	return resp.Result.Scripts, nil
 }
 
-// ScriptRequests generates a slice of *http.Requests that are to be executed in order to set an IoT device script.
-func (d *Device) ScriptRequests(script *device.IoTScript) ([]*http.Request, error) {
+// DeployRequests generates a slice of *http.Requests that are to be executed in order to set an IoT device script.
+func (d *Device) DeployRequests(script *device.IoTScript) ([]*http.Request, error) {
 	var requests []*http.Request
 
 	// Delete any existing scripts
