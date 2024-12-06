@@ -30,7 +30,14 @@ func (s *Script) Length() int {
 }
 
 // loadScript from an I/O reader and read the data into an *Script instance.
-func loadScript(r io.Reader, src *Script) (err error) {
+func loadScript(r io.ReadCloser, src *Script) (err error) {
+	defer func() {
+		err = r.Close()
+		if err != nil {
+			log.Printf("Script close error: %v", err)
+		}
+	}()
+
 	src.code, err = io.ReadAll(r)
 	if err != nil {
 		return err
@@ -43,27 +50,31 @@ func loadScript(r io.Reader, src *Script) (err error) {
 	return nil
 }
 
-// LoadScriptFromPath reads and loads a script from the specified file path.
-// It opens the file, ensures it's closed after reading, and processes the script.
-// Returns an error if the file cannot be opened or the script cannot be loaded.
-func LoadScriptFromPath(fp string, src *Script) error {
-	if fp == "" {
-		return fmt.Errorf("the script file path cannot be empty")
-	}
+// LoadScriptsFromPath reads and loads one or more script file paths.
+// It opens each file and processes the script.
+// An error is returned if a file cannot be opened or a script cannot be loaded.
+func LoadScriptsFromPath(fps []string) ([]*Script, error) {
+	scripts := make([]*Script, len(fps))
 
-	f, err := os.Open(fp)
-	if err != nil {
-		return err
-	}
-
-	defer func() {
-		err = f.Close()
-		if err != nil {
-			log.Printf("Script close error: %v", err)
+	for i, fp := range fps {
+		if fp == "" {
+			return nil, fmt.Errorf("the script file path cannot be empty")
 		}
-	}()
 
-	src.name = path.Base(fp)
+		f, err := os.Open(fp)
+		if err != nil {
+			return nil, err
+		}
 
-	return loadScript(f, src)
+		scripts[i] = &Script{
+			name: path.Base(fp),
+		}
+
+		err = loadScript(f, scripts[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return scripts, nil
 }

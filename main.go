@@ -124,14 +124,14 @@ func main() {
 			// All good!
 		}
 
-		script := &device.Script{}
+		var scripts []*device.Script
 
-		err = device.LoadScriptFromPath(flags.DeployFile(), script)
+		scripts, err = device.LoadScriptsFromPath(flags.DeployFiles())
 		if err != nil {
-			log.Fatalf("Unable to load script file: %v\n\n", err)
+			log.Fatalf("Unable to load script files: %v\n\n", err)
 		}
 
-		tapper.SetScript(script)
+		tapper.SetScripts(scripts)
 	}
 
 	log.Println("Scanning the network...")

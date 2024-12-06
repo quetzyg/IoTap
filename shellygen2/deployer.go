@@ -7,10 +7,7 @@ import (
 	"github.com/Stowify/IoTap/httpclient"
 )
 
-const (
-	defaultID = 1
-	chunkSize = 1024
-)
+const chunkSize = 1024
 
 // Basic script resource representation.
 type script struct {
@@ -43,7 +40,7 @@ func (d *Device) scripts() ([]*script, error) {
 }
 
 // DeployRequests generates a slice of *http.Requests that are to be executed in order to set an IoT device script.
-func (d *Device) DeployRequests(src *device.Script) ([]*http.Request, error) {
+func (d *Device) DeployRequests(src []*device.Script) ([]*http.Request, error) {
 	var requests []*http.Request
 
 	// Delete any existing scripts
@@ -61,56 +58,59 @@ func (d *Device) DeployRequests(src *device.Script) ([]*http.Request, error) {
 		requests = append(requests, r)
 	}
 
-	// Create script
-	// See: https://shelly-api-docs.shelly.cloud/gen2/ComponentsAndServices/Script#scriptcreate
-	r, err := request(d, "Script.Create", map[string]any{"name": src.Name()})
-	if err != nil {
-		return nil, err
-	}
-	requests = append(requests, r)
+	// Deploy scripts
+	for id, s := range src {
+		// Create script
+		// See: https://shelly-api-docs.shelly.cloud/gen2/ComponentsAndServices/Script#scriptcreate
+		r, err := request(d, "Script.Create", map[string]any{"name": s.Name()})
+		if err != nil {
+			return nil, err
+		}
+		requests = append(requests, r)
 
-	// Upload code in chunks
-	// See: https://shelly-api-docs.shelly.cloud/gen2/ComponentsAndServices/Script#scriptputcode
-	for start := 0; start < src.Length(); start += chunkSize {
-		end := start + chunkSize
-		if end > src.Length() {
-			end = src.Length()
+		// Upload code in chunks
+		// See: https://shelly-api-docs.shelly.cloud/gen2/ComponentsAndServices/Script#scriptputcode
+		for start := 0; start < s.Length(); start += chunkSize {
+			end := start + chunkSize
+			if end > s.Length() {
+				end = s.Length()
+			}
+
+			r, err = request(d, "Script.PutCode", map[string]any{
+				"id":     id + 1,
+				"append": start != 0,
+				"code":   string(s.Code()[start:end]),
+			})
+			if err != nil {
+				return nil, err
+			}
+			requests = append(requests, r)
 		}
 
-		r, err = request(d, "Script.PutCode", map[string]any{
-			"id":     defaultID,
-			"append": start != 0,
-			"code":   string(src.Code()[start:end]),
+		// Enable script
+		// See: https://shelly-api-docs.shelly.cloud/gen2/ComponentsAndServices/Script#scriptsetconfig
+		r, err = request(d, "Script.SetConfig", map[string]any{
+			"id": id + 1,
+			"config": map[string]any{
+				"enable": true,
+			},
 		})
+		if err != nil {
+			return nil, err
+		}
+		requests = append(requests, r)
+
+		// Start script
+		// See: https://shelly-api-docs.shelly.cloud/gen2/ComponentsAndServices/Script#scriptstart
+		r, err = request(d, "Script.Start", map[string]any{"id": id + 1})
 		if err != nil {
 			return nil, err
 		}
 		requests = append(requests, r)
 	}
 
-	// Enable script
-	// See: https://shelly-api-docs.shelly.cloud/gen2/ComponentsAndServices/Script#scriptsetconfig
-	r, err = request(d, "Script.SetConfig", map[string]any{
-		"id": defaultID,
-		"config": map[string]any{
-			"enable": true,
-		},
-	})
-	if err != nil {
-		return nil, err
-	}
-	requests = append(requests, r)
-
-	// Start script
-	// See: https://shelly-api-docs.shelly.cloud/gen2/ComponentsAndServices/Script#scriptstart
-	r, err = request(d, "Script.Start", map[string]any{"id": defaultID})
-	if err != nil {
-		return nil, err
-	}
-	requests = append(requests, r)
-
 	// Reboot request
-	r, err = request(d, "Shelly.Reboot", nil)
+	r, err := request(d, "Shelly.Reboot", nil)
 	if err != nil {
 		return nil, err
 	}
