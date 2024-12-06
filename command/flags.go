@@ -63,8 +63,8 @@ Commands:
   dump    Display information for detected devices
   config  Apply configuration settings to detected devices
   version Show firmware version of detected devices
-  update  Perform firmware update on detected devices
-  deploy  Deploy a script to compatible devices
+  update  Perform a firmware update on detected devices
+  deploy  Deploy a script to devices that support it
   reboot  Restart detected devices
 
 Use %s <CIDR> <command> -h for more information about the command.
