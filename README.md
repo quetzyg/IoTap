@@ -314,5 +314,8 @@ Example:
         - **Shelly Plus 1 (Mini)** ([Product](https://www.shelly.com/en-pt/products/product-overview/shelly-plus-1-mini), [KB](https://kb.shelly.cloud/knowledge-base/shelly-plus-1-mini), [API](https://shelly-api-docs.shelly.cloud/gen2/Devices/Gen2/ShellyPlus1))
         - **Shelly Pro 1** ([Product](https://www.shelly.com/en-pt/products/product-overview/shelly-pro-1), [KB](https://kb.shelly.cloud/knowledge-base/shelly-pro-1-v1), [API](https://shelly-api-docs.shelly.cloud/gen2/Devices/Gen2/ShellyPro1))
 
+## License
+[Apache License 2.0](LICENSE.md)
+
 ## Disclaimer
 Use responsibly. Always ensure you have proper authorization before tapping into network devices.
