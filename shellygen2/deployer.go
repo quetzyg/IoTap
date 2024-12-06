@@ -43,7 +43,7 @@ func (d *Device) scripts() ([]*script, error) {
 }
 
 // DeployRequests generates a slice of *http.Requests that are to be executed in order to set an IoT device script.
-func (d *Device) DeployRequests(script *device.IoTScript) ([]*http.Request, error) {
+func (d *Device) DeployRequests(src *device.Script) ([]*http.Request, error) {
 	var requests []*http.Request
 
 	// Delete any existing scripts
@@ -63,7 +63,7 @@ func (d *Device) DeployRequests(script *device.IoTScript) ([]*http.Request, erro
 
 	// Create script
 	// See: https://shelly-api-docs.shelly.cloud/gen2/ComponentsAndServices/Script#scriptcreate
-	r, err := request(d, "Script.Create", map[string]any{"name": script.Name()})
+	r, err := request(d, "Script.Create", map[string]any{"name": src.Name()})
 	if err != nil {
 		return nil, err
 	}
@@ -71,16 +71,16 @@ func (d *Device) DeployRequests(script *device.IoTScript) ([]*http.Request, erro
 
 	// Upload code in chunks
 	// See: https://shelly-api-docs.shelly.cloud/gen2/ComponentsAndServices/Script#scriptputcode
-	for start := 0; start < script.Length(); start += chunkSize {
+	for start := 0; start < src.Length(); start += chunkSize {
 		end := start + chunkSize
-		if end > script.Length() {
-			end = script.Length()
+		if end > src.Length() {
+			end = src.Length()
 		}
 
 		r, err = request(d, "Script.PutCode", map[string]any{
 			"id":     defaultID,
 			"append": start != 0,
-			"code":   string(script.Code()[start:end]),
+			"code":   string(src.Code()[start:end]),
 		})
 		if err != nil {
 			return nil, err

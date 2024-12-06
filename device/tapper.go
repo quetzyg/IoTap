@@ -18,7 +18,7 @@ const probeTimeout = time.Second * 8
 type Tapper struct {
 	probers   []Prober
 	config    Config
-	script    *IoTScript
+	script    *Script
 	transport http.RoundTripper
 }
 
@@ -28,8 +28,8 @@ func (t *Tapper) SetConfig(cfg Config) {
 }
 
 // SetScript field value.
-func (t *Tapper) SetScript(scr *IoTScript) {
-	t.script = scr
+func (t *Tapper) SetScript(src *Script) {
+	t.script = src
 }
 
 // NewTapper creates a new *Tapper instance.
