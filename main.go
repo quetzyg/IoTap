@@ -143,6 +143,10 @@ func main() {
 
 	log.Printf("Devices found: %d\n", len(devices))
 
+	if devices.Empty() {
+		os.Exit(0)
+	}
+
 	switch cmd {
 	case command.Dump:
 		err = devices.SortBy(flags.SortField())
