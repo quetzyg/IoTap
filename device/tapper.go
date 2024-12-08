@@ -40,7 +40,7 @@ func NewTapper(probers []Prober) *Tapper {
 }
 
 // probeIP for a specific IoT device.
-func probeIP(client *http.Client, prober Prober, ip net.IP) (Resource, error) {
+func probeIP(prober Prober, client *http.Client, ip net.IP) (Resource, error) {
 	r, dev, err := prober.Request(ip)
 	if err != nil {
 		return nil, err
@@ -92,15 +92,11 @@ func (pr *ProcedureResult) Error() string {
 }
 
 // probe an IP and return the probe result to a channel.
-func (t *Tapper) probe(ch chan<- *ProcedureResult, ip net.IP) {
+func (t *Tapper) probe(ch chan<- *ProcedureResult, client *http.Client, ip net.IP) {
 	result := &ProcedureResult{}
-	client := &http.Client{
-		Transport: t.transport,
-		Timeout:   probeTimeout,
-	}
 
 	for _, prober := range t.probers {
-		dev, err := probeIP(client, prober, ip)
+		dev, err := probeIP(prober, client, ip)
 
 		// Device found!
 		if dev != nil {
@@ -123,8 +119,13 @@ func (t *Tapper) probe(ch chan<- *ProcedureResult, ip net.IP) {
 func (t *Tapper) Scan(ips []net.IP) (Collection, error) {
 	ch := make(chan *ProcedureResult)
 
+	client := &http.Client{
+		Transport: t.transport,
+		Timeout:   probeTimeout,
+	}
+
 	for _, ip := range ips {
-		go t.probe(ch, ip)
+		go t.probe(ch, client, ip)
 	}
 
 	errs := Errors{}
