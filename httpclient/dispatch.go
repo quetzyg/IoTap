@@ -8,6 +8,8 @@ import (
 	"net/http"
 )
 
+var errResponse = errors.New("HTTP response error")
+
 // Dispatch an HTTP request and (optionally) unmarshal the payload.
 func Dispatch(client *http.Client, r *http.Request, v any) (err error) {
 	response, err := client.Do(r)
@@ -28,9 +30,8 @@ func Dispatch(client *http.Client, r *http.Request, v any) (err error) {
 		return json.Unmarshal(b, v)
 	}
 
-	// From this point on, we only care about the HTTP request status
-	if response.StatusCode < http.StatusOK || response.StatusCode >= http.StatusMultipleChoices {
-		return fmt.Errorf("%s - %s (%d)", r.URL.Path, b, response.StatusCode)
+	if response.StatusCode >= http.StatusBadRequest {
+		return fmt.Errorf("%w: %s: status %d (body: %s)", errResponse, r.URL.Path, response.StatusCode, b)
 	}
 
 	return nil
