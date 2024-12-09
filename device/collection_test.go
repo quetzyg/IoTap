@@ -7,7 +7,8 @@ import (
 
 // resource implementation for testing purposes.
 type resource struct {
-	secured bool
+	secured    bool
+	unexpected bool
 }
 
 // IP address of the resource.
@@ -43,6 +44,15 @@ func (r *resource) Driver() string {
 // Secured returns true if the item requires authentication to be accessed, false otherwise.
 func (r *resource) Secured() bool {
 	return r.secured
+}
+
+// UnmarshalJSON implements the Unmarshaler interface.
+func (r *resource) UnmarshalJSON(_ []byte) error {
+	if r.unexpected {
+		return ErrUnexpected
+	}
+
+	return nil
 }
 
 func TestCollection_Empty(t *testing.T) {
