@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 )
 
@@ -18,7 +19,10 @@ func Dispatch(client *http.Client, r *http.Request, v any) (err error) {
 	}
 
 	defer func() {
-		err = errors.Join(err, response.Body.Close())
+		err = response.Body.Close()
+		if err != nil {
+			log.Printf("Body close error: %v", err)
+		}
 	}()
 
 	b, err := io.ReadAll(response.Body)
