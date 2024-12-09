@@ -30,28 +30,24 @@ func (p *prober) Request(_ net.IP) (*http.Request, Resource, error) {
 	return r, p.resource, nil
 }
 
-// RoundTripFunc is a custom type that allows creating a mock RoundTripper.
-type RoundTripFunc func(req *http.Request) (*http.Response, error)
-
-// RoundTrip implements the RoundTripper interface
-func (f RoundTripFunc) RoundTrip(req *http.Request) (*http.Response, error) {
-	return f(req)
+// RoundTripper is a custom type used for mocking HTTP responses.
+type RoundTripper struct {
+	response *http.Response
+	err      error
 }
 
-// newMockClient creates an HTTP client with a custom transport that can return errors
-func newMockClient(mockFunc RoundTripFunc) *http.Client {
-	return &http.Client{
-		Transport: mockFunc,
-	}
+// RoundTrip implements the RoundTripper interface.
+func (rt RoundTripper) RoundTrip(_ *http.Request) (*http.Response, error) {
+	return rt.response, rt.err
 }
 
 func TestProbeIP(t *testing.T) {
 	tests := []struct {
-		name   string
-		prober Prober
-		client *http.Client
-		res    Resource
-		err    error
+		name         string
+		prober       Prober
+		roundTripper http.RoundTripper
+		res          Resource
+		err          error
 	}{
 		{
 			name:   "failure: bad prober",
@@ -61,50 +57,54 @@ func TestProbeIP(t *testing.T) {
 		{
 			name:   "failure: http response error",
 			prober: &prober{},
-			client: newMockClient(func(req *http.Request) (*http.Response, error) {
-				return nil, &url.Error{
+			roundTripper: &RoundTripper{
+				err: &url.Error{
 					Op:  "parse",
 					URL: ":",
 					Err: errors.New("missing protocol scheme"),
-				}
-			}),
+				},
+			},
 		},
 		{
 			name:   "failure: unexpected device",
 			prober: &prober{resource: &resource{unexpected: true}},
-			client: newMockClient(func(req *http.Request) (*http.Response, error) {
-				return &http.Response{
+			roundTripper: &RoundTripper{
+				response: &http.Response{
 					StatusCode: http.StatusOK,
 					Body:       io.NopCloser(strings.NewReader("{}")),
-				}, nil
-			}),
+				},
+			},
 		},
 		{
 			name:   "failure: parsing error",
 			prober: &prober{resource: &resource{}},
-			client: newMockClient(func(req *http.Request) (*http.Response, error) {
-				return &http.Response{
+			roundTripper: &RoundTripper{
+				response: &http.Response{
 					StatusCode: http.StatusOK,
 					Body:       io.NopCloser(strings.NewReader("}")),
-				}, nil
-			}),
+				},
+			},
 		},
 		{
 			name:   "success",
 			prober: &prober{resource: &resource{}},
-			client: newMockClient(func(req *http.Request) (*http.Response, error) {
-				return &http.Response{
+			roundTripper: &RoundTripper{
+				response: &http.Response{
 					StatusCode: http.StatusOK,
 					Body:       io.NopCloser(strings.NewReader("{}")),
-				}, nil
-			}),
+				},
+			},
 			res: &resource{},
 		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			res, err := probeIP(test.prober, test.client, net.ParseIP("192.168.146.123"))
+			client := &http.Client{
+				Transport: test.roundTripper,
+			}
+
+			res, err := probeIP(test.prober, client, net.ParseIP("192.168.146.123"))
 
 			if !reflect.DeepEqual(res, test.res) {
 				t.Fatalf("expected %v, got %v", test.res, res)
