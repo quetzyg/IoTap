@@ -6,17 +6,10 @@ import (
 	"net"
 )
 
-var (
-	errNetworkCannotBeNil = errors.New("the network cannot be nil")
-	errNetworkMembership  = errors.New("you must be in the same network")
-)
+var errNetworkMembership = errors.New("you must be in the same network")
 
-// validateNetworkMembership of the caller.
-func validateNetworkMembership(network *net.IPNet) error {
-	if network == nil {
-		return errNetworkCannotBeNil
-	}
-
+// inNetwork checks if the caller belongs to a network.
+func inNetwork(network *net.IPNet) error {
 	interfaces, err := net.Interfaces()
 	if err != nil {
 		return err
@@ -28,17 +21,8 @@ func validateNetworkMembership(network *net.IPNet) error {
 			return err
 		}
 
-		var ip net.IP
-
 		for _, addr := range addrs {
-			switch v := addr.(type) {
-			case *net.IPNet:
-				ip = v.IP
-			case *net.IPAddr:
-				ip = v.IP
-			}
-
-			if network.Contains(ip) {
+			if v, ok := addr.(*net.IPNet); ok && network.Contains(v.IP) {
 				return nil
 			}
 		}
@@ -64,8 +48,7 @@ func Resolve(cidr string) ([]net.IP, error) {
 		return nil, err
 	}
 
-	err = validateNetworkMembership(network)
-	if err != nil {
+	if err = inNetwork(network); err != nil {
 		return nil, err
 	}
 

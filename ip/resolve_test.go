@@ -14,10 +14,6 @@ func TestValidateNetworkMembership(t *testing.T) {
 		err     error
 	}{
 		{
-			name: "failure: nil network",
-			err:  errNetworkCannotBeNil,
-		},
-		{
 			name:    "failure: not a network member",
 			network: &net.IPNet{},
 			err:     errNetworkMembership,
@@ -33,7 +29,7 @@ func TestValidateNetworkMembership(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			err := validateNetworkMembership(test.network)
+			err := inNetwork(test.network)
 			if !errors.Is(err, test.err) {
 				t.Fatalf("expected %#v, got %#v", test.err, err)
 			}
