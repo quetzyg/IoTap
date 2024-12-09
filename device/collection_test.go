@@ -5,44 +5,44 @@ import (
 	"testing"
 )
 
-// Item is a resource implementation for testing purposes.
-type Item struct {
+// resource implementation for testing purposes.
+type resource struct {
 	secured bool
 }
 
-// IP address of the Item.
-func (i *Item) IP() net.IP {
+// IP address of the resource.
+func (r *resource) IP() net.IP {
 	return net.IP{}
 }
 
-// MAC address of the Item.
-func (i *Item) MAC() net.HardwareAddr {
+// MAC address of the resource.
+func (r *resource) MAC() net.HardwareAddr {
 	return net.HardwareAddr{}
 }
 
-// Name of the Item.
-func (i *Item) Name() string {
+// Name of the resource.
+func (r *resource) Name() string {
 	return "item"
 }
 
-// Model of the Item.
-func (i *Item) Model() string {
+// Model of the resource.
+func (r *resource) Model() string {
 	return "model"
 }
 
-// ID returns the Item's unique identifier.
-func (i *Item) ID() string {
+// ID returns the resource's unique identifier.
+func (r *resource) ID() string {
 	return "id"
 }
 
-// Driver name of this Item implementation.
-func (i *Item) Driver() string {
+// Driver name of this resource implementation.
+func (r *resource) Driver() string {
 	return "test"
 }
 
 // Secured returns true if the item requires authentication to be accessed, false otherwise.
-func (i *Item) Secured() bool {
-	return i.secured
+func (r *resource) Secured() bool {
+	return r.secured
 }
 
 func TestCollection_Empty(t *testing.T) {
@@ -64,7 +64,7 @@ func TestCollection_Empty(t *testing.T) {
 		{
 			name: "collection has items",
 			col: Collection{
-				&Item{},
+				&resource{},
 			},
 			empty: false,
 		},
