@@ -22,7 +22,7 @@ type listResponse struct {
 }
 
 // scripts returns all script resources of the device.
-func (d *Device) scripts() ([]*script, error) {
+func (d *Device) scripts(client *http.Client) ([]*script, error) {
 	// List all the IoT device scripts
 	// See: https://shelly-api-docs.shelly.cloud/gen2/ComponentsAndServices/Script#scriptlist
 	r, err := request(d, "Script.List", nil)
@@ -31,7 +31,7 @@ func (d *Device) scripts() ([]*script, error) {
 	}
 
 	resp := &listResponse{}
-	err = httpclient.Dispatch(&http.Client{}, r, resp)
+	err = httpclient.Dispatch(client, r, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -40,12 +40,12 @@ func (d *Device) scripts() ([]*script, error) {
 }
 
 // DeployRequests generates a slice of *http.Requests that are to be executed in order to set an IoT device script.
-func (d *Device) DeployRequests(src []*device.Script) ([]*http.Request, error) {
+func (d *Device) DeployRequests(client *http.Client, src []*device.Script) ([]*http.Request, error) {
 	var requests []*http.Request
 
 	// Delete any existing scripts
 	// See: https://shelly-api-docs.shelly.cloud/gen2/ComponentsAndServices/Script#scriptdelete
-	scripts, err := d.scripts()
+	scripts, err := d.scripts(client)
 	if err != nil {
 		return nil, err
 	}
