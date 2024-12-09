@@ -10,7 +10,7 @@ import (
 	"testing"
 )
 
-// RoundTripper is a custom type that allows creating a mock RoundTripper
+// RoundTripper is a custom type used for mocking HTTP responses.
 type RoundTripper struct {
 	response *http.Response
 	err      error
