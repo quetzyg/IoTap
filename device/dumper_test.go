@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"net"
+	"os"
 	"strings"
 	"testing"
 )
@@ -108,6 +109,97 @@ func TestDumpJSON(t *testing.T) {
 
 			if !strings.Contains(w.String(), test.out) {
 				t.Fatalf("expected %q, got %q", test.out, w.String())
+			}
+		})
+	}
+}
+
+func TestExecDump(t *testing.T) {
+	tests := []struct {
+		name   string
+		col    Collection
+		format string
+		file   string
+		err    error
+	}{
+		{
+			name:   "failure: invalid format",
+			format: "foo",
+			err:    ErrInvalidDumpFormat,
+		},
+		{
+			name: "success: csv to screen",
+			col: Collection{
+				&resource{
+					driver:  "shelly_gen1",
+					ip:      net.ParseIP("192.168.146.123"),
+					mac:     net.HardwareAddr{00, 17, 34, 51, 68, 85},
+					name:    "Storage",
+					model:   "SHSW-1",
+					secured: false,
+				},
+			},
+			format: FormatCSV,
+		},
+		{
+			name: "success: json to screen",
+			col: Collection{
+				&resource{
+					driver:  "shelly_gen1",
+					ip:      net.ParseIP("192.168.146.123"),
+					mac:     net.HardwareAddr{00, 17, 34, 51, 68, 85},
+					name:    "Storage",
+					model:   "SHSW-1",
+					secured: false,
+				},
+			},
+			format: FormatJSON,
+		},
+		{
+			name: "success: csv to file",
+			col: Collection{
+				&resource{
+					driver:  "shelly_gen1",
+					ip:      net.ParseIP("192.168.146.123"),
+					mac:     net.HardwareAddr{00, 17, 34, 51, 68, 85},
+					name:    "Storage",
+					model:   "SHSW-1",
+					secured: false,
+				},
+			},
+			format: FormatCSV,
+			file:   "test.csv",
+		},
+		{
+			name: "success: json to file",
+			col: Collection{
+				&resource{
+					driver:  "shelly_gen1",
+					ip:      net.ParseIP("192.168.146.123"),
+					mac:     net.HardwareAddr{00, 17, 34, 51, 68, 85},
+					name:    "Storage",
+					model:   "SHSW-1",
+					secured: false,
+				},
+			},
+			format: FormatJSON,
+			file:   "test.json",
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			err := ExecDump(test.col, test.format, test.file)
+			if !errors.Is(err, test.err) {
+				t.Fatalf("expected %v, got %v", test.err, err)
+			}
+
+			// cleanup test files
+			if test.file != "" {
+				err = os.Remove(test.file)
+				if err != nil {
+					t.Fatalf("expected nil, got %v", err)
+				}
 			}
 		})
 	}
