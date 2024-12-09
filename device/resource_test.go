@@ -1,9 +1,6 @@
 package device
 
-import (
-	"net"
-	"testing"
-)
+import "testing"
 
 func TestMacify(t *testing.T) {
 	tests := []struct {
@@ -33,38 +30,22 @@ func TestMacify(t *testing.T) {
 	}
 }
 
-type devSecured struct{ secure bool }
-
-func (d *devSecured) Driver() string { return "" }
-
-func (d *devSecured) IP() net.IP { return nil }
-
-func (d *devSecured) MAC() net.HardwareAddr { return nil }
-
-func (d *devSecured) Name() string { return "" }
-
-func (d *devSecured) Model() string { return "" }
-
-func (d *devSecured) ID() string { return "" }
-
-func (d *devSecured) Secured() bool { return d.secure }
-
 func TestSecuredEmoji(t *testing.T) {
 	tests := []struct {
 		name     string
-		dev      *devSecured
+		dev      Resource
 		expected string
 	}{
 		{
 			name: "return secured emoji",
-			dev: &devSecured{
-				secure: true,
+			dev: &resource{
+				secured: true,
 			},
 			expected: secured,
 		},
 		{
 			name:     "return unsecured emoji",
-			dev:      &devSecured{},
+			dev:      &resource{},
 			expected: unsecured,
 		},
 	}
