@@ -32,7 +32,9 @@ var Configure = func(tap *Tapper, res Resource, ch chan<- *ProcedureResult) {
 		return
 	}
 
-	client := &http.Client{}
+	client := &http.Client{
+		Transport: tap.transport,
+	}
 
 	for _, r := range rs {
 		if err = httpclient.Dispatch(client, r, nil); err != nil {

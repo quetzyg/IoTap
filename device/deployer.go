@@ -23,6 +23,10 @@ var Deploy = func(tap *Tapper, res Resource, ch chan<- *ProcedureResult) {
 		return
 	}
 
+	client := &http.Client{
+		Transport: tap.transport,
+	}
+
 	rs, err := dev.DeployRequests(tap.scripts)
 	if err != nil {
 		ch <- &ProcedureResult{
@@ -31,8 +35,6 @@ var Deploy = func(tap *Tapper, res Resource, ch chan<- *ProcedureResult) {
 		}
 		return
 	}
-
-	client := &http.Client{}
 
 	for _, r := range rs {
 		if err = httpclient.Dispatch(client, r, nil); err != nil {
