@@ -12,10 +12,10 @@ import (
 var errResponse = errors.New("HTTP response error")
 
 // Dispatch an HTTP request and (optionally) unmarshal the payload.
-func Dispatch(client *http.Client, r *http.Request, v any) (err error) {
+func Dispatch(client *http.Client, r *http.Request, v any) error {
 	response, err := client.Do(r)
 	if err != nil {
-		return
+		return err
 	}
 
 	defer func() {
@@ -27,7 +27,7 @@ func Dispatch(client *http.Client, r *http.Request, v any) (err error) {
 
 	b, err := io.ReadAll(response.Body)
 	if err != nil {
-		return
+		return err
 	}
 
 	if v != nil {

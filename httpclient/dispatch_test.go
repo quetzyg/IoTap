@@ -16,8 +16,8 @@ type RoundTripper struct {
 	err      error
 }
 
-// RoundTrip implements the RoundTripper interface
-func (rt RoundTripper) RoundTrip(r *http.Request) (*http.Response, error) {
+// RoundTrip implements the RoundTripper interface.
+func (rt RoundTripper) RoundTrip(_ *http.Request) (*http.Response, error) {
 	return rt.response, rt.err
 }
 
@@ -64,7 +64,6 @@ func TestDispatch(t *testing.T) {
 			},
 			err: context.DeadlineExceeded,
 		},
-
 		{
 			name: "failure: unable to read body",
 			req: &http.Request{
@@ -79,7 +78,6 @@ func TestDispatch(t *testing.T) {
 			},
 			err: io.ErrUnexpectedEOF,
 		},
-
 		{
 			name: "failure: bad request",
 			req: &http.Request{
@@ -95,7 +93,6 @@ func TestDispatch(t *testing.T) {
 
 			err: errResponse,
 		},
-
 		{
 			name: "success: no body",
 			req: &http.Request{
@@ -108,7 +105,6 @@ func TestDispatch(t *testing.T) {
 				},
 			},
 		},
-
 		{
 			name: "success: unmarshal body",
 			req: &http.Request{
@@ -132,7 +128,6 @@ func TestDispatch(t *testing.T) {
 			}
 
 			err := Dispatch(client, test.req, test.v)
-
 			if !errors.Is(err, test.err) {
 				t.Fatalf("expected %v, got %v", test.err, err)
 			}
