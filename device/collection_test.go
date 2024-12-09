@@ -1,9 +1,11 @@
 package device
 
 import (
+	"encoding/json"
 	"errors"
 	"net"
 	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -60,6 +62,33 @@ func (r *resource) UnmarshalJSON(_ []byte) error {
 	}
 
 	return nil
+}
+
+// DelimitedRow returns a string representation of the resource,
+// with fields separated by a delimiter (e.g., comma or tab).
+func (r *resource) DelimitedRow(sep string) string {
+	return strings.Join([]string{
+		r.Driver(),
+		r.mac.String(),
+		r.ip.String(),
+		r.Name(),
+		r.Model(),
+		"v1.2.3",
+		SecuredEmoji(r),
+	}, sep)
+}
+
+// MarshalJSON implements the Marshaler interface.
+func (r *resource) MarshalJSON() ([]byte, error) {
+	return json.Marshal(map[string]any{
+		"driver":   r.Driver(),
+		"mac":      r.mac.String(),
+		"ip":       r.ip,
+		"name":     r.name,
+		"model":    r.model,
+		"secured":  r.secured,
+		"firmware": "v1.2.3",
+	})
 }
 
 func TestCollection_Empty(t *testing.T) {
