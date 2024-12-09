@@ -21,17 +21,10 @@ type Dumper interface {
 	MarshalJSON() ([]byte, error)
 }
 
-// dumpCSV writes the given Collection of devices to the provided io.WriteCloser in CSV format.
+// dumpCSV writes the given Collection of devices to the provided io.Writer in CSV format.
 // Each device's data is serialized using the DelimitedRow() method.
-// The caller is responsible for closing the WriteCloser.
-func dumpCSV(devices Collection, w io.WriteCloser) error {
+func dumpCSV(devices Collection, w io.Writer, sep string) error {
 	writer := tabwriter.NewWriter(w, 0, 0, 2, ' ', 0)
-	sep := ","
-
-	// Use the Tab separator when outputting to a screen
-	if w == os.Stdout {
-		sep = "\t"
-	}
 
 	for _, device := range devices {
 		_, err := fmt.Fprintln(writer, device.(Dumper).DelimitedRow(sep))
@@ -50,10 +43,9 @@ func dumpCSV(devices Collection, w io.WriteCloser) error {
 	return nil
 }
 
-// dumpJSON writes the given Collection of devices to the provided io.WriteCloser in JSON format.
+// dumpJSON writes the given Collection of devices to the provided io.Writer in JSON format.
 // Each device's data is serialized using the MarshalJSON() method.
-// The caller is responsible for closing the WriteCloser.
-func dumpJSON(devices Collection, w io.WriteCloser) error {
+func dumpJSON(devices Collection, w io.Writer) error {
 	b, err := json.MarshalIndent(devices, "", "  ")
 	if err != nil {
 		return err
@@ -67,7 +59,7 @@ func dumpJSON(devices Collection, w io.WriteCloser) error {
 // ExecDump is a wrapper function to easily dump device scan results to multiple formats and outputs.
 func ExecDump(devices Collection, format string, file string) error {
 	var (
-		w   io.WriteCloser = os.Stdout
+		w   io.Writer = os.Stdout
 		err error
 	)
 
@@ -76,18 +68,18 @@ func ExecDump(devices Collection, format string, file string) error {
 		if err != nil {
 			return err
 		}
-
-		defer func() {
-			err = w.Close()
-			if err != nil {
-				log.Fatalf("Writer close error: %v", err)
-			}
-		}()
 	}
 
 	switch format {
 	case FormatCSV:
-		return dumpCSV(devices, w)
+		sep := ","
+
+		// Use the Tab separator when outputting to a screen
+		if w == os.Stdout {
+			sep = "\t"
+		}
+
+		return dumpCSV(devices, w, sep)
 
 	case FormatJSON:
 		return dumpJSON(devices, w)
