@@ -1,7 +1,6 @@
 package device
 
 import (
-	"fmt"
 	"io"
 	"log"
 	"os"
@@ -30,7 +29,9 @@ func (s *Script) Length() int {
 }
 
 // loadScript from an I/O reader and read the data into an *Script instance.
-func loadScript(r io.ReadCloser, src *Script) (err error) {
+func loadScript(r io.ReadCloser, src *Script) error {
+	var err error
+
 	defer func() {
 		err = r.Close()
 		if err != nil {
@@ -58,7 +59,7 @@ func LoadScriptsFromPath(fps []string) ([]*Script, error) {
 
 	for i, fp := range fps {
 		if fp == "" {
-			return nil, fmt.Errorf("the script file path cannot be empty")
+			return nil, ErrFilePathEmpty
 		}
 
 		f, err := os.Open(fp)
