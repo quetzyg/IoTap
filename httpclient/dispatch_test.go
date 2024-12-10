@@ -129,7 +129,7 @@ func TestDispatch(t *testing.T) {
 
 			err := Dispatch(client, test.req, test.v)
 			if !errors.Is(err, test.err) {
-				t.Fatalf("expected %v, got %v", test.err, err)
+				t.Fatalf("expected %#v, got %#v", test.err, err)
 			}
 		})
 	}

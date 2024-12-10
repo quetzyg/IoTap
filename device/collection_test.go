@@ -209,7 +209,7 @@ func TestCollection_SortBy(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			err := test.col.SortBy(test.field)
 			if !errors.Is(err, test.err) {
-				t.Fatalf("expected %v, got %v", test.err, err)
+				t.Fatalf("expected %#v, got %#v", test.err, err)
 			}
 
 			if !reflect.DeepEqual(test.ord, test.col) {

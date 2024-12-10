@@ -55,7 +55,7 @@ func TestDumpCSV(t *testing.T) {
 
 			err := dumpCSV(test.col, w, test.sep)
 			if !errors.Is(err, test.err) {
-				t.Fatalf("expected %v, got %v", test.err, err)
+				t.Fatalf("expected %#v, got %#v", test.err, err)
 			}
 
 			if !strings.Contains(w.String(), test.out) {
@@ -104,7 +104,7 @@ func TestDumpJSON(t *testing.T) {
 
 			err := dumpJSON(test.col, w)
 			if !errors.Is(err, test.err) {
-				t.Fatalf("expected %v, got %v", test.err, err)
+				t.Fatalf("expected %#v, got %#v", test.err, err)
 			}
 
 			if !strings.Contains(w.String(), test.out) {
@@ -191,7 +191,7 @@ func TestExecDump(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			err := ExecDump(test.col, test.format, test.file)
 			if !errors.Is(err, test.err) {
-				t.Fatalf("expected %v, got %v", test.err, err)
+				t.Fatalf("expected %#v, got %#v", test.err, err)
 			}
 
 			// cleanup test files

@@ -107,11 +107,11 @@ func TestProbeIP(t *testing.T) {
 			res, err := probeIP(test.prober, client, net.ParseIP("192.168.146.123"))
 
 			if !reflect.DeepEqual(res, test.res) {
-				t.Fatalf("expected %v, got %v", test.res, res)
+				t.Fatalf("expected %#v, got %#v", test.res, res)
 			}
 
 			if !errors.Is(err, test.err) {
-				t.Fatalf("expected %v, got %v", test.err, err)
+				t.Fatalf("expected %#v, got %#v", test.err, err)
 			}
 		})
 	}
