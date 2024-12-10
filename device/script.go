@@ -55,6 +55,10 @@ func loadScript(r io.ReadCloser, src *Script) error {
 // It opens each file and processes the script.
 // An error is returned if a file cannot be opened or a script cannot be loaded.
 func LoadScriptsFromPath(fps []string) ([]*Script, error) {
+	if len(fps) == 0 {
+		return nil, ErrFilePathEmpty
+	}
+
 	scripts := make([]*Script, len(fps))
 
 	for i, fp := range fps {
