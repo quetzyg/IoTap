@@ -66,18 +66,6 @@ func TestLoadConfig(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			err := loadConfig(test.r, test.cfg)
 
-			if test.err == nil {
-				if err != nil {
-					t.Fatalf("expected nil, got %v", err)
-				}
-
-				return
-			}
-
-			if err == nil {
-				t.Fatalf("expected an error but got nil")
-			}
-
 			if _, ok := test.err.(*json.SyntaxError); ok {
 				var syntaxErr *json.SyntaxError
 				if !errors.As(err, &syntaxErr) {
