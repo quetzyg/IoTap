@@ -12,7 +12,10 @@ import (
 	"github.com/Stowify/IoTap/httpclient"
 )
 
-const probeTimeout = time.Second * 8
+const (
+	probeTimeout  = time.Second * 8
+	channelBuffer = 32
+)
 
 // Tapper knows how to tap into devices and execute procedures on them.
 type Tapper struct {
@@ -160,7 +163,7 @@ func (t *Tapper) Execute(proc procedure, devices Collection) error {
 		return nil
 	}
 
-	ch := make(chan *ProcedureResult)
+	ch := make(chan *ProcedureResult, channelBuffer)
 
 	for _, dev := range devices {
 		go proc(t, dev, ch)
@@ -168,15 +171,13 @@ func (t *Tapper) Execute(proc procedure, devices Collection) error {
 
 	errs := Errors{}
 
-	remaining := len(devices)
-	for remaining != 0 {
+	for range devices {
 		result := <-ch
-		remaining--
-
 		if result.Failed() {
 			errs = append(errs, result)
 		}
 	}
+
 	close(ch)
 
 	if errs.Empty() {
