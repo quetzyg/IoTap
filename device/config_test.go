@@ -28,7 +28,7 @@ func (c *config) Empty() bool {
 type badReader struct{}
 
 // Read implements the io.Reader interface.
-func (badReader) Read(_ []byte) (n int, err error) {
+func (badReader) Read(_ []byte) (int, error) {
 	return 0, io.ErrUnexpectedEOF
 }
 
