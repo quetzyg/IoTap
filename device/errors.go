@@ -9,13 +9,18 @@ import (
 )
 
 var (
-	// ErrConfigurationEmpty is an error type used when loading a configuration file.
-	// This error is returned when the configuration file data import results in an empty Config instance.
-	ErrConfigurationEmpty = errors.New("empty configuration")
+	// ErrFilePathEmpty indicates that a required file path was not provided.
+	// This error is typically returned when an operation requires a file path,
+	// but an empty string was passed instead.
+	ErrFilePathEmpty = errors.New("the file path is empty")
 
-	// ErrScriptEmpty is an error type used when loading a script file.
-	// This error is returned when the script code is empty.
-	ErrScriptEmpty = errors.New("empty IoT script")
+	// ErrConfigurationEmpty indicates that the loaded configuration file
+	// resulted in an empty Config instance.
+	ErrConfigurationEmpty = errors.New("the configuration is empty")
+
+	// ErrScriptEmpty indicates that the loaded script file
+	// resulted in an empty Script instance.
+	ErrScriptEmpty = errors.New("the IoT script is empty")
 
 	// ErrUnexpected is an error type used when probing for IoT devices on the network.
 	// This error is returned when a device is found, but doesn't match an expected target device.
