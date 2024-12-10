@@ -26,7 +26,7 @@ func TestScript(t *testing.T) {
 		t.Fatalf("expected %q, got %q", name, s.Name())
 	}
 
-	if bytes.Compare(s.Code(), []byte(code)) != 0 {
+	if !bytes.Equal(s.Code(), []byte(code)) {
 		t.Fatalf("expected %q, got %q", code, s.Code())
 	}
 
