@@ -2,7 +2,6 @@ package device
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 	"os"
@@ -38,7 +37,7 @@ func loadConfig(r io.Reader, cfg Config) error {
 // Returns an error if the file cannot be opened or the configuration cannot be loaded.
 func LoadConfigFromPath(fp string, cfg Config) error {
 	if fp == "" {
-		return fmt.Errorf("the configuration file path cannot be empty")
+		return ErrFilePathEmpty
 	}
 
 	f, err := os.Open(fp)
