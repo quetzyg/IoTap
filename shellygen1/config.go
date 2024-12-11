@@ -1,6 +1,6 @@
 package shellygen1
 
-import "github.com/Stowify/IoTap/device"
+import "github.com/quetzyg/IoTap/device"
 
 // The settings type increases flexibility when dealing with
 // configuration payloads expected by the Shelly Gen1 device API.

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/Stowify/IoTap/httpclient"
+	"github.com/quetzyg/IoTap/httpclient"
 )
 
 // Updater is an interface that provides a standard way to trigger a firmware update on IoT devices.

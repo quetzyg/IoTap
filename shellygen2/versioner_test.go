@@ -92,11 +92,11 @@ func TestDevice_UpdateDetails(t *testing.T) {
 			name: "update details",
 			dev: &Device{
 				ip:          net.ParseIP("192.168.146.123"),
-				name:        "stowify-A001",
+				name:        "DEV-A001",
 				Version:     "1.0",
 				VersionNext: "2.0",
 			},
-			details: "[shelly_gen2] stowify-A001 @ 192.168.146.123 can be updated from 1.0 to 2.0",
+			details: "[shelly_gen2] DEV-A001 @ 192.168.146.123 can be updated from 1.0 to 2.0",
 		},
 	}
 

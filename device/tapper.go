@@ -9,7 +9,7 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/Stowify/IoTap/httpclient"
+	"github.com/quetzyg/IoTap/httpclient"
 )
 
 const (

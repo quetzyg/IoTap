@@ -21,14 +21,14 @@ A command line interface (CLI) tool designed to simplify the management and conf
 
 ### From Source
 ```bash
-git clone https://github.com/Stowify/IoTap.git
+git clone https://github.com/quetzyg/IoTap.git
 cd IoTap
 go build
 sudo mv IoTap /usr/local/bin/iotap
 ```
 
 ### Binary Release
-Download the latest release from the [Releases](https://github.com/Stowify/IoTap/releases) page.
+Download the latest release from the [Releases](https://github.com/quetzyg/IoTap/releases) page.
 
 ## Usage
 

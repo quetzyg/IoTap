@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/Stowify/IoTap/httpclient"
+	"github.com/quetzyg/IoTap/httpclient"
 )
 
 // Deployer is an interface that provides a standard way to deploy a script on supported IoT devices.

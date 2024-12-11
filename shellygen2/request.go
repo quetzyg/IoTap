@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/Stowify/IoTap/httpclient"
+	"github.com/quetzyg/IoTap/httpclient"
 )
 
 const rpcPath = "rpc"

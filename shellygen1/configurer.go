@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/Stowify/IoTap/device"
+	"github.com/quetzyg/IoTap/device"
 )
 
 var paths = map[string]string{

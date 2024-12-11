@@ -4,8 +4,8 @@ import (
 	"net"
 	"net/http"
 
-	"github.com/Stowify/IoTap/device"
-	"github.com/Stowify/IoTap/httpclient"
+	"github.com/quetzyg/IoTap/device"
+	"github.com/quetzyg/IoTap/httpclient"
 )
 
 const probePath = "shelly"

@@ -71,9 +71,9 @@ jobs:
           fi
           go build -v \
           -trimpath \
-          -ldflags="-s -w -X github.com/Stowify/IoTap/meta.Version=${{ needs.version.outputs.number }} \
-          -X github.com/Stowify/IoTap/meta.Hash=${{ needs.version.outputs.hash }} \
-          -X github.com/Stowify/IoTap/meta.BuildTime=${{ needs.version.outputs.time }}" \
+          -ldflags="-s -w -X github.com/quetzyg/IoTap/meta.Version=${{ needs.version.outputs.number }} \
+          -X github.com/quetzyg/IoTap/meta.Hash=${{ needs.version.outputs.hash }} \
+          -X github.com/quetzyg/IoTap/meta.BuildTime=${{ needs.version.outputs.time }}" \
           -o $BINARY \
           ./main.go
 

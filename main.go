@@ -7,12 +7,12 @@ import (
 	"log"
 	"os"
 
-	"github.com/Stowify/IoTap/command"
-	"github.com/Stowify/IoTap/device"
-	"github.com/Stowify/IoTap/ip"
-	"github.com/Stowify/IoTap/meta"
-	"github.com/Stowify/IoTap/shellygen1"
-	"github.com/Stowify/IoTap/shellygen2"
+	"github.com/quetzyg/IoTap/command"
+	"github.com/quetzyg/IoTap/device"
+	"github.com/quetzyg/IoTap/ip"
+	"github.com/quetzyg/IoTap/meta"
+	"github.com/quetzyg/IoTap/shellygen1"
+	"github.com/quetzyg/IoTap/shellygen2"
 )
 
 func init() {

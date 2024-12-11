@@ -6,9 +6,9 @@ import (
 	"slices"
 	"testing"
 
-	"github.com/Stowify/IoTap/device"
-	"github.com/Stowify/IoTap/shellygen1"
-	"github.com/Stowify/IoTap/shellygen2"
+	"github.com/quetzyg/IoTap/device"
+	"github.com/quetzyg/IoTap/shellygen1"
+	"github.com/quetzyg/IoTap/shellygen2"
 )
 
 func TestFlags_Usage(t *testing.T) {

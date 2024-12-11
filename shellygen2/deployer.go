@@ -3,8 +3,8 @@ package shellygen2
 import (
 	"net/http"
 
-	"github.com/Stowify/IoTap/device"
-	"github.com/Stowify/IoTap/httpclient"
+	"github.com/quetzyg/IoTap/device"
+	"github.com/quetzyg/IoTap/httpclient"
 )
 
 const chunkSize = 1024
