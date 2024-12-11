@@ -55,11 +55,50 @@ iotap 192.168.1.0/24 dump -f devices.json -format json
 iotap 192.168.1.0/24 dump -driver shelly_gen2 -sort ip
 ```
 
+Dump command help
+```bash
+iotap 192.168.1.0/24 dump -h
+```
+
+Output:
+```bash
+Usage of dump:
+ ./iotap <CIDR> dump [flags]
+
+Flags:
+  -driver value
+        Filter by device driver (default all)
+  -f string
+        Output the scan results to a file
+  -format value
+        Dump output format (default csv)
+  -sort value
+        Sort devices by field (default name)
+
+```
+
 #### Config
 Apply configuration to multiple devices
 ```bash
 # Apply configuration to all Shelly Gen1 devices
 iotap 192.168.1.0/24 config -driver shelly_gen1 -f config.json
+```
+
+Configuration command help
+```bash
+iotap 192.168.1.0/24 config -h
+```
+
+Output:
+```bash
+Usage of config:
+ ./iotap <CIDR> config [flags]
+
+Flags:
+  -driver value
+        Filter by device driver (default all)
+  -f string
+        Device configuration file path
 ```
 
 #### Version
@@ -72,6 +111,21 @@ iotap 192.168.1.0/24 version
 iotap 192.168.1.0/24 version -driver shelly_gen2
 ```
 
+Version command help
+```bash
+iotap 192.168.1.0/24 version -h
+```
+
+Output:
+```bash
+Usage of version:
+ ./iotap <CIDR> version [flags]
+
+Flags:
+  -driver value
+        Filter by device driver (default all)
+```
+
 #### Update
 Update device firmware
 ```bash
@@ -82,14 +136,46 @@ iotap 192.168.1.0/24 update
 iotap 192.168.1.0/24 update -driver shelly_gen1
 ```
 
+Update command help
+```bash
+iotap 192.168.1.0/24 update -h
+```
+
+Output:
+```bash
+Usage of update:
+ ./iotap <CIDR> update [flags]
+
+Flags:
+  -driver value
+        Filter by device driver (default all)
+```
+
 #### Deploy
-Deploy scripts to devices
+Deploy one or more scripts to devices (only Shelly Gen2 is supported, at the moment).
 ```bash
 # Deploy a script to all Shelly Gen2 devices
 iotap 192.168.1.0/24 deploy -driver shelly_gen2 -f script.js
 
 # Deploy multiple scripts to all Shelly Gen2 devices
 iotap 192.168.1.0/24 deploy -driver shelly_gen2 -f script1.js -f script2.js -f script3.js
+```
+
+Deploy command help
+```bash
+iotap 192.168.1.0/24 deploy -h
+```
+
+Output:
+```bash
+Usage of deploy:
+ ./iotap <CIDR> deploy [flags]
+
+Flags:
+  -driver value
+        Filter by device driver (default all)
+  -f value
+        Deploy script file path (allows multiple calls)
 ```
 
 #### Reboot
@@ -102,25 +188,28 @@ iotap 192.168.1.0/24 reboot
 iotap 192.168.1.0/24 reboot -driver shelly_gen1
 ```
 
-## Flags
+Reboot command help
+```bash
+iotap 192.168.1.0/24 reboot -h
+```
 
-### Dump Command
-- `-driver`: Filter by device driver (default: all)
-- `-f`: Output scan results to a file
-- `-format`: Output format (default: csv)
-- `-sort`: Sort devices by field (default: name)
+Output:
+```bash
+Usage of reboot:
+ ./iotap <CIDR> reboot [flags]
 
-### Other Commands
-All commands support the `-driver` flag to filter by device driver.
+Flags:
+  -driver value
+        Filter by device driver (default all)
+```
 
 ## Configuration Files
 Currently, there are two supported JSON configuration formats. Shelly Gen1 and Gen2. Each generation has a different structure, based on how the corresponding device expects the data to be passed.
 
 ### Configuration Strategy
-IoTap provides flexible device targeting through a configuration strategy mechanism. In your configuration file, you can define a `strategy` section that allows precise control over which devices receive the configuration.
+IoTap provides flexible device targeting through a configuration strategy mechanism. In a configuration file, you can define a `strategy` section that allows precise control over which devices receive the configuration.
 
 #### Strategy Modes
-
 1. **Whitelist Mode**
    - When `mode` is set to `whitelist`, only devices with MAC addresses listed in the `devices` array will receive the configuration.
    - All other discovered devices will be skipped.
@@ -129,9 +218,7 @@ IoTap provides flexible device targeting through a configuration strategy mechan
    - When `mode` is set to `blacklist`, devices with MAC addresses listed in the `devices` array will be excluded from receiving the configuration.
    - All other discovered devices will receive the configuration.
 
-
 ##### Shelly Gen1 Config Example
-
 In this scenario, only devices with MAC addresses `AA:BB:CC:DD:EE:FF` and `11:22:33:44:55:66` will receive the configuration.
 
 Example:
@@ -194,8 +281,7 @@ Example:
 }
 ```
 
-### Shelly Gen2 Config Example
-
+##### Shelly Gen2 Config Example
 In this scenario, devices with MAC addresses `AA:BB:CC:DD:EE:FF` and `11:22:33:44:55:66` will be skipped, and all other discovered devices will receive the configuration.
 
 Example:
@@ -303,7 +389,7 @@ Example:
 ```
 
 ### Script File Format
-[Shelly Script Language](https://shelly-api-docs.shelly.cloud/gen2/Scripts/ShellyScriptLanguageFeatures) compatible with Shelly Gen2 devices.
+Use [Shelly Script Language](https://shelly-api-docs.shelly.cloud/gen2/Scripts/ShellyScriptLanguageFeatures) compatible code with Shelly Gen2 devices.
 
 ## Successfully tested devices:
 - **Shelly**
@@ -314,8 +400,18 @@ Example:
         - **Shelly Plus 1 (Mini)** ([Product](https://www.shelly.com/en-pt/products/product-overview/shelly-plus-1-mini), [KB](https://kb.shelly.cloud/knowledge-base/shelly-plus-1-mini), [API](https://shelly-api-docs.shelly.cloud/gen2/Devices/Gen2/ShellyPlus1))
         - **Shelly Pro 1** ([Product](https://www.shelly.com/en-pt/products/product-overview/shelly-pro-1), [KB](https://kb.shelly.cloud/knowledge-base/shelly-pro-1-v1), [API](https://shelly-api-docs.shelly.cloud/gen2/Devices/Gen2/ShellyPro1))
 
-## License
-[Apache License 2.0](LICENSE.md)
+## Support & Sponsorship
+If you find this project helpful, consider supporting its development:
+🏆 [Sponsor on GitHub](https://github.com/sponsors/quetzyg)
 
 ## Disclaimer
 Use responsibly. Always ensure you have proper authorization before tapping into network devices.
+
+## Security
+If you found a security related issue, please email **security (at) altek (dot) org**.
+
+## Credits
+- [Quetzy Garcia](https://github.com/quetzyg)
+
+## License
+**IoTap** is open source software licensed under the [Apache License 2.0](LICENSE.md).
