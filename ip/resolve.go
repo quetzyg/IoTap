@@ -1,35 +1,6 @@
 package ip
 
-import (
-	"errors"
-	"fmt"
-	"net"
-)
-
-var errNetworkMembership = errors.New("you must be in the same network")
-
-// inNetwork checks if the caller belongs to a network.
-func inNetwork(network *net.IPNet) error {
-	interfaces, err := net.Interfaces()
-	if err != nil {
-		return err
-	}
-
-	for _, i := range interfaces {
-		addrs, err := i.Addrs()
-		if err != nil {
-			return err
-		}
-
-		for _, addr := range addrs {
-			if v, ok := addr.(*net.IPNet); ok && network.Contains(v.IP) {
-				return nil
-			}
-		}
-	}
-
-	return fmt.Errorf("%w: %s", errNetworkMembership, network.IP)
-}
+import "net"
 
 // next IP address.
 func next(addr net.IP) {
@@ -45,10 +16,6 @@ func next(addr net.IP) {
 func Resolve(cidr string) ([]net.IP, error) {
 	address, network, err := net.ParseCIDR(cidr)
 	if err != nil {
-		return nil, err
-	}
-
-	if err = inNetwork(network); err != nil {
 		return nil, err
 	}
 

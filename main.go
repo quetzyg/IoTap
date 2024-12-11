@@ -134,7 +134,7 @@ func main() {
 		tapper.SetScripts(scripts)
 	}
 
-	log.Println("Scanning the network...")
+	log.Printf("Scanning the %s network...\n", os.Args[1])
 
 	devices, err := tapper.Scan(ips)
 	if err != nil {
