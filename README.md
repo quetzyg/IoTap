@@ -2,14 +2,14 @@
 
 ## Overview
 
-A command line interface (CLI) tool designed to simplify the management and configuration of IoT devices across your network. Currently supporting Shelly relays (Generation 1 and Generation 2), IoTap provides a streamlined approach to performing bulk operations on multiple IoT devices.
+A CLI (command line interface) tool designed to simplify the management and configuration of IoT devices across your network. Currently supporting Shelly (Gen1 and Gen2) relay devices, IoTap provides a streamlined approach to performing bulk operations on multiple IoT devices.
 
 ## Features
 
 - Network-wide device scanning
 - Multi-device management commands
-- Support for Shelly relays (Gen1 and Gen2)
-- Flexible filtering by device driver
+- Support for Shelly (Gen1 and Gen2) relay devices
+- Flexible device filtering and sorting
 - Multiple output formats
 - Easy configuration and script deployment
 
@@ -39,19 +39,20 @@ iotap <CIDR> <command> [flags]
 
 ### Commands
 
-#### Dump
-Scan and display device results
+<details>
+<summary><strong>dump</strong>: Output the device scan results to <strong>STDOUT</strong> or to a file.</summary>
+
 ```bash
 # Dump device results to screen in tabular form
 iotap 192.168.1.0/24 dump
 
-# Dump to CSV file
+# Dump device results to CSV file
 iotap 192.168.1.0/24 dump -f devices.csv
 
-# Dump to JSON file
+# Dump device results to JSON file
 iotap 192.168.1.0/24 dump -f devices.json -format json
 
-# Filter by driver and sort by IP
+# Dump device results filtered by driver and sorted by IP
 iotap 192.168.1.0/24 dump -driver shelly_gen2 -sort ip
 ```
 
@@ -76,11 +77,13 @@ Flags:
         Sort devices by field (default name)
 
 ```
+</details>
 
-#### Config
-Apply configuration to multiple devices
+<details>
+<summary><strong>config</strong>: Apply a configuration to multiple devices of a specific driver</summary>
+
 ```bash
-# Apply configuration to all Shelly Gen1 devices
+# Apply the configuration from `config.json` to all Shelly Gen1 devices
 iotap 192.168.1.0/24 config -driver shelly_gen1 -f config.json
 ```
 
@@ -100,14 +103,17 @@ Flags:
   -f string
         Device configuration file path
 ```
+</details>
 
-#### Version
-Check device firmware versions
+<details>
+<summary><strong>version</strong>: Check the device firmware versions</summary>
+Out of date devices will be listed.
+
 ```bash
 # Check versions for all devices
 iotap 192.168.1.0/24 version
 
-# Check versions for specific driver
+# Check versions for specific driver (Shelly Gen2)
 iotap 192.168.1.0/24 version -driver shelly_gen2
 ```
 
@@ -125,14 +131,16 @@ Flags:
   -driver value
         Filter by device driver (default all)
 ```
+</details>
 
-#### Update
-Update device firmware
+<details>
+<summary><strong>update</strong>: Update devices to the latest available vendor firmware</summary>
+
 ```bash
-# Update all devices
+# Update the firmware for all devices
 iotap 192.168.1.0/24 update
 
-# Update specific driver devices
+# Update the firmware for specific devices (Shelly Gen1)
 iotap 192.168.1.0/24 update -driver shelly_gen1
 ```
 
@@ -150,9 +158,13 @@ Flags:
   -driver value
         Filter by device driver (default all)
 ```
+</details>
 
-#### Deploy
-Deploy one or more scripts to devices (only Shelly Gen2 is supported, at the moment).
+<details>
+<summary><strong>deploy</strong>: Deploy one or more scripts to devices.</summary>
+
+Note that, at the moment, only Shelly Gen2 devices support this command.
+
 ```bash
 # Deploy a script to all Shelly Gen2 devices
 iotap 192.168.1.0/24 deploy -driver shelly_gen2 -f script.js
@@ -177,14 +189,16 @@ Flags:
   -f value
         Deploy script file path (allows multiple calls)
 ```
+</details>
 
-#### Reboot
-Reboot devices
+<details>
+<summary><strong>reboot</strong>: Restart devices</summary>
+
 ```bash
 # Reboot all devices
 iotap 192.168.1.0/24 reboot
 
-# Reboot specific driver devices
+# Reboot specific devices by driver
 iotap 192.168.1.0/24 reboot -driver shelly_gen1
 ```
 
@@ -202,6 +216,7 @@ Flags:
   -driver value
         Filter by device driver (default all)
 ```
+</details>
 
 ## Configuration Files
 Currently, there are two supported JSON configuration formats. Shelly Gen1 and Gen2. Each generation has a different structure, based on how the corresponding device expects the data to be passed.
@@ -218,10 +233,12 @@ IoTap provides flexible device targeting through a configuration strategy mechan
    - When `mode` is set to `blacklist`, devices with MAC addresses listed in the `devices` array will be excluded from receiving the configuration.
    - All other discovered devices will receive the configuration.
 
-##### Shelly Gen1 Config Example
+<details>
+<summary><strong>Shelly Gen1</strong>: Configuration Example</summary>
+
 In this scenario, only devices with MAC addresses `AA:BB:CC:DD:EE:FF` and `11:22:33:44:55:66` will receive the configuration.
 
-Example:
+**Example:**
 ```json
 {
   "meta": {
@@ -280,11 +297,14 @@ Example:
   }
 }
 ```
+</details>
 
-##### Shelly Gen2 Config Example
+<details>
+<summary><strong>Shelly Gen2</strong>: Configuration Example</summary>
+
 In this scenario, devices with MAC addresses `AA:BB:CC:DD:EE:FF` and `11:22:33:44:55:66` will be skipped, and all other discovered devices will receive the configuration.
 
-Example:
+**Example:**
 ```json
 {
   "meta": {
@@ -387,9 +407,10 @@ Example:
   }
 }
 ```
+</details>
 
 ### Script File Format
-Use [Shelly Script Language](https://shelly-api-docs.shelly.cloud/gen2/Scripts/ShellyScriptLanguageFeatures) compatible code with Shelly Gen2 devices.
+Use [Shelly Script Language](https://shelly-api-docs.shelly.cloud/gen2/Scripts/ShellyScriptLanguageFeatures) compatible code when deploying to Shelly Gen2 devices.
 
 ## Successfully tested devices:
 - **Shelly**
@@ -402,10 +423,11 @@ Use [Shelly Script Language](https://shelly-api-docs.shelly.cloud/gen2/Scripts/S
 
 ## Support & Sponsorship
 If you find this project helpful, consider supporting its development:
+
 🏆 [Sponsor on GitHub](https://github.com/sponsors/quetzyg)
 
 ## Disclaimer
-Use responsibly. Always ensure you have proper authorization before tapping into network devices.
+Use responsibly! Always ensure you have proper authorisation before tapping into network devices.
 
 ## Security
 If you found a security related issue, please email **security (at) altek (dot) org**.
