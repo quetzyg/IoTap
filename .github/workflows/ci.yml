@@ -47,3 +47,8 @@ jobs:
         run: |-
           go test -race -shuffle=on -failfast -vet=off -v ./... -coverprofile=coverage.out
           go tool cover -html=coverage.out -o coverage.html
+
+      - name: Check test coverage
+        uses: vladopajic/go-test-coverage@v2
+        with:
+          config: ./.testcoverage.yml
