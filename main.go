@@ -66,7 +66,7 @@ func main() {
 	// Collect IP addresses for scanning
 	ips, err := ip.Resolve(os.Args[1])
 	if err != nil {
-		log.Printf("Unable to resolve IP addresses: %v\n\n", err)
+		log.Printf("Unable to collect IP addresses: %v\n\n", err)
 
 		flags.Usage()
 
@@ -95,7 +95,6 @@ func main() {
 
 	tapper := device.NewTapper(probers)
 
-	// Avoid scanning if the config/script loading fail
 	if cmd == command.Config {
 		var config device.Config
 
@@ -189,7 +188,7 @@ func main() {
 		err = tapper.Execute(device.Update, devices)
 
 	case command.Deploy:
-		log.Print("Deploying script to devices...")
+		log.Print("Deploying script(s) to devices...")
 
 		err = tapper.Execute(device.Deploy, devices)
 
