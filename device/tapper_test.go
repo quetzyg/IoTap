@@ -22,7 +22,7 @@ func TestNewTapper(t *testing.T) {
 }
 
 func TestTapper_SetConfig(t *testing.T) {
-	tap := NewTapper(nil)
+	tap := &Tapper{}
 
 	tap.SetConfig(&config{Foo: "bar"})
 
@@ -32,7 +32,7 @@ func TestTapper_SetConfig(t *testing.T) {
 }
 
 func TestTapper_SetScripts(t *testing.T) {
-	tap := NewTapper(nil)
+	tap := &Tapper{}
 
 	tap.SetScripts([]*Script{
 		{
@@ -43,6 +43,73 @@ func TestTapper_SetScripts(t *testing.T) {
 
 	if len(tap.scripts) != 1 {
 		t.Fatal("script count must be 1")
+	}
+}
+
+func TestTapper_probe(t *testing.T) {
+	tests := []struct {
+		name         string
+		prober       Prober
+		roundTripper http.RoundTripper
+		dev          Resource
+		failed       bool
+		err          error
+	}{
+		{
+			name: "failure: probe error",
+			prober: &prober{
+				funcError: &url.Error{},
+			},
+			failed: true,
+			err:    &ProbeError{},
+		},
+		{
+			name:   "success: device found",
+			prober: &prober{resource: &resource{}},
+			roundTripper: &RoundTripper{
+				response: &http.Response{
+					StatusCode: http.StatusOK,
+					Body:       io.NopCloser(strings.NewReader("{}")),
+				},
+			},
+			dev:    &resource{},
+			failed: false,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			tap := &Tapper{
+				probers: []Prober{test.prober},
+			}
+
+			ch := make(chan *ProcedureResult, 1)
+
+			client := &http.Client{
+				Transport: test.roundTripper,
+			}
+
+			tap.probe(ch, client, net.ParseIP("192.168.146.123"))
+
+			result := <-ch
+
+			if test.failed != result.Failed() {
+				t.Fatalf("expected %t, got %t", test.failed, result.Failed())
+			}
+
+			if !reflect.DeepEqual(result.dev, test.dev) {
+				t.Fatalf("expected %#v, got %#v", test.dev, result.dev)
+			}
+
+			if _, ok := test.err.(*ProbeError); ok {
+				var probeErr *ProbeError
+				if !errors.As(test.err, &probeErr) {
+					t.Fatalf("expected %#v, got %#v", test.err, result.err)
+				}
+
+				return
+			}
+		})
 	}
 }
 
