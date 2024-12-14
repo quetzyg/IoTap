@@ -29,33 +29,3 @@ func TestMacify(t *testing.T) {
 		})
 	}
 }
-
-func TestSecuredEmoji(t *testing.T) {
-	tests := []struct {
-		name     string
-		dev      Resource
-		expected string
-	}{
-		{
-			name: "return secured emoji",
-			dev: &resource{
-				secured: true,
-			},
-			expected: secured,
-		},
-		{
-			name:     "return unsecured emoji",
-			dev:      &resource{},
-			expected: unsecured,
-		},
-	}
-
-	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			got := SecuredEmoji(test.dev)
-			if got != test.expected {
-				t.Fatalf("expected %s, got %s", test.expected, got)
-			}
-		})
-	}
-}

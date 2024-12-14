@@ -29,7 +29,7 @@ func TestDumpCSV(t *testing.T) {
 					secured: false,
 				},
 			},
-			out: "shelly_gen1,00:11:22:33:44:55,192.168.146.123,Storage,SHSW-1,v1.2.3,🔓\n",
+			out: "Driver,MAC Address,IP Address,Name,Model,Firmware,Secured\nshelly_gen1,00:11:22:33:44:55,192.168.146.123,Storage,SHSW-1,v1.2.3,false\n",
 			sep: ",",
 		},
 		{
@@ -44,7 +44,7 @@ func TestDumpCSV(t *testing.T) {
 					secured: false,
 				},
 			},
-			out: "shelly_gen1  00:11:22:33:44:55  192.168.146.123  Storage  SHSW-1  v1.2.3  🔓\n",
+			out: "Driver       MAC Address        IP Address       Name     Model   Firmware  Secured\nshelly_gen1  00:11:22:33:44:55  192.168.146.123  Storage  SHSW-1  v1.2.3    false\n",
 			sep: "\t",
 		},
 	}

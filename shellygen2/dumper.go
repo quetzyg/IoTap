@@ -2,9 +2,8 @@ package shellygen2
 
 import (
 	"encoding/json"
+	"fmt"
 	"strings"
-
-	"github.com/quetzyg/IoTap/device"
 )
 
 // DelimitedRow returns a string representation of the resource,
@@ -14,10 +13,10 @@ func (d *Device) DelimitedRow(sep string) string {
 		d.Driver(),
 		d.mac.String(),
 		d.ip.String(),
-		d.Name(),
-		d.Model(),
+		d.name,
+		d.model,
 		d.Firmware,
-		device.SecuredEmoji(d),
+		fmt.Sprint(d.secured),
 	}, sep)
 }
 
@@ -29,7 +28,7 @@ func (d *Device) MarshalJSON() ([]byte, error) {
 		"ip":       d.ip,
 		"name":     d.name,
 		"model":    d.model,
-		"secured":  d.secured,
 		"firmware": d.Firmware,
+		"secured":  d.secured,
 	})
 }

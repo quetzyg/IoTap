@@ -34,17 +34,3 @@ func Macify(address string) string {
 
 	return strings.Join(octets, ":")
 }
-
-const (
-	secured   = "🔒"
-	unsecured = "🔓"
-)
-
-// SecuredEmoji returns an open/closed lock emoji, depending on the secured device state.
-func SecuredEmoji(dev Resource) string {
-	if dev.Secured() {
-		return secured
-	}
-
-	return unsecured
-}

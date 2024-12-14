@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"strings"
 	"text/tabwriter"
 )
 
@@ -26,15 +27,30 @@ type Dumper interface {
 func dumpCSV(devices Collection, w io.Writer, sep string) error {
 	writer := tabwriter.NewWriter(w, 0, 0, 2, ' ', 0)
 
+	header := []string{
+		"Driver",
+		"MAC Address",
+		"IP Address",
+		"Name",
+		"Model",
+		"Firmware",
+		"Secured",
+	}
+
+	_, err := fmt.Fprintln(writer, strings.Join(header, sep))
+	if err != nil {
+		return err
+	}
+
 	for _, device := range devices {
-		_, err := fmt.Fprintln(writer, device.(Dumper).DelimitedRow(sep))
+		_, err = fmt.Fprintln(writer, device.(Dumper).DelimitedRow(sep))
 		if err != nil {
 			return err
 		}
 	}
 
 	defer func() {
-		err := writer.Flush()
+		err = writer.Flush()
 		if err != nil {
 			log.Fatalf("Writer flush error: %v", err)
 		}

@@ -3,6 +3,7 @@ package device
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net"
 	"reflect"
 	"strings"
@@ -71,10 +72,10 @@ func (r *resource) DelimitedRow(sep string) string {
 		r.Driver(),
 		r.mac.String(),
 		r.ip.String(),
-		r.Name(),
-		r.Model(),
+		r.name,
+		r.model,
 		"v1.2.3",
-		SecuredEmoji(r),
+		fmt.Sprint(r.secured),
 	}, sep)
 }
 
@@ -86,8 +87,8 @@ func (r *resource) MarshalJSON() ([]byte, error) {
 		"ip":       r.ip,
 		"name":     r.name,
 		"model":    r.model,
-		"secured":  r.secured,
 		"firmware": "v1.2.3",
+		"secured":  r.secured,
 	})
 }
 
