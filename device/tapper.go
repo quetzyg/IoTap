@@ -136,7 +136,7 @@ func (t *Tapper) Scan(ips []net.IP) (Collection, error) {
 
 	for range ips {
 		result := <-ch
-		if result.err != nil {
+		if result.Failed() {
 			errs = append(errs, result.err)
 		}
 
