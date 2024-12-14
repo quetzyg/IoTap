@@ -120,7 +120,7 @@ func (t *Tapper) probe(ch chan<- *ProcedureResult, client *http.Client, ip net.I
 
 // Scan the network for IoT devices and return a Collection on success, error on failure.
 func (t *Tapper) Scan(ips []net.IP) (Collection, error) {
-	ch := make(chan *ProcedureResult)
+	ch := make(chan *ProcedureResult, channelBuffer)
 
 	client := &http.Client{
 		Transport: t.transport,
