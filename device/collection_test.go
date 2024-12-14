@@ -43,7 +43,7 @@ func (r *resource) Model() string {
 
 // ID returns the resource's unique identifier.
 func (r *resource) ID() string {
-	return "id"
+	return r.mac.String()
 }
 
 // Driver name of this resource implementation.
