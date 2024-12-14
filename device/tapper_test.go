@@ -11,23 +11,56 @@ import (
 	"testing"
 )
 
-var errRequestCreate = errors.New("error creating request")
+func TestNewTapper(t *testing.T) {
+	tap := NewTapper([]Prober{
+		&prober{},
+	})
+
+	if len(tap.probers) != 1 {
+		t.Fatal("prober count must be 1")
+	}
+}
+
+func TestTapper_SetConfig(t *testing.T) {
+	tap := NewTapper(nil)
+
+	tap.SetConfig(&config{Foo: "bar"})
+
+	if tap.config.Empty() {
+		t.Fatal("config is empty")
+	}
+}
+
+func TestTapper_SetScripts(t *testing.T) {
+	tap := NewTapper(nil)
+
+	tap.SetScripts([]*Script{
+		{
+			name: "foo",
+			code: []byte("var foo = 123;"),
+		},
+	})
+
+	if len(tap.scripts) != 1 {
+		t.Fatal("script count must be 1")
+	}
+}
 
 // prober implementation for testing purposes.
 type prober struct {
-	badRequest bool
-	resource   *resource
+	resource  *resource
+	funcError error
 }
 
 // Request implementation for testing purposes.
 func (p *prober) Request(_ net.IP) (*http.Request, Resource, error) {
-	if p.badRequest {
-		return nil, nil, errRequestCreate
+	if p.funcError != nil {
+		return nil, nil, p.funcError
 	}
 
-	r, _ := http.NewRequest(http.MethodGet, "http://192.168.146.123/settings", nil)
+	r, err := http.NewRequest(http.MethodGet, "", nil)
 
-	return r, p.resource, nil
+	return r, p.resource, err
 }
 
 // RoundTripper is a custom type used for mocking HTTP responses.
@@ -50,9 +83,11 @@ func TestProbeIP(t *testing.T) {
 		err          error
 	}{
 		{
-			name:   "failure: bad prober",
-			prober: &prober{badRequest: true},
-			err:    errRequestCreate,
+			name: "failure: bad prober",
+			prober: &prober{
+				funcError: &url.Error{},
+			},
+			err: &url.Error{},
 		},
 		{
 			name:   "failure: http response error",
@@ -104,6 +139,14 @@ func TestProbeIP(t *testing.T) {
 
 			if !reflect.DeepEqual(res, test.res) {
 				t.Fatalf("expected %#v, got %#v", test.res, res)
+			}
+
+			if _, ok := test.err.(*url.Error); ok {
+				var urlErr *url.Error
+				if !errors.As(test.err, &urlErr) {
+					t.Fatalf("expected %#v, got %#v", test.err, err)
+				}
+				return
 			}
 
 			if !errors.Is(err, test.err) {
