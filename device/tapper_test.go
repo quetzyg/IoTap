@@ -58,11 +58,7 @@ func TestProbeIP(t *testing.T) {
 			name:   "failure: http response error",
 			prober: &prober{},
 			roundTripper: &RoundTripper{
-				err: &url.Error{
-					Op:  "parse",
-					URL: ":",
-					Err: errors.New("missing protocol scheme"),
-				},
+				err: &url.Error{},
 			},
 		},
 		{
