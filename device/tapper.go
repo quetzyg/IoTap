@@ -3,7 +3,6 @@ package device
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net"
 	"net/http"
 	"net/url"
@@ -25,6 +24,13 @@ type Tapper struct {
 	transport http.RoundTripper
 }
 
+// NewTapper creates a new *Tapper instance.
+func NewTapper(probers []Prober) *Tapper {
+	return &Tapper{
+		probers: probers,
+	}
+}
+
 // SetConfig that was passed by the user.
 func (t *Tapper) SetConfig(cfg Config) {
 	t.config = cfg
@@ -33,13 +39,6 @@ func (t *Tapper) SetConfig(cfg Config) {
 // SetScripts that were passed by the user.
 func (t *Tapper) SetScripts(src []*Script) {
 	t.scripts = src
-}
-
-// NewTapper creates a new *Tapper instance.
-func NewTapper(probers []Prober) *Tapper {
-	return &Tapper{
-		probers: probers,
-	}
 }
 
 // probeIP for a specific IoT device.
@@ -69,29 +68,6 @@ func probeIP(prober Prober, client *http.Client, ip net.IP) (Resource, error) {
 	}
 
 	return dev, err
-}
-
-// ProcedureResult encapsulates the outcome of a procedure executed on an IoT device.
-// These can be related to various operations such as probing, updating, rebooting or configuring a device.
-type ProcedureResult struct {
-	dev Resource
-	err error
-}
-
-// Failed checks if the ProcedureResult execution has failed.
-func (pr *ProcedureResult) Failed() bool {
-	return pr.err != nil
-}
-
-// Error interface implementation for ProcedureResult.
-func (pr *ProcedureResult) Error() string {
-	return fmt.Sprintf(
-		"[%s] %s @ %s: %v\n",
-		pr.dev.Driver(),
-		pr.dev.ID(),
-		pr.dev.IP(),
-		pr.err,
-	)
 }
 
 // probe an IP and return the probe result to a channel.
@@ -153,9 +129,6 @@ func (t *Tapper) Scan(ips []net.IP) (Collection, error) {
 
 	return nil, errs
 }
-
-// procedure is a function type that encapsulates operations to be carried out on IoT devices.
-type procedure func(tap *Tapper, res Resource, ch chan<- *ProcedureResult)
 
 // Execute a procedure on a device collection.
 func (t *Tapper) Execute(proc procedure, devices Collection) error {
