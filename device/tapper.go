@@ -113,7 +113,7 @@ func (t *Tapper) Scan(ips []net.IP) (Collection, error) {
 	for range ips {
 		result := <-ch
 		if result.Failed() {
-			errs = append(errs, result.err)
+			errs = append(errs, result)
 		}
 
 		if result.dev != nil {
@@ -147,7 +147,7 @@ func (t *Tapper) Execute(proc procedure, devices Collection) error {
 	for range devices {
 		result := <-ch
 		if result.Failed() {
-			errs = append(errs, result.err)
+			errs = append(errs, result)
 		}
 	}
 
