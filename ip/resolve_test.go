@@ -64,14 +64,21 @@ func TestResolve(t *testing.T) {
 				t.Fatalf("expected %#v, got %#v", test.ips, ips)
 			}
 
-			var pe *net.ParseError
-			if errors.As(err, &pe) {
-				return
+			var parseError *net.ParseError
+			switch {
+			case errors.As(test.err, &parseError):
+				var pe *net.ParseError
+				if errors.As(err, &pe) {
+					return
+				}
+
+			default:
+				if errors.Is(err, test.err) {
+					return
+				}
 			}
 
-			if !errors.Is(err, test.err) {
-				t.Fatalf("expected %#v, got %#v", test.err, err)
-			}
+			t.Fatalf("expected %#v, got %#v", test.err, err)
 		})
 	}
 }

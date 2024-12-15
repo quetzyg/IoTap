@@ -65,18 +65,16 @@ func TestStrategy_UnmarshalJSON(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			err := json.Unmarshal([]byte(test.data), &Strategy{})
 
-			switch v := test.err.(type) {
-			case nil:
-				if errors.Is(err, v) {
-					return
-				}
-
-			case *json.SyntaxError:
+			var syntaxError *json.SyntaxError
+			var addrError *net.AddrError
+			switch {
+			case errors.As(test.err, &syntaxError):
 				var se *json.SyntaxError
 				if errors.As(err, &se) {
 					return
 				}
-			case *net.AddrError:
+
+			case errors.As(test.err, &addrError):
 				var ae *net.AddrError
 				if errors.As(err, &ae) {
 					return
@@ -88,7 +86,7 @@ func TestStrategy_UnmarshalJSON(t *testing.T) {
 				}
 			}
 
-			t.Fatalf("expected %v, got %v", test.err, err)
+			t.Fatalf("expected %#v, got %#v", test.err, err)
 		})
 	}
 }
