@@ -147,7 +147,7 @@ func (t *Tapper) Execute(proc procedure, devices Collection) error {
 	for range devices {
 		result := <-ch
 		if result.Failed() {
-			errs = append(errs, result)
+			errs = append(errs, result.err)
 		}
 	}
 
