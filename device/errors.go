@@ -3,9 +3,7 @@ package device
 import (
 	"errors"
 	"fmt"
-	"log"
 	"net"
-	"strings"
 )
 
 var (
@@ -56,34 +54,15 @@ type ProbeError struct {
 	err error
 }
 
-// Error interface implementation for ProbeError.
+// Error interface implementation.
 func (pe *ProbeError) Error() string {
 	return fmt.Sprintf("%s: %v\n", pe.ip, pe.err)
 }
 
-// Errors represents a device error collection.
+// Errors represents an error collection.
 type Errors []error
 
-// Error interface implementation for Errors.
+// Error interface implementation.
 func (e Errors) Error() string {
-	var b strings.Builder
-	for _, err := range e {
-		b.WriteString(err.Error())
-	}
-
-	return b.String()
-}
-
-// Empty checks if the collection has any errors.
-func (e Errors) Empty() bool {
-	return len(e) == 0
-}
-
-// Print the success/failure stats and each error in the collection per line.
-func (e Errors) Print() {
-	log.Printf("Failures: %d\n", len(e))
-
-	for _, err := range e {
-		log.Println(err)
-	}
+	return errors.Join(e...).Error()
 }

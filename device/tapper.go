@@ -123,7 +123,7 @@ func (t *Tapper) Scan(ips []net.IP) (Collection, error) {
 
 	close(ch)
 
-	if errs.Empty() {
+	if len(errs) == 0 {
 		return devices, nil
 	}
 
@@ -153,7 +153,7 @@ func (t *Tapper) Execute(proc procedure, devices Collection) error {
 
 	close(ch)
 
-	if errs.Empty() {
+	if len(errs) == 0 {
 		return nil
 	}
 

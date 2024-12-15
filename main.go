@@ -199,15 +199,9 @@ func main() {
 	}
 
 ErrorHandling:
-	var ec device.Errors
-	if errors.As(err, &ec) && !ec.Empty() {
-		ec.Print()
-
-		os.Exit(1)
-	}
-
 	if err != nil {
-		log.Print(err)
+		log.Println("Errors found:")
+		log.Println(err)
 
 		os.Exit(1)
 	}
