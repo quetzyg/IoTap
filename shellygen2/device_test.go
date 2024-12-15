@@ -1,6 +1,7 @@
 package shellygen2
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"net"
@@ -32,8 +33,8 @@ func TestDevice_IP(t *testing.T) {
 }
 
 func TestDevice_MAC(t *testing.T) {
-	if dev.MAC().String() != mac.String() {
-		t.Fatalf("expected %q, got %q", mac.String(), dev.MAC().String())
+	if !bytes.Equal(dev.MAC(), mac) {
+		t.Fatalf("expected %q, got %q", mac, dev.MAC())
 	}
 }
 
