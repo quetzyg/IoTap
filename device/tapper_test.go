@@ -101,13 +101,19 @@ func TestTapper_probe(t *testing.T) {
 				t.Fatalf("expected %#v, got %#v", test.dev, result.dev)
 			}
 
-			if _, ok := test.err.(*ProbeError); ok {
-				var probeErr *ProbeError
-				if !errors.As(test.err, &probeErr) {
-					t.Fatalf("expected %#v, got %#v", test.err, result.err)
+			var probeError *ProbeError
+			switch {
+			case errors.As(test.err, &probeError):
+				var pe *ProbeError
+				if errors.As(result.err, &pe) {
+					return
 				}
 
+			case errors.Is(result.err, test.err):
 				return
+
+			default:
+				t.Fatalf("expected %#v, got %#v", test.err, result.err)
 			}
 		})
 	}
@@ -208,15 +214,18 @@ func TestProbeIP(t *testing.T) {
 				t.Fatalf("expected %#v, got %#v", test.res, res)
 			}
 
-			if _, ok := test.err.(*url.Error); ok {
-				var urlErr *url.Error
-				if !errors.As(test.err, &urlErr) {
-					t.Fatalf("expected %#v, got %#v", test.err, err)
+			var urlError *url.Error
+			switch {
+			case errors.As(test.err, &urlError):
+				var ue *url.Error
+				if errors.As(err, &ue) {
+					return
 				}
-				return
-			}
 
-			if !errors.Is(err, test.err) {
+			case errors.Is(err, test.err):
+				return
+
+			default:
 				t.Fatalf("expected %#v, got %#v", test.err, err)
 			}
 		})

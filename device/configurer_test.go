@@ -78,15 +78,18 @@ func TestConfigure(t *testing.T) {
 
 			result := <-ch
 
-			if _, ok := test.err.(*url.Error); ok {
-				var urlErr *url.Error
-				if !errors.As(result.err, &urlErr) {
-					t.Fatalf("expected %#v, got %#v", test.err, result.err)
+			var urlError *url.Error
+			switch {
+			case errors.As(test.err, &urlError):
+				var ue *url.Error
+				if errors.As(result.err, &ue) {
+					return
 				}
-				return
-			}
 
-			if !errors.Is(result.err, test.err) {
+			case errors.Is(result.err, test.err):
+				return
+
+			default:
 				t.Fatalf("expected %#v, got %#v", test.err, result.err)
 			}
 		})

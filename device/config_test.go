@@ -125,15 +125,18 @@ func TestLoadConfigFromPath(t *testing.T) {
 				t.Fatalf("expected an error but got nil")
 			}
 
-			if _, ok := test.err.(*fs.PathError); ok {
-				var pathErr *fs.PathError
-				if !errors.As(err, &pathErr) {
-					t.Fatalf("expected %#v, got %#v", test.err, err)
+			var pathError *fs.PathError
+			switch {
+			case errors.As(test.err, &pathError):
+				var pe *fs.PathError
+				if errors.As(err, &pe) {
+					return
 				}
-				return
-			}
 
-			if !errors.Is(err, test.err) {
+			case errors.Is(err, test.err):
+				return
+
+			default:
 				t.Fatalf("expected %#v, got %#v", test.err, err)
 			}
 		})
