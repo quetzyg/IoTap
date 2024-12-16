@@ -62,7 +62,7 @@ func (s *Strategy) UnmarshalJSON(data []byte) error {
 	devices, ok := m["devices"].([]any)
 	if ok {
 		for _, dev := range devices {
-			mac, err := net.ParseMAC(Macify(fmt.Sprint(dev)))
+			mac, err := net.ParseMAC(fmt.Sprint(dev))
 			if err != nil {
 				return err
 			}
