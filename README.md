@@ -426,6 +426,14 @@ If you find this project helpful, consider supporting its development:
 
 🏆 [Sponsor on GitHub](https://github.com/sponsors/quetzyg)
 
+## Contributions and Feature Roadmap
+This project is open to community input and feature suggestions. Enhancements that provide broad utility and solve common challenges for multiple users are prioritary.
+While creative ideas are welcome, implementation will be based on potential impact and alignment with the project's core objectives.
+
+If you have a feature request, please submit it as an issue—the more compelling the use case and potential benefit, the higher the likelihood of adoption.
+
+**Sponsored development**: if you or your organization want to accelerate a feature that has wide applicability, sponsorship can help move it to the top of the priority list.
+
 ## Disclaimer
 Use responsibly! Always ensure you have proper authorisation before tapping into network devices.
 
