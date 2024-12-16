@@ -1,6 +1,7 @@
 package device
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"net"
@@ -19,6 +20,7 @@ const (
 
 // Strategy to use when configuring IoT devices.
 type Strategy struct {
+	models  []string
 	mode    strategyMode
 	devices []net.HardwareAddr
 }
@@ -45,30 +47,43 @@ func (s *Strategy) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("%w: %s", errStrategyModeInvalid, s.mode)
 	}
 
+	models, ok := m["models"].([]any)
+	if ok {
+		for _, str := range models {
+			if model, ok := str.(string); ok {
+				s.models = append(s.models, model)
+			}
+		}
+	}
+
 	// Currently, the MAC address unmarshalling logic has
 	// to be done manually, due to Go's lack of support.
 	// See: https://github.com/golang/go/issues/29678
 	devices, ok := m["devices"].([]any)
-	if !ok {
-		return nil
-	}
+	if ok {
+		for _, dev := range devices {
+			mac, err := net.ParseMAC(Macify(fmt.Sprint(dev)))
+			if err != nil {
+				return err
+			}
 
-	for _, dev := range devices {
-		mac, err := net.ParseMAC(Macify(fmt.Sprint(dev)))
-		if err != nil {
-			return err
+			s.devices = append(s.devices, mac)
 		}
-
-		s.devices = append(s.devices, mac)
 	}
 
 	return nil
 }
 
-// Listed checks if a device MAC address is in the Strategy manifest.
+// Listed checks if a device model or MAC address is in the Strategy manifest.
 func (s *Strategy) Listed(dev Resource) bool {
+	for _, model := range s.models {
+		if model == dev.Model() {
+			return true
+		}
+	}
+
 	for _, mac := range s.devices {
-		if mac.String() == dev.MAC().String() {
+		if bytes.Equal(mac, dev.MAC()) {
 			return true
 		}
 	}
