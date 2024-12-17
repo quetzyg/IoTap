@@ -437,8 +437,8 @@ If you have a feature request, please submit it as an [**Idea**](https://github.
 ## Disclaimer
 Use responsibly! Always ensure you have proper authorisation before tapping into network devices.
 
-## Security
-If you found a security related issue, please email **security (at) altek (dot) org**.
+## Security Policy
+Please review our [security policy](https://github.com/quetzyg/IoTap/security/policy) for proper security vulnerability disclosure.
 
 ## Credits
 - [Quetzy Garcia](https://github.com/quetzyg)
