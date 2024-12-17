@@ -8,48 +8,48 @@ import (
 	"testing"
 )
 
-func TestStrategy_UnmarshalJSON(t *testing.T) {
+func TestPolicy_UnmarshalJSON(t *testing.T) {
 	tests := []struct {
-		name     string
-		data     string
-		strategy *Strategy
-		err      error
+		name   string
+		data   string
+		policy *Policy
+		err    error
 	}{
 		{
-			name:     "failure: invalid JSON",
-			strategy: &Strategy{},
-			err:      &json.SyntaxError{},
+			name:   "failure: invalid JSON",
+			policy: &Policy{},
+			err:    &json.SyntaxError{},
 		},
 		{
-			name:     "failure: undefined strategy mode #1",
-			data:     "{}",
-			strategy: &Strategy{},
-			err:      errStrategyModeUndefined,
+			name:   "failure: undefined policy mode #1",
+			data:   "{}",
+			policy: &Policy{},
+			err:    errPolicyModeUndefined,
 		},
 		{
-			name:     "failure: undefined strategy mode #2",
-			data:     `{"mode":""}`,
-			strategy: &Strategy{},
-			err:      errStrategyModeUndefined,
+			name:   "failure: undefined policy mode #2",
+			data:   `{"mode":""}`,
+			policy: &Policy{},
+			err:    errPolicyModeUndefined,
 		},
 		{
-			name:     "failure: invalid strategy mode",
-			data:     `{"mode":"foo"}`,
-			strategy: &Strategy{},
-			err:      errStrategyModeInvalid,
+			name:   "failure: invalid policy mode",
+			data:   `{"mode":"foo"}`,
+			policy: &Policy{},
+			err:    errPolicyModeInvalid,
 		},
 		{
-			name: "success: whitelist strategy",
+			name: "success: whitelist policy",
 			data: `{"mode":"whitelist"}`,
-			strategy: &Strategy{
-				mode: whitelist,
+			policy: &Policy{
+				Mode: PolicyModeWhitelist,
 			},
 		},
 		{
-			name: "success: blacklist strategy",
+			name: "success: blacklist policy",
 			data: `{"mode":"blacklist"}`,
-			strategy: &Strategy{
-				mode: blacklist,
+			policy: &Policy{
+				Mode: PolicyModeBlacklist,
 			},
 		},
 		{
@@ -60,28 +60,28 @@ func TestStrategy_UnmarshalJSON(t *testing.T) {
 				"foo"
 			  ]
 			}`,
-			strategy: &Strategy{
-				mode: blacklist,
+			policy: &Policy{
+				Mode: PolicyModeBlacklist,
 			},
 			err: &net.AddrError{},
 		},
 		{
-			name: "success: whitelist strategy with MAC address",
+			name: "success: whitelist policy with MAC address",
 			data: `{
 			  "mode": "whitelist",
 			  "devices": [
 				"14:06:12:DC:7A:F0"
 			  ]
 			}`,
-			strategy: &Strategy{
-				mode: whitelist,
-				devices: []net.HardwareAddr{
+			policy: &Policy{
+				Mode: PolicyModeWhitelist,
+				Devices: []net.HardwareAddr{
 					{20, 6, 18, 220, 122, 240},
 				},
 			},
 		},
 		{
-			name: "success: blacklist strategy with model names",
+			name: "success: blacklist policy with model names",
 			data: `{
 			  "mode": "blacklist",
 			  "models": [
@@ -89,9 +89,9 @@ func TestStrategy_UnmarshalJSON(t *testing.T) {
 				"SNSW-001X8EU"
 			  ]
 			}`,
-			strategy: &Strategy{
-				mode: blacklist,
-				models: []string{
+			policy: &Policy{
+				Mode: PolicyModeBlacklist,
+				Models: []string{
 					"SNSW-001X16EU",
 					"SNSW-001X8EU",
 				},
@@ -101,12 +101,12 @@ func TestStrategy_UnmarshalJSON(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			strategy := &Strategy{}
+			policy := &Policy{}
 
-			err := json.Unmarshal([]byte(test.data), strategy)
+			err := json.Unmarshal([]byte(test.data), policy)
 
-			if !reflect.DeepEqual(strategy, test.strategy) {
-				t.Fatalf("expected %#v, got %#v", test.strategy, strategy)
+			if !reflect.DeepEqual(policy, test.policy) {
+				t.Fatalf("expected %#v, got %#v", test.policy, policy)
 			}
 
 			var syntaxError *json.SyntaxError
@@ -136,81 +136,81 @@ func TestStrategy_UnmarshalJSON(t *testing.T) {
 
 var macAddr = net.HardwareAddr{20, 6, 18, 220, 122, 240}
 
-func TestStrategy_Listed(t *testing.T) {
+func TestPolicy_Contains(t *testing.T) {
 	tests := []struct {
-		name   string
-		str    *Strategy
-		dev    Resource
-		listed bool
+		name      string
+		str       *Policy
+		dev       Resource
+		contained bool
 	}{
 		{
-			name: "device model is not listed",
-			str: &Strategy{
-				mode: whitelist,
-				models: []string{
+			name: "device model is not contained",
+			str: &Policy{
+				Mode: PolicyModeWhitelist,
+				Models: []string{
 					"SNSW-001X16EU",
 				},
 			},
-			dev:    &resource{},
-			listed: false,
+			dev:       &resource{},
+			contained: false,
 		},
 		{
-			name: "device model is listed",
-			str: &Strategy{
-				mode: whitelist,
-				models: []string{
+			name: "device model is contained",
+			str: &Policy{
+				Mode: PolicyModeWhitelist,
+				Models: []string{
 					"SNSW-001X16EU",
 				},
 			},
-			dev:    &resource{model: "SNSW-001X16EU"},
-			listed: true,
+			dev:       &resource{model: "SNSW-001X16EU"},
+			contained: true,
 		},
 		{
-			name: "device MAC address is not listed",
-			str: &Strategy{
-				mode: blacklist,
-				devices: []net.HardwareAddr{
+			name: "device MAC address is not contained",
+			str: &Policy{
+				Mode: PolicyModeBlacklist,
+				Devices: []net.HardwareAddr{
 					macAddr,
 				},
 			},
-			dev:    &resource{},
-			listed: false,
+			dev:       &resource{},
+			contained: false,
 		},
 		{
-			name: "device MAC address is listed",
-			str: &Strategy{
-				mode: whitelist,
-				devices: []net.HardwareAddr{
+			name: "device MAC address is contained",
+			str: &Policy{
+				Mode: PolicyModeWhitelist,
+				Devices: []net.HardwareAddr{
 					macAddr,
 				},
 			},
-			dev:    &resource{mac: macAddr},
-			listed: true,
+			dev:       &resource{mac: macAddr},
+			contained: true,
 		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			listed := test.str.Listed(test.dev)
-			if listed != test.listed {
-				t.Fatalf("expected %t, got %t", test.listed, listed)
+			contained := test.str.Contains(test.dev)
+			if contained != test.contained {
+				t.Fatalf("expected %t, got %t", test.contained, contained)
 			}
 		})
 	}
 }
 
-func TestStrategy_Excluded(t *testing.T) {
+func TestPolicy_IsExcluded(t *testing.T) {
 	tests := []struct {
 		name     string
-		str      *Strategy
+		str      *Policy
 		dev      Resource
 		excluded bool
 	}{
 		{
 			name: "whitelist: device is excluded via model name",
-			str: &Strategy{
-				mode: whitelist,
-				models: []string{
+			str: &Policy{
+				Mode: PolicyModeWhitelist,
+				Models: []string{
 					"SNSW-001X16EU",
 				},
 			},
@@ -219,9 +219,9 @@ func TestStrategy_Excluded(t *testing.T) {
 		},
 		{
 			name: "whitelist: device is excluded via MAC address",
-			str: &Strategy{
-				mode: whitelist,
-				devices: []net.HardwareAddr{
+			str: &Policy{
+				Mode: PolicyModeWhitelist,
+				Devices: []net.HardwareAddr{
 					macAddr,
 				},
 			},
@@ -230,9 +230,9 @@ func TestStrategy_Excluded(t *testing.T) {
 		},
 		{
 			name: "whitelist: device is included via model name",
-			str: &Strategy{
-				mode: whitelist,
-				models: []string{
+			str: &Policy{
+				Mode: PolicyModeWhitelist,
+				Models: []string{
 					"SNSW-001X16EU",
 				},
 			},
@@ -241,9 +241,9 @@ func TestStrategy_Excluded(t *testing.T) {
 		},
 		{
 			name: "whitelist: device is included via MAC address",
-			str: &Strategy{
-				mode: whitelist,
-				devices: []net.HardwareAddr{
+			str: &Policy{
+				Mode: PolicyModeWhitelist,
+				Devices: []net.HardwareAddr{
 					macAddr,
 				},
 			},
@@ -252,9 +252,9 @@ func TestStrategy_Excluded(t *testing.T) {
 		},
 		{
 			name: "blacklist: device is excluded via model name",
-			str: &Strategy{
-				mode: blacklist,
-				models: []string{
+			str: &Policy{
+				Mode: PolicyModeBlacklist,
+				Models: []string{
 					"SNSW-001X16EU",
 				},
 			},
@@ -263,9 +263,9 @@ func TestStrategy_Excluded(t *testing.T) {
 		},
 		{
 			name: "blacklist: device is excluded via MAC address",
-			str: &Strategy{
-				mode: blacklist,
-				devices: []net.HardwareAddr{
+			str: &Policy{
+				Mode: PolicyModeBlacklist,
+				Devices: []net.HardwareAddr{
 					macAddr,
 				},
 			},
@@ -274,9 +274,9 @@ func TestStrategy_Excluded(t *testing.T) {
 		},
 		{
 			name: "blacklist: device is included via model name",
-			str: &Strategy{
-				mode: blacklist,
-				models: []string{
+			str: &Policy{
+				Mode: PolicyModeBlacklist,
+				Models: []string{
 					"SNSW-001X16EU",
 				},
 			},
@@ -285,9 +285,9 @@ func TestStrategy_Excluded(t *testing.T) {
 		},
 		{
 			name: "blacklist: device is included via MAC address",
-			str: &Strategy{
-				mode: blacklist,
-				devices: []net.HardwareAddr{
+			str: &Policy{
+				Mode: PolicyModeBlacklist,
+				Devices: []net.HardwareAddr{
 					macAddr,
 				},
 			},
@@ -298,7 +298,7 @@ func TestStrategy_Excluded(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			excluded := test.str.Excluded(test.dev)
+			excluded := test.str.IsExcluded(test.dev)
 			if excluded != test.excluded {
 				t.Fatalf("expected %t, got %t", test.excluded, excluded)
 			}

@@ -16,9 +16,9 @@ func (d *Device) ConfigureRequests(config device.Config) ([]*http.Request, error
 		return nil, fmt.Errorf("%w: expected %q, got %q", device.ErrDriverMismatch, d.Driver(), config.Driver())
 	}
 
-	// Check if a configuration strategy is set and enforce it
-	if conf.Strategy != nil && conf.Strategy.Excluded(d) {
-		return nil, device.ErrStrategyExcluded
+	// Check if a configuration policy is set and enforce it
+	if conf.Policy != nil && conf.Policy.IsExcluded(d) {
+		return nil, device.ErrPolicyExcluded
 	}
 
 	var requests []*http.Request

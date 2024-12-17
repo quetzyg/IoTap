@@ -32,9 +32,9 @@ var (
 	// This error is returned when a device does not support the procedure that is being executed.
 	ErrUnsupportedProcedure = errors.New("unsupported device procedure")
 
-	// ErrStrategyExcluded is an error type used during the configuration strategy logic,
-	// excluding a device from being configured.
-	ErrStrategyExcluded = errors.New("strategy excluded device")
+	// ErrPolicyExcluded is an error type used during the configuration policy logic,
+	// if a device is to be excluded from being configured.
+	ErrPolicyExcluded = errors.New("policy excluded device")
 
 	// ErrInvalidSortByField is returned when an attempt is made to
 	// sort by a field that is not supported by the SortBy() method
@@ -43,9 +43,9 @@ var (
 	// ErrInvalidDumpFormat is returned when the dump format isn't correct.
 	ErrInvalidDumpFormat = errors.New("invalid dump format")
 
-	// Strategy error types
-	errStrategyModeUndefined = errors.New("the strategy mode is undefined")
-	errStrategyModeInvalid   = errors.New("the strategy mode is invalid")
+	// Policy error types
+	errPolicyModeUndefined = errors.New("the policy mode is undefined")
+	errPolicyModeInvalid   = errors.New("the policy mode is invalid")
 )
 
 // ProbeError for an IP address.
