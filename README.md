@@ -221,8 +221,8 @@ Flags:
 ## Configuration Files
 Currently, there are two supported JSON configuration formats. Shelly Gen1 and Gen2. Each generation has a different structure, based on how the corresponding device expects the data to be passed.
 
-### Configuration Strategy
-IoTap provides flexible device targeting through a configuration strategy mechanism. In a configuration file, you can define a `strategy` section that allows precise control over which devices receive the configuration.
+### Configuration Policy
+IoTap provides flexible device targeting through a configuration policy mechanism. In a configuration file, you can define a `policy` section that allows precise control over which devices receive the configuration.
 
 #### Strategy Modes
 1. **Whitelist Mode**
@@ -244,7 +244,7 @@ In this scenario, only devices with MAC addresses `AA:BB:CC:DD:EE:FF` and `11:22
   "meta": {
     "device":"Shelly 1"
   },
-  "strategy": {
+  "policy": {
     "mode": "whitelist",
     "devices": [
       "AA:BB:CC:DD:EE:FF",
@@ -310,7 +310,7 @@ In this scenario, devices with MAC addresses `AA:BB:CC:DD:EE:FF` and `11:22:33:4
   "meta": {
     "device": "Shelly Plus 1"
   },
-  "strategy": {
+  "policy": {
     "mode": "blacklist",
     "devices": [
       "AA:BB:CC:DD:EE:FF",
