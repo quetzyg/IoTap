@@ -438,7 +438,7 @@ If you have a feature request, please submit it as an [**Idea**](https://github.
 Use responsibly! Always ensure you have proper authorisation before tapping into network devices.
 
 ## Security Policy
-Please review our [security policy](https://github.com/quetzyg/IoTap/security/policy) for proper security vulnerability disclosure.
+Please review the [security policy](https://github.com/quetzyg/IoTap/security/policy) to ensure proper procedures for disclosing security vulnerabilities.
 
 ## Credits
 - [Quetzy Garcia](https://github.com/quetzyg)
