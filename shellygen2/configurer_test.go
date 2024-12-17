@@ -72,7 +72,7 @@ func TestDevice_ConfigureRequests(t *testing.T) {
 			err: device.ErrPolicyExcluded,
 		},
 		{
-			name: "success: single setting",
+			name: "success: single settings",
 			dev:  &Device{},
 			cfg: &Config{
 				BLE: &settings{
@@ -94,7 +94,7 @@ func TestDevice_ConfigureRequests(t *testing.T) {
 			}(),
 		},
 		{
-			name: "success: multiple settings",
+			name: "success: settings slice",
 			dev:  &Device{},
 			cfg: &Config{
 				Input: &[]*settings{
