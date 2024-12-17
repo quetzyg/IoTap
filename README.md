@@ -163,7 +163,9 @@ Flags:
 <details>
 <summary><strong>deploy</strong>: Deploy one or more scripts to devices.</summary>
 
-Note that, at the moment, only Shelly Gen2 devices support this command.
+- **Note #1:** At the moment, only Shelly Gen2 devices support this command.
+
+- **Note #2:** The `deploy` command will **remove** any existing scripts from the device, as part of the deployment procedure!
 
 ```bash
 # Deploy a script to all Shelly Gen2 devices
