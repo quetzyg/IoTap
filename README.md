@@ -228,12 +228,12 @@ IoTap provides flexible device targeting through a configuration policy mechanis
 
 #### Policy Modes
 1. **Whitelist Mode**
-   - When `mode` is set to `whitelist`, only devices with MAC addresses listed in the `devices` array will receive the configuration.
+   - When the `mode` is set to `whitelist`, only devices with a model matching one in the `models` array or with a MAC address listed in the `devices` array will be configured.
    - All other discovered devices will be skipped.
 
 2. **Blacklist Mode**
-   - When `mode` is set to `blacklist`, devices with MAC addresses listed in the `devices` array will be excluded from receiving the configuration.
-   - All other discovered devices will receive the configuration.
+   - When the `mode` is set to `blacklist`, devices with a model that matches one in the `models` array or with a MAC address listed in the `devices` array will be excluded from configuration.
+   - All other discovered devices will be configured.
 
 <details>
 <summary><strong>Shelly Gen1</strong>: Configuration Example</summary>
