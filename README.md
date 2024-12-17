@@ -2,13 +2,13 @@
 
 ## Overview
 
-A CLI (command line interface) tool designed to simplify the management and configuration of IoT devices across your network. Currently supporting Shelly (Gen1 and Gen2) relay devices, IoTap provides a streamlined approach to performing bulk operations on multiple IoT devices.
+A CLI (command line interface) tool designed to simplify the management and configuration of IoT devices across your network. Currently supporting some [Shelly](https://shelly.cloud) (Gen1 and Gen2) devices, IoTap provides a streamlined approach to performing operations on multiple IoT devices simultaneously.
 
 ## Features
 
 - Network-wide device scanning
 - Multi-device management commands
-- Support for Shelly (Gen1 and Gen2) relay devices
+- Support for some Shelly (Gen1 and Gen2) devices
 - Flexible device filtering and sorting
 - Multiple output formats
 - Easy configuration and script deployment
@@ -412,14 +412,34 @@ In this scenario, devices with MAC addresses `AA:BB:CC:DD:EE:FF` and `11:22:33:4
 ### Script File Format
 Use [Shelly Script Language](https://shelly-api-docs.shelly.cloud/gen2/Scripts/ShellyScriptLanguageFeatures) compatible code when deploying to Shelly Gen2 devices.
 
-## Successfully tested devices:
-- **Shelly**
-    - **Gen1**
-        - **Shelly 1** ([Product](https://www.shelly.com/en-pt/products/product-overview/shelly-1), [KB](https://kb.shelly.cloud/knowledge-base/shelly-1), [API](https://shelly-api-docs.shelly.cloud/gen1/#shelly1-shelly1pm))
-    - **Gen2**
-        - **Shelly Plus 1** ([Product](https://www.shelly.com/en-pt/products/product-overview/shelly-plus-1), [KB](https://kb.shelly.cloud/knowledge-base/shelly-plus-1), [API](https://shelly-api-docs.shelly.cloud/gen2/Devices/Gen2/ShellyPlus1))
-        - **Shelly Plus 1 (Mini)** ([Product](https://www.shelly.com/en-pt/products/product-overview/shelly-plus-1-mini), [KB](https://kb.shelly.cloud/knowledge-base/shelly-plus-1-mini), [API](https://shelly-api-docs.shelly.cloud/gen2/Devices/Gen2/ShellyPlus1))
-        - **Shelly Pro 1** ([Product](https://www.shelly.com/en-pt/products/product-overview/shelly-pro-1), [KB](https://kb.shelly.cloud/knowledge-base/shelly-pro-1-v1), [API](https://shelly-api-docs.shelly.cloud/gen2/Devices/Gen2/ShellyPro1))
+## Device Support
+The following table outlines the devices that have been successfully tested:
+
+| Vendor | Generation | Model | Links |
+|--------|------------|-------|-------|
+| Shelly | Gen1 | Shelly 1 | ([Product](https://www.shelly.com/en-pt/products/product-overview/shelly-1), [KB](https://kb.shelly.cloud/knowledge-base/shelly-1), [API](https://shelly-api-docs.shelly.cloud/gen1/#shelly1-shelly1pm)) |
+| Shelly | Gen2 | Shelly Plus 1| ([Product](https://www.shelly.com/en-pt/products/product-overview/shelly-plus-1), [KB](https://kb.shelly.cloud/knowledge-base/shelly-plus-1), [API](https://shelly-api-docs.shelly.cloud/gen2/Devices/Gen2/ShellyPlus1))|
+| Shelly | Gen2 | Shelly Plus 1 (Mini)| ([Product](https://www.shelly.com/en-pt/products/product-overview/shelly-plus-1-mini), [KB](https://kb.shelly.cloud/knowledge-base/shelly-plus-1-mini), [API](https://shelly-api-docs.shelly.cloud/gen2/Devices/Gen2/ShellyPlus1))|
+| Shelly | Gen2 | Shelly Pro 1| ([Product](https://www.shelly.com/en-pt/products/product-overview/shelly-pro-1), [KB](https://kb.shelly.cloud/knowledge-base/shelly-pro-1-v1), [API](https://shelly-api-docs.shelly.cloud/gen2/Devices/Gen2/ShellyPro1))|
+
+### Broader Device Support
+
+While the above devices have been successfully tested, IoTap is designed with flexibility and broad compatibility in mind, meaning that it may already support a greater number of Shelly Gen1 and Gen2 devices.
+
+### Hardware and Vendor Collaboration
+
+**Device Compatibility Expansion:**
+- The maintainer is actively seeking to expand the device compatibility matrix
+- Hardware vendors and manufacturers are invited to contribute by:
+  - Providing test devices
+  - Sponsoring programming costs
+  - Collaborating on compatibility testing
+
+**Current Product Support:**
+- The tool currently only supports Shelly products
+- We welcome sponsorship and collaboration from other interested IoT and smart home device manufacturers
+
+If you are a vendor, manufacturer, or potential sponsor interested in expanding our device support, please get in touch.
 
 ## Support & Sponsorship
 If you find this project helpful, consider supporting its development:
