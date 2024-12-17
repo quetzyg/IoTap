@@ -69,11 +69,16 @@ func (p *Policy) Contains(dev Resource) bool {
 // IsExcluded determines whether a device should be excluded based on the Policy mode
 // (blacklist or whitelist) and whether the device is contained within the Policy.
 func (p *Policy) IsExcluded(dev Resource) bool {
-	if p.Mode == PolicyModeBlacklist {
+	switch p.Mode {
+	case PolicyModeBlacklist:
 		return p.Contains(dev)
-	}
 
-	return !p.Contains(dev)
+	case PolicyModeWhitelist:
+		return !p.Contains(dev)
+
+	default:
+		panic("invalid policy mode")
+	}
 }
 
 // UnmarshalJSON implements the Unmarshaler interface.

@@ -205,7 +205,14 @@ func TestPolicy_IsExcluded(t *testing.T) {
 		str      *Policy
 		dev      Resource
 		excluded bool
+		panic    bool
 	}{
+		{
+			name:  "failure: panic",
+			str:   &Policy{},
+			dev:   &resource{},
+			panic: true,
+		},
 		{
 			name: "whitelist: device is excluded via model name",
 			str: &Policy{
@@ -298,6 +305,12 @@ func TestPolicy_IsExcluded(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			defer func() {
+				if r := recover(); r != nil && !test.panic {
+					t.Fatalf("panic expected")
+				}
+			}()
+
 			excluded := test.str.IsExcluded(test.dev)
 			if excluded != test.excluded {
 				t.Fatalf("expected %t, got %t", test.excluded, excluded)
