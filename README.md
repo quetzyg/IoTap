@@ -224,7 +224,7 @@ Currently, there are two supported JSON configuration formats. Shelly Gen1 and G
 ### Configuration Policy
 IoTap provides flexible device targeting through a configuration policy mechanism. In a configuration file, you can define a `policy` section that allows precise control over which devices receive the configuration.
 
-#### Strategy Modes
+#### Policy Modes
 1. **Whitelist Mode**
    - When `mode` is set to `whitelist`, only devices with MAC addresses listed in the `devices` array will receive the configuration.
    - All other discovered devices will be skipped.
