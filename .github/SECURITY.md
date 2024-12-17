@@ -8,7 +8,7 @@ If you discover a security vulnerability in IoTap, please:
 2. Email details to: **security (at) altek (dot) org**
 
 The maintainer will:
-- Acknowledge your report within a few days
+- Acknowledge your report as soon as possible
 - Investigate the vulnerability
 - Develop and release a fix as quickly as possible
 
