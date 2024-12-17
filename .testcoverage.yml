@@ -13,7 +13,7 @@ threshold:
   package: 0
 
   # Minimum overall project coverage percentage required.
-  total: 70
+  total: 80
 
 exclude:
   paths:
