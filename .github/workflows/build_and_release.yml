@@ -84,7 +84,7 @@ jobs:
           if [ "${{ matrix.goos }}" = "windows" ]; then
             BINARY=$BINARY_NAME.exe
           fi
-          tar -zcvf iotap-${{ matrix.goos }}-${{ matrix.goarch }}.tar.gz $BINARY LICENSE.md
+          tar -zcvf iotap-${{ matrix.goos }}-${{ matrix.goarch }}.tar.gz $BINARY LICENSE.md CHANGELOG.md
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
