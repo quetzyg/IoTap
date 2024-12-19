@@ -133,6 +133,8 @@ func main() {
 		tapper.SetScripts(scripts)
 	}
 
+	var affected = 0
+
 	log.Printf("Scanning the %s network...\n", os.Args[1])
 
 	devices, err := tapper.Scan(ips)
@@ -158,12 +160,12 @@ func main() {
 	case command.Config:
 		log.Print("Deploying configuration to devices...")
 
-		err = tapper.Execute(device.Configure, devices)
+		affected, err = tapper.Execute(device.Configure, devices)
 
 	case command.Version:
 		log.Print("Verifying device versions...")
 
-		err = tapper.Execute(device.Version, devices)
+		_, err = tapper.Execute(device.Version, devices)
 		if err != nil {
 			goto ErrorHandling
 		}
@@ -185,17 +187,21 @@ func main() {
 	case command.Update:
 		log.Print("Sending firmware update request to devices...")
 
-		err = tapper.Execute(device.Update, devices)
+		affected, err = tapper.Execute(device.Update, devices)
 
 	case command.Deploy:
 		log.Print("Deploying script(s) to devices...")
 
-		err = tapper.Execute(device.Deploy, devices)
+		affected, err = tapper.Execute(device.Deploy, devices)
 
 	case command.Reboot:
 		log.Print("Sending reboot request to devices...")
 
-		err = tapper.Execute(device.Reboot, devices)
+		affected, err = tapper.Execute(device.Reboot, devices)
+	}
+
+	if affected > 0 {
+		log.Printf("Affected devices: %d\n", affected)
 	}
 
 ErrorHandling:

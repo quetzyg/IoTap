@@ -131,9 +131,9 @@ func (t *Tapper) Scan(ips []net.IP) (Collection, error) {
 }
 
 // Execute a procedure on a device collection.
-func (t *Tapper) Execute(proc procedure, devices Collection) error {
+func (t *Tapper) Execute(proc procedure, devices Collection) (int, error) {
 	if devices.Empty() {
-		return nil
+		return 0, nil
 	}
 
 	ch := make(chan *ProcedureResult, channelBuffer)
@@ -143,19 +143,28 @@ func (t *Tapper) Execute(proc procedure, devices Collection) error {
 	}
 
 	errs := Errors{}
+	affected := 0
 
 	for range devices {
 		result := <-ch
-		if result.Failed() {
-			errs = append(errs, result)
+		if !result.Failed() {
+			affected++
+			continue
 		}
+
+		// Skipped devices
+		if errors.Is(result.err, ErrPolicyExcluded) {
+			continue
+		}
+
+		errs = append(errs, result)
 	}
 
 	close(ch)
 
 	if len(errs) == 0 {
-		return nil
+		return affected, nil
 	}
 
-	return errs
+	return 0, errs
 }
