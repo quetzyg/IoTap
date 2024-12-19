@@ -28,15 +28,8 @@ func (d *Deployment) UnmarshalJSON(data []byte) error {
 	d.Policy = tmp.Policy
 
 	d.Scripts, err = LoadScriptsFromPath(tmp.Scripts)
-	if err != nil {
-		return err
-	}
 
-	if len(d.Scripts) == 0 {
-		return ErrDeploymentWithoutScripts
-	}
-
-	return nil
+	return err
 }
 
 // loadDeployment from an I/O reader and unmarshal the data into a *Deployment instance.

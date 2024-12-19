@@ -16,10 +16,6 @@ var (
 	// resulted in an empty Config instance.
 	ErrConfigurationEmpty = errors.New("the configuration is empty")
 
-	// ErrDeploymentWithoutScripts indicates that the loaded deployment file
-	// does not have scripts to deploy.
-	ErrDeploymentWithoutScripts = errors.New("the deployment must have at least one script to deploy")
-
 	// ErrScriptEmpty indicates that the loaded script file
 	// resulted in an empty Script instance.
 	ErrScriptEmpty = errors.New("the IoT script is empty")
