@@ -1,8 +1,8 @@
-# IoTap: IoT Device Management CLI
+# IoTap: Effortless IoT Device Orchestration
 
 ## Overview
 
-A CLI (command line interface) tool designed to simplify the management and configuration of IoT devices across your network. Currently supporting some [Shelly](https://shelly.cloud) (Gen1 and Gen2) devices, IoTap provides a streamlined approach to performing operations on multiple IoT devices simultaneously.
+IoTap is a command-line interface tool for tapping into IoT devices, streamlining the configuration and control of network-connected devices while ensuring reproducible execution of tasks. Currently supporting [Shelly](https://shelly.cloud) devices (both Gen1 and Gen2), IoTap enables you to manage multiple devices simultaneously through a unified interface. This makes it particularly powerful for batch operations and consistent device management across your network.
 
 ## Features
 
@@ -163,10 +163,6 @@ Flags:
 <details>
 <summary><strong>deploy</strong>: Deploy one or more scripts to devices.</summary>
 
-- **Note #1:** At the moment, only Shelly Gen2 devices support this command.
-
-- **Note #2:** The `deploy` command will **remove** any existing scripts from the device, as part of the deployment procedure!
-
 ```bash
 # Deploy a script to all Shelly Gen2 devices
 iotap 192.168.1.0/24 deploy -driver shelly_gen2 -f script.js
@@ -191,6 +187,14 @@ Flags:
   -f value
         Deploy script file path (allows multiple calls)
 ```
+
+### Important Notes
+- At the moment, **only** Shelly Gen2 devices support this command.
+
+- As part of the deployment task, the `deploy` command will **remove** previously existing scripts from the device.
+
+- Use [Shelly Script Language](https://shelly-api-docs.shelly.cloud/gen2/Scripts/ShellyScriptLanguageFeatures) compatible code when deploying.
+
 </details>
 
 <details>
@@ -238,7 +242,7 @@ IoTap provides flexible device targeting through a configuration policy mechanis
 <details>
 <summary><strong>Shelly Gen1</strong>: Configuration Example</summary>
 
-In this scenario, only devices with MAC addresses `AA:BB:CC:DD:EE:FF` and `11:22:33:44:55:66` will receive the configuration.
+In this scenario, devices with MAC addresses `AA:BB:CC:DD:EE:FF` and `11:22:33:44:55:66` will be skipped, while the remaining discovered devices will be configured.
 
 **Example:**
 ```json
@@ -247,7 +251,7 @@ In this scenario, only devices with MAC addresses `AA:BB:CC:DD:EE:FF` and `11:22
     "device":"Shelly 1"
   },
   "policy": {
-    "mode": "whitelist",
+    "mode": "blacklist",
     "devices": [
       "AA:BB:CC:DD:EE:FF",
       "11:22:33:44:55:66"
@@ -304,19 +308,19 @@ In this scenario, only devices with MAC addresses `AA:BB:CC:DD:EE:FF` and `11:22
 <details>
 <summary><strong>Shelly Gen2</strong>: Configuration Example</summary>
 
-In this scenario, devices with MAC addresses `AA:BB:CC:DD:EE:FF` and `11:22:33:44:55:66` will be skipped, and all other discovered devices will receive the configuration.
+In this scenario, only devices with models `SNSW-001X16EU` and `SNSW-001X8EU` will be configured.
 
 **Example:**
 ```json
 {
   "meta": {
-    "device": "Shelly Plus 1"
+    "device": "Shelly Plus 1 + Shelly Plus 1 Mini"
   },
   "policy": {
-    "mode": "blacklist",
-    "devices": [
-      "AA:BB:CC:DD:EE:FF",
-      "11:22:33:44:55:66"
+    "mode": "whitelist",
+    "models": [
+      "SNSW-001X16EU",
+      "SNSW-001X8EU"
     ]
   },
   "sys": {
@@ -411,9 +415,6 @@ In this scenario, devices with MAC addresses `AA:BB:CC:DD:EE:FF` and `11:22:33:4
 ```
 </details>
 
-### Script File Format
-Use [Shelly Script Language](https://shelly-api-docs.shelly.cloud/gen2/Scripts/ShellyScriptLanguageFeatures) compatible code when deploying to Shelly Gen2 devices.
-
 ## Device Support
 The following table outlines the devices that have been successfully tested:
 
@@ -438,7 +439,7 @@ While the above devices have been successfully tested, IoTap is designed with fl
   - Collaborating on compatibility testing
 
 **Current Product Support:**
-- The tool currently only supports Shelly products
+- Currently, the tool only supports Shelly products
 - We welcome sponsorship and collaboration from other interested IoT and smart home device manufacturers
 
 If you are a vendor, manufacturer, or potential sponsor interested in expanding our device support, please get in touch.
