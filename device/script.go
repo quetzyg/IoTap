@@ -7,15 +7,15 @@ import (
 	"path"
 )
 
-// Script holds the name and the contents of an IoT device script.
+// Script holds the path and the contents of an IoT device script.
 type Script struct {
-	name string
+	path string
 	code []byte
 }
 
 // Name of the file the script was loaded from.
 func (s *Script) Name() string {
-	return s.name
+	return path.Base(s.path)
 }
 
 // Code returns the content of the script.
@@ -72,7 +72,7 @@ func LoadScriptsFromPath(fps []string) ([]*Script, error) {
 		}
 
 		scripts[i] = &Script{
-			name: path.Base(fp),
+			path: fp,
 		}
 
 		err = loadScript(f, scripts[i])
