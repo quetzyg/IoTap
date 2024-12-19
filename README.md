@@ -164,11 +164,8 @@ Flags:
 <summary><strong>deploy</strong>: Deploy one or more scripts to devices.</summary>
 
 ```bash
-# Deploy a script to all Shelly Gen2 devices
-iotap 192.168.1.0/24 deploy -driver shelly_gen2 -f script.js
-
-# Deploy multiple scripts to all Shelly Gen2 devices
-iotap 192.168.1.0/24 deploy -driver shelly_gen2 -f script1.js -f script2.js -f script3.js
+# Perform a deployment to Shelly Gen2 devices
+iotap 192.168.1.0/24 deploy -driver shelly_gen2 -f deployment.json
 ```
 
 Deploy command help
@@ -184,16 +181,16 @@ Usage of deploy:
 Flags:
   -driver value
         Filter by device driver (default all)
-  -f value
-        Deploy script file path (allows multiple calls)
+  -f string
+        Device deployment file path
 ```
 
 ### Important Notes
-- At the moment, **only** Shelly Gen2 devices support this command.
+- At the moment, **only** the `shelly_gen2` driver supports this command.
 
-- As part of the deployment task, the `deploy` command will **remove** previously existing scripts from the device.
+- As part of the deployment task, the `deploy` command will **remove** any previously existing scripts from the device.
 
-- Use [Shelly Script Language](https://shelly-api-docs.shelly.cloud/gen2/Scripts/ShellyScriptLanguageFeatures) compatible code when deploying.
+- Use only [Shelly Script Language](https://shelly-api-docs.shelly.cloud/gen2/Scripts/ShellyScriptLanguageFeatures) code.
 
 </details>
 
@@ -225,19 +222,21 @@ Flags:
 </details>
 
 ## Configuration Files
-Currently, there are two supported JSON configuration formats. Shelly Gen1 and Gen2. Each generation has a different structure, based on how the corresponding device expects the data to be passed.
+Currently, there are two JSON configuration formats: one for Shelly Gen1 and another for Shelly Gen2. Each generation follows a distinct structure tailored to how the respective devices process and expect the data.
 
 ### Configuration Policy
-IoTap provides flexible device targeting through a configuration policy mechanism. In a configuration file, you can define a `policy` section that allows precise control over which devices receive the configuration.
+IoTap offers flexible device targeting using a configuration policy mechanism. Within a configuration file, you can include a `policy` section to precisely specify which devices should receive the configuration.
 
 #### Policy Modes
 1. **Whitelist Mode**
-   - When the `mode` is set to `whitelist`, only devices with a model matching one in the `models` array or with a MAC address listed in the `devices` array will be configured.
-   - All other discovered devices will be skipped.
+    - When `mode` is set to `whitelist`, configurations will only be applied to devices that meet either of these criteria:
+        - Their model name matches an entry in the `models` array
+        - Their MAC address matches an entry in the `devices` array
 
 2. **Blacklist Mode**
-   - When the `mode` is set to `blacklist`, devices with a model that matches one in the `models` array or with a MAC address listed in the `devices` array will be excluded from configuration.
-   - All other discovered devices will be configured.
+    - When `mode` is set to `blacklist`, configurations will not be applied to devices if either:
+        - Their model name matches an entry in the `models` array
+        - Their MAC address matches an entry in the `devices` array
 
 <details>
 <summary><strong>Shelly Gen1</strong>: Configuration Example</summary>
@@ -411,6 +410,50 @@ In this scenario, only devices with models `SNSW-001X16EU` and `SNSW-001X8EU` wi
       "enable_control": true
     }
   }
+}
+```
+</details>
+
+## Deployment file
+The `deploy` command requires a single, well-defined JSON deployment file format.
+
+Similar to the configuration file formats, this format also supports policy enforcement.
+
+### Deployment Policy
+IoTap enables flexible device targeting through a deployment policy mechanism. In a deployment file, you can include a `policy` section to precisely define which devices the deployment applies to.
+
+#### Policy Modes
+1. **Whitelist Mode**
+    - When `mode` is set to `whitelist`, scripts will only be deployed to devices that meet either of these criteria:
+        - Their model name matches an entry in the `models` array
+        - Their MAC address matches an entry in the `devices` array
+
+2. **Blacklist Mode**
+    - When `mode` is set to `blacklist`, scripts will not be deployed to devices if either:
+        - Their model name matches an entry in the `models` array
+        - Their MAC address matches an entry in the `devices` array
+
+<details>
+<summary><strong>Shelly Gen2</strong>: Deployment Example</summary>
+
+In this scenario, scripts will only be deployed to devices where the model name is `SPSW-001XE16EU`.
+
+**Example:**
+```json
+{
+  "meta": {
+    "device": "Shelly Pro 1",
+  },
+  "policy": {
+    "mode": "whitelist",
+    "models": [
+      "SPSW-001XE16EU"
+    ]
+  },
+  "scripts": [
+    "announce.js",
+    "detached_input_on.js"
+  ]
 }
 ```
 </details>
