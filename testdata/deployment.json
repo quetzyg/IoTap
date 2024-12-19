@@ -1,0 +1,12 @@
+{
+  "policy": {
+    "mode": "whitelist",
+    "models": [
+      "SHSW-1"
+    ]
+  },
+  "scripts": [
+    "../testdata/script1.js",
+    "../testdata/script2.js"
+  ]
+}
