@@ -7,7 +7,7 @@ import (
 	"net"
 )
 
-// PolicyMode to apply when configuring IoT devices.
+// PolicyMode to apply when deploying to/configuring IoT devices.
 // Two modes are supported: blacklist (devices to be excluded) and whitelist (devices to be included).
 type PolicyMode int
 
@@ -42,7 +42,7 @@ func (pm *PolicyMode) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// Policy to apply when configuring IoT devices.
+// Policy to apply when deploying to/configuring IoT devices.
 type Policy struct {
 	Mode    PolicyMode         `json:"mode"`
 	Models  []string           `json:"models"`

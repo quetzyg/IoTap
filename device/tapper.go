@@ -16,12 +16,12 @@ const (
 	channelBuffer = 32
 )
 
-// Tapper knows how to tap into devices and execute procedures on them.
+// Tapper knows how to tap into devices and execute tasks on them.
 type Tapper struct {
-	probers   []Prober
-	config    Config
-	scripts   []*Script
-	transport http.RoundTripper
+	probers    []Prober
+	config     Config
+	deployment *Deployment
+	transport  http.RoundTripper
 }
 
 // NewTapper creates a new *Tapper instance.
@@ -36,9 +36,9 @@ func (t *Tapper) SetConfig(cfg Config) {
 	t.config = cfg
 }
 
-// SetScripts that were passed by the user.
-func (t *Tapper) SetScripts(src []*Script) {
-	t.scripts = src
+// SetDeployment that was passed by the user.
+func (t *Tapper) SetDeployment(dep *Deployment) {
+	t.deployment = dep
 }
 
 // probeIP for a specific IoT device.

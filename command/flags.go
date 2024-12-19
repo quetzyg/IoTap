@@ -44,22 +44,7 @@ func NewStrFlag(def string, options ...string) *StrFlag {
 	}
 }
 
-// StrSliceFlag is a custom flag type for storing multiple string values.
-type StrSliceFlag []string
-
-// String implements the Stringer interface.
-func (f *StrSliceFlag) String() string {
-	return fmt.Sprint(*f)
-}
-
-// Set the flag value.
-func (f *StrSliceFlag) Set(value string) error {
-	*f = append(*f, value)
-
-	return nil
-}
-
-// Commands
+// Available commands
 const (
 	Dump    = "dump"
 	Config  = "config"
@@ -111,7 +96,7 @@ type Flags struct {
 
 	deployCmd    *flag.FlagSet
 	deployDriver *StrFlag
-	deployFiles  StrSliceFlag
+	deployFile   *string
 
 	rebootCmd    *flag.FlagSet
 	rebootDriver *StrFlag
@@ -179,7 +164,7 @@ func NewFlags() *Flags {
 	// Deploy
 	flags.deployCmd = flag.NewFlagSet(Deploy, flag.ContinueOnError)
 	flags.deployDriver = setDriverFlag(flags.deployCmd)
-	flags.deployCmd.Var(&flags.deployFiles, "f", "Deploy script file path (allows multiple calls)")
+	flags.deployFile = flags.deployCmd.String("f", "", "Device deployment file path")
 	flags.deployCmd.Usage = func() {
 		fmt.Printf(commandUsage, Deploy, os.Args[0], Deploy)
 		flags.deployCmd.PrintDefaults()
@@ -221,9 +206,9 @@ func (p *Flags) ConfigFile() string {
 	return *p.configFile
 }
 
-// DeployFiles returns the script files paths for deployment.
-func (p *Flags) DeployFiles() []string {
-	return p.deployFiles
+// DeployFile returns the deployment file path value.
+func (p *Flags) DeployFile() string {
+	return *p.deployFile
 }
 
 // Parse the CLI arguments.

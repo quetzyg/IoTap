@@ -123,14 +123,14 @@ func main() {
 			// All good!
 		}
 
-		var scripts []*device.Script
+		dep := &device.Deployment{}
 
-		scripts, err = device.LoadScriptsFromPath(flags.DeployFiles())
+		err = device.LoadDeploymentFromPath(flags.DeployFile(), dep)
 		if err != nil {
-			log.Fatalf("Unable to load script files: %v\n\n", err)
+			log.Fatalf("Unable to load deployment file: %v\n\n", err)
 		}
 
-		tapper.SetScripts(scripts)
+		tapper.SetDeployment(dep)
 	}
 
 	var affected = 0

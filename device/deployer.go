@@ -9,7 +9,7 @@ import (
 
 // Deployer is an interface that provides a standard way to deploy a script on supported IoT devices.
 type Deployer interface {
-	DeployRequests(*http.Client, []*Script) ([]*http.Request, error)
+	DeployRequests(*http.Client, *Deployment) ([]*http.Request, error)
 }
 
 // Deploy is a procedure implementation designed to deploy a script to an IoT device.
@@ -27,7 +27,7 @@ var Deploy = func(tap *Tapper, res Resource, ch chan<- *ProcedureResult) {
 		Transport: tap.transport,
 	}
 
-	rs, err := dev.DeployRequests(client, tap.scripts)
+	rs, err := dev.DeployRequests(client, tap.deployment)
 	if err != nil {
 		ch <- &ProcedureResult{
 			dev: res,
