@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io"
 	"io/fs"
+	"path"
 	"reflect"
 	"strings"
 	"testing"
@@ -12,18 +13,18 @@ import (
 
 func TestScript(t *testing.T) {
 	const (
-		name   = "script.js"
+		fp     = "/foo/bar.js"
 		code   = `var foo = "abc";`
 		length = len(code)
 	)
 
 	s := &Script{
-		name: name,
+		path: fp,
 		code: []byte(code),
 	}
 
-	if s.Name() != name {
-		t.Fatalf("expected %q, got %q", name, s.Name())
+	if s.Name() != path.Base(fp) {
+		t.Fatalf("expected %q, got %q", path.Base(fp), s.Name())
 	}
 
 	if !bytes.Equal(s.Code(), []byte(code)) {
@@ -123,11 +124,11 @@ func TestLoadScriptsFromPath(t *testing.T) {
 			fps:  []string{"../testdata/script1.js", "../testdata/script2.js"},
 			src: []*Script{
 				{
-					name: "script1.js",
+					path: "../testdata/script1.js",
 					code: []byte(`var foo = "abc";`),
 				},
 				{
-					name: "script2.js",
+					path: "../testdata/script2.js",
 					code: []byte(`var bar = 123;`),
 				},
 			},

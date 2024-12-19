@@ -14,7 +14,7 @@ type deployer struct {
 	funcError error
 }
 
-func (d *deployer) DeployRequests(*http.Client, []*Script) ([]*http.Request, error) {
+func (d *deployer) DeployRequests(*http.Client, *Deployment) ([]*http.Request, error) {
 	if d.funcError != nil {
 		return nil, d.funcError
 	}

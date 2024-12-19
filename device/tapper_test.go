@@ -31,17 +31,22 @@ func TestTapper_SetConfig(t *testing.T) {
 	}
 }
 
-func TestTapper_SetScripts(t *testing.T) {
+func TestTapper_SetDeployment(t *testing.T) {
 	tap := &Tapper{}
 
-	tap.SetScripts([]*Script{
-		{
-			name: "foo",
-			code: []byte("var foo = 123;"),
+	tap.SetDeployment(&Deployment{
+		Policy: &Policy{
+			Mode: PolicyModeWhitelist,
+		},
+		Scripts: []*Script{
+			{
+				path: "/foo/bar.js",
+				code: []byte("var foo = 123;"),
+			},
 		},
 	})
 
-	if len(tap.scripts) != 1 {
+	if len(tap.deployment.Scripts) != 1 {
 		t.Fatal("script count must be 1")
 	}
 }
