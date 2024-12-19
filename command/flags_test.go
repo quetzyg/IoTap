@@ -3,7 +3,6 @@ package command
 import (
 	"errors"
 	"flag"
-	"slices"
 	"testing"
 
 	"github.com/quetzyg/IoTap/device"
@@ -257,41 +256,34 @@ func TestFlags_ConfigFile(t *testing.T) {
 
 func TestFlags_DeployFile(t *testing.T) {
 	tests := []struct {
-		name        string
-		args        []string
-		command     string
-		driver      string
-		err         error
-		deployFiles []string
+		name       string
+		args       []string
+		command    string
+		driver     string
+		err        error
+		deployFile string
 	}{
 		{
-			name:        "get empty deploy file path value",
-			args:        []string{Deploy},
-			command:     Deploy,
-			driver:      device.Driver,
-			deployFiles: []string{},
+			name:       "get empty deploy file path value",
+			args:       []string{Deploy},
+			command:    Deploy,
+			driver:     device.Driver,
+			deployFile: "",
 		},
 		{
-			name:        "get single deploy file path value",
-			args:        []string{Deploy, "-f", "script.js"},
-			command:     Deploy,
-			driver:      device.Driver,
-			deployFiles: []string{"script.js"},
+			name:       "get single deploy file path value",
+			args:       []string{Deploy, "-f", "deployment.json"},
+			command:    Deploy,
+			driver:     device.Driver,
+			deployFile: "deployment.json",
 		},
 		{
-			name:        "get multiple deploy file path value",
-			args:        []string{Deploy, "-f", "script1.js", "-f", "script2.js", "-f", "script3.js"},
-			command:     Deploy,
-			driver:      device.Driver,
-			deployFiles: []string{"script1.js", "script2.js", "script3.js"},
-		},
-		{
-			name:        "get empty deploy file path value when argument is missing",
-			args:        []string{Deploy, "-f"},
-			command:     "",
-			driver:      "",
-			err:         ErrArgumentParse,
-			deployFiles: []string{},
+			name:       "get empty deploy file path value when argument is missing",
+			args:       []string{Deploy, "-f"},
+			command:    "",
+			driver:     "",
+			err:        ErrArgumentParse,
+			deployFile: "",
 		},
 	}
 
@@ -313,10 +305,10 @@ func TestFlags_DeployFile(t *testing.T) {
 				t.Fatalf("expected %#v, got %#v", test.err, err)
 			}
 
-			files := flags.DeployFiles()
+			file := flags.DeployFile()
 
-			if slices.Compare(files, test.deployFiles) != 0 {
-				t.Fatalf("Unexpected deploy files. Got %s, expected %s", files, test.deployFiles)
+			if file != test.deployFile {
+				t.Fatalf("Unexpected deploy file. Got %q, expected %q", file, test.deployFile)
 			}
 		})
 	}
