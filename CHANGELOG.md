@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project uses a date-based versioning system.
 
-## [v24.12.19] - 2024-12-19
+## [v24.12.20] - 2024-12-20
 
 ### Added
 - Display the number of affected devices when a procedure finishes [[f808b93](https://github.com/quetzyg/IoTap/commit/f808b931ceabfd02e67d7dcbc08654b78b3026d3)].
