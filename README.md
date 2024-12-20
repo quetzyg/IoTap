@@ -6,12 +6,15 @@ IoTap is a command-line interface tool for tapping into IoT devices, streamlinin
 
 ## Features
 
-- Network-wide device scanning
+- Network-wide device scanning and discovery
 - Multi-device management commands
-- Support for some Shelly (Gen1 and Gen2) devices
-- Flexible device filtering and sorting
-- Multiple output formats
+- Export device information to CSV/JSON files or display in terminal
+- Configure device settings and parameters
+- Detect devices running outdated versions
+- Update firmware on outdated devices
+- Perform remote device restarts
 - Easy configuration and script deployment
+- Deploy custom scripts to compatible devices
 
 ## Prerequisites
 - Go (version 1.23 or later)
@@ -40,7 +43,7 @@ iotap <CIDR> <command> [flags]
 ### Commands
 
 <details>
-<summary><strong>dump</strong>: Output the device scan results to <strong>STDOUT</strong> or to a file.</summary>
+<summary><strong>dump</strong>: Output device scan results to <strong>STDOUT</strong> or to a file.</summary>
 
 ```bash
 # Dump device results to screen in tabular form
@@ -80,7 +83,7 @@ Flags:
 </details>
 
 <details>
-<summary><strong>config</strong>: Apply a configuration to multiple devices of a specific driver</summary>
+<summary><strong>config</strong>: Apply configurations to multiple devices</summary>
 
 ```bash
 # Apply the configuration from `config.json` to all Shelly Gen1 devices
@@ -106,7 +109,7 @@ Flags:
 </details>
 
 <details>
-<summary><strong>version</strong>: Check the device firmware versions</summary>
+<summary><strong>version</strong>: Check device firmware versions</summary>
 Out of date devices will be listed.
 
 ```bash
@@ -161,7 +164,7 @@ Flags:
 </details>
 
 <details>
-<summary><strong>deploy</strong>: Deploy one or more scripts to devices.</summary>
+<summary><strong>deploy</strong>: Deploy scripts to devices</summary>
 
 ```bash
 # Perform a deployment to Shelly Gen2 devices
