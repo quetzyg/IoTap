@@ -60,12 +60,12 @@ const (
 %s <CIDR> <command> [flags]
 
 Commands:
-  dump    Display information for detected devices
-  config  Apply configuration settings to detected devices
-  version Show firmware version of detected devices
-  update  Perform a firmware update on detected devices
-  deploy  Deploy a script to devices that support it
-  reboot  Restart detected devices
+  dump    Output device scan results to STDOUT or to a file
+  config  Apply configurations to multiple devices
+  version Scan and check device versions
+  update  Update outdated devices
+  deploy  Deploy scripts to multiple devices
+  reboot  Restart devices
 
 Use %s <CIDR> <command> -h for more information about the command.
 `

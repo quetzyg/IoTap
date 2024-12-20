@@ -43,7 +43,7 @@ iotap <CIDR> <command> [flags]
 ### Commands
 
 <details>
-<summary><strong>dump</strong>: Output device scan results to <strong>STDOUT</strong> or to a file.</summary>
+<summary><strong>dump</strong>: Output device scan results to <strong>STDOUT</strong> or to a file</summary>
 
 ```bash
 # Dump device results to screen in tabular form
@@ -109,8 +109,8 @@ Flags:
 </details>
 
 <details>
-<summary><strong>version</strong>: Check device firmware versions</summary>
-Out of date devices will be listed.
+<summary><strong>version</strong>: Scan and check device versions</summary>
+Identify device versions across the network, listing any that are out of date.
 
 ```bash
 # Check versions for all devices
@@ -137,7 +137,8 @@ Flags:
 </details>
 
 <details>
-<summary><strong>update</strong>: Update devices to the latest available vendor firmware</summary>
+<summary><strong>update</strong>: Update outdated devices</summary>
+Update devices to the latest available vendor firmware.
 
 ```bash
 # Update the firmware for all devices
@@ -164,7 +165,7 @@ Flags:
 </details>
 
 <details>
-<summary><strong>deploy</strong>: Deploy scripts to devices</summary>
+<summary><strong>deploy</strong>: Deploy scripts to multiple devices</summary>
 
 ```bash
 # Perform a deployment to Shelly Gen2 devices
