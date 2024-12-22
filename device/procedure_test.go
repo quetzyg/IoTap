@@ -26,7 +26,7 @@ func TestProcedureResult_Error(t *testing.T) {
 				mac:    net.HardwareAddr{20, 6, 18, 220, 122, 240},
 			},
 			err: errors.New("some error"),
-			out: "[driver] 14:06:12:dc:7a:f0 @ 192.168.146.123: some error\n",
+			out: "[driver] 14:06:12:dc:7a:f0 @ 192.168.146.123: some error",
 		},
 	}
 

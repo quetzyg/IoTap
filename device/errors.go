@@ -56,7 +56,7 @@ type ProbeError struct {
 
 // Error interface implementation.
 func (pe *ProbeError) Error() string {
-	return fmt.Sprintf("%s: %v\n", pe.ip, pe.err)
+	return fmt.Sprintf("%s: %v", pe.ip, pe.err)
 }
 
 // Errors represents an error collection.

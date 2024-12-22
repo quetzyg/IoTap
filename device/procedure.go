@@ -24,7 +24,7 @@ func (pr *ProcedureResult) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"[%s] %s @ %s: %v\n",
+		"[%s] %s @ %s: %v",
 		pr.dev.Driver(),
 		pr.dev.ID(),
 		pr.dev.IP(),

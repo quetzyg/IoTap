@@ -6,7 +6,7 @@ import (
 )
 
 func TestProbeError_Error(t *testing.T) {
-	const expected = "192.168.146.123: use of closed network connection\n"
+	const expected = "192.168.146.123: use of closed network connection"
 
 	err := &ProbeError{
 		ip:  net.ParseIP("192.168.146.123"),
