@@ -16,7 +16,7 @@ type Config struct {
 	MQTT   *settings      `json:"mqtt,omitempty"`
 	Switch *[]*settings   `json:"switch,omitempty"`
 	Sys    *settings      `json:"sys,omitempty"`
-	Wifi   *settings      `json:"wifi,omitempty"`
+	WiFi   *settings      `json:"wifi,omitempty"`
 	WS     *settings      `json:"ws,omitempty"`
 }
 
