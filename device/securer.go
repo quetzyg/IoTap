@@ -10,6 +10,7 @@ import (
 // Securer deals with IoT device security.
 type Securer interface {
 	Secured() bool
+	SetCredentials(*Credentials)
 	AuthConfigRequest(*AuthConfig) (*http.Request, error)
 	SecureRequest(*http.Request) (*http.Request, error)
 }
