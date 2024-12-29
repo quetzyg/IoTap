@@ -18,11 +18,11 @@ const (
 
 // Tapper knows how to tap into devices and execute tasks on them.
 type Tapper struct {
-	probers     []Prober
-	config      Config
-	credentials *Credentials
-	deployment  *Deployment
-	transport   http.RoundTripper
+	probers    []Prober
+	config     Config
+	authConfig *AuthConfig
+	deployment *Deployment
+	transport  http.RoundTripper
 }
 
 // NewTapper creates a new *Tapper instance.
@@ -32,14 +32,14 @@ func NewTapper(probers []Prober) *Tapper {
 	}
 }
 
-// SetCredentials passed by the user.
-func (t *Tapper) SetCredentials(cred *Credentials) {
-	t.credentials = cred
-}
-
 // SetConfig implementation passed by the user.
 func (t *Tapper) SetConfig(cfg Config) {
 	t.config = cfg
+}
+
+// SetAuthConfig passed by the user.
+func (t *Tapper) SetAuthConfig(cfg *AuthConfig) {
+	t.authConfig = cfg
 }
 
 // SetDeployment passed by the user.
