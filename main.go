@@ -80,6 +80,12 @@ func main() {
 		case errors.Is(err, flag.ErrHelp):
 			os.Exit(0)
 
+		case errors.Is(err, command.ErrArgumentParse):
+			log.Printf("%v\n\n", err)
+			if cmd != nil {
+				cmd.Usage()
+			}
+
 		case errors.Is(err, command.ErrInvalid), errors.Is(err, command.ErrNotFound):
 			log.Printf("%v\n\n", err)
 			flags.Usage()
@@ -95,7 +101,7 @@ func main() {
 
 	tapper := device.NewTapper(probers)
 
-	if cmd == command.Config {
+	if cmd.Name() == command.Config {
 		var config device.Config
 
 		switch driver {
@@ -115,7 +121,7 @@ func main() {
 		tapper.SetConfig(config)
 	}
 
-	if cmd == command.Deploy {
+	if cmd.Name() == command.Deploy {
 		switch driver {
 		case device.Driver, shellygen1.Driver:
 			log.Fatalf("The deploy command is not supported by the %q driver", driver)
@@ -148,7 +154,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	switch cmd {
+	switch cmd.Name() {
 	case command.Dump:
 		err = devices.SortBy(flags.SortField())
 		if err != nil {

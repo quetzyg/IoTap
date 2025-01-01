@@ -212,14 +212,14 @@ func (p *Flags) DeployFile() string {
 }
 
 // Parse the CLI arguments.
-func (p *Flags) Parse(arguments []string) (string, string, error) {
+func (p *Flags) Parse(arguments []string) (*flag.FlagSet, string, error) {
 	if len(arguments) == 0 {
-		return "", "", ErrNotFound
+		return nil, "", ErrNotFound
 	}
 
 	err := flag.CommandLine.Parse(arguments)
 	if err != nil {
-		return "", "", fmt.Errorf("%w: %w", ErrArgumentParse, err)
+		return nil, "", fmt.Errorf("%w: %w", ErrArgumentParse, err)
 	}
 
 	// Handle commands
@@ -227,52 +227,52 @@ func (p *Flags) Parse(arguments []string) (string, string, error) {
 	case Dump:
 		err = p.dumpCmd.Parse(arguments[1:])
 		if err != nil {
-			return "", "", fmt.Errorf("%w: %w", ErrArgumentParse, err)
+			return p.dumpCmd, "", fmt.Errorf("%w: %w", ErrArgumentParse, err)
 		}
 
-		return Dump, p.dumpDriver.String(), nil
+		return p.dumpCmd, p.dumpDriver.String(), nil
 
 	case Config:
 		err = p.configCmd.Parse(arguments[1:])
 		if err != nil {
-			return "", "", fmt.Errorf("%w: %w", ErrArgumentParse, err)
+			return p.configCmd, "", fmt.Errorf("%w: %w", ErrArgumentParse, err)
 		}
 
-		return Config, p.configDriver.String(), nil
+		return p.configCmd, p.configDriver.String(), nil
 
 	case Version:
 		err = p.versionCmd.Parse(arguments[1:])
 		if err != nil {
-			return "", "", fmt.Errorf("%w: %w", ErrArgumentParse, err)
+			return p.versionCmd, "", fmt.Errorf("%w: %w", ErrArgumentParse, err)
 		}
 
-		return Version, p.versionDriver.String(), nil
+		return p.versionCmd, p.versionDriver.String(), nil
 
 	case Update:
 		err = p.updateCmd.Parse(arguments[1:])
 		if err != nil {
-			return "", "", fmt.Errorf("%w: %w", ErrArgumentParse, err)
+			return p.updateCmd, "", fmt.Errorf("%w: %w", ErrArgumentParse, err)
 		}
 
-		return Update, p.updateDriver.String(), nil
+		return p.updateCmd, p.updateDriver.String(), nil
 
 	case Deploy:
 		err = p.deployCmd.Parse(arguments[1:])
 		if err != nil {
-			return "", "", fmt.Errorf("%w: %w", ErrArgumentParse, err)
+			return p.deployCmd, "", fmt.Errorf("%w: %w", ErrArgumentParse, err)
 		}
 
-		return Deploy, p.deployDriver.String(), nil
+		return p.deployCmd, p.deployDriver.String(), nil
 
 	case Reboot:
 		err = p.rebootCmd.Parse(arguments[1:])
 		if err != nil {
-			return "", "", fmt.Errorf("%w: %w", ErrArgumentParse, err)
+			return p.rebootCmd, "", fmt.Errorf("%w: %w", ErrArgumentParse, err)
 		}
 
-		return Reboot, p.rebootDriver.String(), nil
+		return p.rebootCmd, p.rebootDriver.String(), nil
 
 	default:
-		return "", "", fmt.Errorf("%w: %s", ErrInvalid, arguments[0])
+		return nil, "", fmt.Errorf("%w: %s", ErrInvalid, arguments[0])
 	}
 }
