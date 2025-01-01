@@ -121,6 +121,26 @@ func main() {
 		tapper.SetConfig(config)
 	}
 
+	if cmd.Name() == command.Secure {
+		switch driver {
+		case shellygen1.Driver:
+			// All good!
+		case device.Driver, shellygen2.Driver:
+			log.Fatalf("The secure command is not supported by the %q driver", driver)
+		}
+
+		if !flags.SecureOff() {
+			auth := &device.AuthConfig{}
+
+			err = device.LoadAuthConfigFromPath(flags.SecureFile(), auth)
+			if err != nil {
+				log.Fatalf("Unable to load auth config file: %v\n\n", err)
+			}
+
+			tapper.SetAuthConfig(auth)
+		}
+	}
+
 	if cmd.Name() == command.Deploy {
 		switch driver {
 		case device.Driver, shellygen1.Driver:
@@ -167,6 +187,11 @@ func main() {
 		log.Print("Deploying configuration to devices...")
 
 		affected, err = tapper.Execute(device.Configure, devices)
+
+	case command.Secure:
+		log.Print("Securing devices...")
+
+		affected, err = tapper.Execute(device.Secure, devices)
 
 	case command.Version:
 		log.Print("Verifying device versions...")
