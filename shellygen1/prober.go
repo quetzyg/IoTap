@@ -8,7 +8,7 @@ import (
 	"github.com/quetzyg/IoTap/httpclient"
 )
 
-const probePath = "settings"
+const probePath = "shelly"
 
 // Prober implementation for the Shelly Gen1 driver.
 type Prober struct{}

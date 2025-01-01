@@ -5,7 +5,6 @@ import (
 	"net"
 
 	"github.com/quetzyg/IoTap/device"
-	"github.com/quetzyg/IoTap/maputil"
 )
 
 const (
@@ -58,54 +57,53 @@ func (d *Device) Driver() string {
 
 // UnmarshalJSON implements the Unmarshaler interface.
 func (d *Device) UnmarshalJSON(data []byte) error {
-	var m map[string]any
+	// Unmarshal logic for the versioner implementation
+	var ver struct {
+		New string `json:"new_version"`
+	}
 
-	err := json.Unmarshal(data, &m)
+	err := json.Unmarshal(data, &ver)
 	if err != nil {
 		return err
 	}
 
-	// Unmarshal logic for the versioner implementation
-	if maputil.KeyExists(m, "new_version") {
-		d.FirmwareNext = m["new_version"].(string)
+	if ver.New != "" {
+		d.FirmwareNext = ver.New
 		return nil
 	}
 
 	// Device unmarshal logic
-	keys := []string{
-		"device.type",
-		"device.mac",
-		"login.enabled",
-		"name",
-		"fw",
+	var dev struct {
+		Model    string `json:"type"`
+		MAC      string `json:"mac"`
+		Secured  bool   `json:"auth"`
+		Firmware string `json:"fw"`
 	}
 
-	for _, key := range keys {
-		if !maputil.KeyExists(m, key) {
-			return device.ErrUnexpected
-		}
-	}
-
-	d.model = m["device"].(map[string]any)["type"].(string)
-
-	mac := device.Macify(m["device"].(map[string]any)["mac"].(string))
-	d.mac, err = net.ParseMAC(mac)
+	err = json.Unmarshal(data, &dev)
 	if err != nil {
 		return err
 	}
 
-	// Handle a potential nil name value
-	name, ok := m["name"].(string)
-	if !ok {
-		name = "N/A"
+	if dev.MAC == "" {
+		return device.ErrUnexpected
 	}
-	d.name = name
-	d.Firmware = m["fw"].(string)
+
+	d.model = dev.Model
+
+	d.mac, err = net.ParseMAC(device.Macify(dev.MAC))
+	if err != nil {
+		return err
+	}
+
+	// Unfortunately, the /shelly endpoint for Gen1 devices does not provide a field for the device name
+	d.name = "N/A"
+	d.Firmware = dev.Firmware
 
 	// Assume we're on the latest version, until we version the device.
 	d.FirmwareNext = d.Firmware
 
-	d.secured = m["login"].(map[string]any)["enabled"].(bool)
+	d.secured = dev.Secured
 
 	return nil
 }
