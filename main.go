@@ -80,7 +80,7 @@ func main() {
 		case errors.Is(err, flag.ErrHelp):
 			os.Exit(0)
 
-		case errors.Is(err, command.ErrArgumentParse):
+		case errors.Is(err, command.ErrFlagConflict):
 			log.Printf("%v\n\n", err)
 			if cmd != nil {
 				cmd.Usage()

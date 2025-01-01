@@ -155,8 +155,8 @@ func NewFlags() *Flags {
 	// Secure
 	flags.secureCmd = flag.NewFlagSet(Secure, flag.ContinueOnError)
 	flags.secureDriver = setDriverFlag(flags.secureCmd)
-	flags.secureFile = flags.secureCmd.String("f", "", "Auth configuration file path")
-	flags.secureOff = flags.secureCmd.Bool("off", false, "Turn device authentication off")
+	flags.secureFile = flags.secureCmd.String("f", "", "Auth configuration file path (incompatible with --off)")
+	flags.secureOff = flags.secureCmd.Bool("off", false, "Turn device authentication off (incompatible with -f)")
 	flags.secureCmd.Usage = func() {
 		fmt.Printf(commandUsage, Secure, os.Args[0], Secure)
 		flags.secureCmd.PrintDefaults()
@@ -274,7 +274,7 @@ func (p *Flags) Parse(arguments []string) (*flag.FlagSet, string, error) {
 		}
 
 		if p.SecureOff() && p.SecureFile() != "" {
-			return p.secureCmd, "", fmt.Errorf("%w: The '-f' and '--off' flags cannot be used together", ErrArgumentParse)
+			return p.secureCmd, "", fmt.Errorf("%w: The '-f' and '--off' flags cannot be used together", ErrFlagConflict)
 		}
 
 		return p.secureCmd, p.secureDriver.String(), nil

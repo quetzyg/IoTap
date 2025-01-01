@@ -4,6 +4,7 @@ import "errors"
 
 var (
 	ErrNotFound      = errors.New("command not found")
-	ErrArgumentParse = errors.New("error parsing argument")
 	ErrInvalid       = errors.New("invalid command")
+	ErrArgumentParse = errors.New("error parsing argument")
+	ErrFlagConflict  = errors.New("conflicting command flags")
 )
