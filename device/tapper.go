@@ -21,7 +21,7 @@ type Tapper struct {
 	probers    []Prober
 	config     Config
 	cred       *Credentials
-	authConfig *AuthConfig
+	auth       *AuthConfig
 	deployment *Deployment
 	transport  http.RoundTripper
 }
@@ -39,8 +39,8 @@ func (t *Tapper) SetConfig(cfg Config) {
 }
 
 // SetAuthConfig passed by the user.
-func (t *Tapper) SetAuthConfig(cfg *AuthConfig) {
-	t.authConfig = cfg
+func (t *Tapper) SetAuthConfig(auth *AuthConfig) {
+	t.auth = auth
 }
 
 // SetDeployment passed by the user.

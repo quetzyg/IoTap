@@ -26,7 +26,7 @@ var Secure = func(tap *Tapper, res Resource, ch chan<- *ProcedureResult) {
 		return
 	}
 
-	r, err := dev.AuthConfigRequest(tap.authConfig)
+	r, err := dev.AuthConfigRequest(tap.auth)
 	if err != nil {
 		ch <- &ProcedureResult{
 			dev: res,
