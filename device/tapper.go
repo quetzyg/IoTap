@@ -20,6 +20,7 @@ const (
 type Tapper struct {
 	probers    []Prober
 	config     Config
+	cred       *Credentials
 	authConfig *AuthConfig
 	deployment *Deployment
 	transport  http.RoundTripper
@@ -86,6 +87,10 @@ func (t *Tapper) probe(ch chan<- *ProcedureResult, client *http.Client, ip net.I
 		// Device found!
 		if dev != nil {
 			result.dev = dev
+
+			if sec, ok := dev.(Securer); ok {
+				sec.SetCredentials(t.cred)
+			}
 			break
 		}
 
