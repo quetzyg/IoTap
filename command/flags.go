@@ -48,6 +48,7 @@ func NewStrFlag(def string, options ...string) *StrFlag {
 const (
 	Dump    = "dump"
 	Config  = "config"
+	Secure  = "secure"
 	Version = "version"
 	Update  = "update"
 	Deploy  = "deploy"
@@ -62,6 +63,7 @@ const (
 Commands:
   dump    Output device scan results to STDOUT or to a file
   config  Apply configurations to multiple devices
+  secure  Enable/disable device authentication
   version Scan and check device versions
   update  Update outdated devices
   deploy  Deploy scripts to multiple devices
@@ -87,6 +89,11 @@ type Flags struct {
 	configCmd    *flag.FlagSet
 	configDriver *StrFlag
 	configFile   *string
+
+	secureCmd    *flag.FlagSet
+	secureDriver *StrFlag
+	secureFile   *string
+	secureOff    *bool
 
 	versionCmd    *flag.FlagSet
 	versionDriver *StrFlag
@@ -143,6 +150,16 @@ func NewFlags() *Flags {
 	flags.configCmd.Usage = func() {
 		fmt.Printf(commandUsage, Config, os.Args[0], Config)
 		flags.configCmd.PrintDefaults()
+	}
+
+	// Secure
+	flags.secureCmd = flag.NewFlagSet(Secure, flag.ContinueOnError)
+	flags.secureDriver = setDriverFlag(flags.secureCmd)
+	flags.secureFile = flags.secureCmd.String("f", "", "Auth configuration file path")
+	flags.secureOff = flags.secureCmd.Bool("off", false, "Turn device authentication off")
+	flags.secureCmd.Usage = func() {
+		fmt.Printf(commandUsage, Secure, os.Args[0], Secure)
+		flags.secureCmd.PrintDefaults()
 	}
 
 	// Version
@@ -206,6 +223,16 @@ func (p *Flags) ConfigFile() string {
 	return *p.configFile
 }
 
+// SecureFile returns the auth configuration file path value.
+func (p *Flags) SecureFile() string {
+	return *p.secureFile
+}
+
+// SecureOff returns true if device authentication should be turned off, false otherwise.
+func (p *Flags) SecureOff() bool {
+	return *p.secureOff
+}
+
 // DeployFile returns the deployment file path value.
 func (p *Flags) DeployFile() string {
 	return *p.deployFile
@@ -239,6 +266,18 @@ func (p *Flags) Parse(arguments []string) (*flag.FlagSet, string, error) {
 		}
 
 		return p.configCmd, p.configDriver.String(), nil
+
+	case Secure:
+		err = p.secureCmd.Parse(arguments[1:])
+		if err != nil {
+			return p.secureCmd, "", fmt.Errorf("%w: %w", ErrArgumentParse, err)
+		}
+
+		if p.SecureOff() && p.SecureFile() != "" {
+			return p.secureCmd, "", fmt.Errorf("%w: The '-f' and '--off' flags cannot be used together", ErrArgumentParse)
+		}
+
+		return p.secureCmd, p.secureDriver.String(), nil
 
 	case Version:
 		err = p.versionCmd.Parse(arguments[1:])
