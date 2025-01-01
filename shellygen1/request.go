@@ -33,6 +33,10 @@ func request(dev *Device, path string, params any) (*http.Request, error) {
 
 	r.Header.Set(httpclient.ContentTypeHeader, httpclient.JSONMimeType)
 
+	if dev.Secured() {
+		return dev.SecureRequest(r)
+	}
+
 	return r, nil
 }
 
