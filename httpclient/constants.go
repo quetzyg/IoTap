@@ -1,7 +1,8 @@
 package httpclient
 
-// Constants for setting the 'Content-Type' header to 'application/json' for all outgoing HTTP requests.
+// Constants for setting headers on HTTP requests.
 const (
-	ContentTypeHeader = "Content-Type"
-	JSONMimeType      = "application/json"
+	AuthorizationHeader = "Authorization"
+	ContentTypeHeader   = "Content-Type"
+	JSONMimeType        = "application/json"
 )
