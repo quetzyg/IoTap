@@ -16,6 +16,10 @@ var (
 	// resulted in an empty Config instance.
 	ErrConfigurationEmpty = errors.New("the configuration is empty")
 
+	// ErrMissingCredentials is returned when an HTTP request cannot be secured
+	// due to missing authentication credentials.
+	ErrMissingCredentials = errors.New("missing authentication credentials")
+
 	// ErrScriptEmpty indicates that the loaded script file
 	// resulted in an empty Script instance.
 	ErrScriptEmpty = errors.New("the IoT script is empty")
