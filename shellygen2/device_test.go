@@ -78,7 +78,7 @@ func TestDevice_UnmarshalJSON(t *testing.T) {
 		{
 			name: "success: version device logic",
 			dev:  &Device{},
-			data: []byte(`{"result":{"stable":{"version":"20241011-114449/1.4.4-g6d2a586"}}}`),
+			data: []byte(`{"src":"shellypro1-001122334455","result":{"stable":{"version":"20241011-114449/1.4.4-g6d2a586"}}}`),
 		},
 		{
 			name: "failure: unexpected IoT device",
