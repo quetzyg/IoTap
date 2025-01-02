@@ -5,7 +5,6 @@ import (
 	"net"
 
 	"github.com/quetzyg/IoTap/device"
-	"github.com/quetzyg/IoTap/maputil"
 )
 
 const (
@@ -21,7 +20,7 @@ type Device struct {
 	model   string
 	secured bool
 
-	Key         string
+	Realm       string
 	Generation  uint8
 	Firmware    string
 	Version     string
@@ -66,64 +65,75 @@ func (d *Device) Secured() bool {
 
 // UnmarshalJSON implements the Unmarshaler interface.
 func (d *Device) UnmarshalJSON(data []byte) error {
-	var m map[string]any
+	// Unmarshal logic for the versioner implementation
+	var fw struct {
+		Src    string `json:"src"`
+		Result struct {
+			Stable struct {
+				Version string `json:"version"`
+			} `json:"stable"`
+		} `json:"result"`
+	}
 
-	err := json.Unmarshal(data, &m)
+	err := json.Unmarshal(data, &fw)
 	if err != nil {
 		return err
 	}
 
-	// Unmarshal logic for the versioner implementation
-	if maputil.KeyExists(m, "result") {
-		if maputil.KeyExists(m, "result.stable.version") {
-			d.VersionNext = m["result"].(map[string]any)["stable"].(map[string]any)["version"].(string)
+	if fw.Src != "" {
+		if fw.Result.Stable.Version != "" {
+			d.VersionNext = fw.Result.Stable.Version
 		}
 
 		return nil
 	}
 
 	// Device unmarshal logic
-	keys := []string{
-		"name",
-		"id",
-		"mac",
-		"model",
-		"gen",
-		"fw_id",
-		"ver",
-		"app",
-		"auth_en",
+	var dev struct {
+		Name       *string `json:"name"`
+		Realm      string  `json:"id"`
+		MAC        string  `json:"mac"`
+		Model      string  `json:"model"`
+		Generation uint8   `json:"gen"`
+		Firmware   string  `json:"fw_id"`
+		Version    string  `json:"ver"`
+		AppName    string  `json:"app"`
+		Secured    bool    `json:"auth_en"`
 	}
 
-	for _, key := range keys {
-		if !maputil.KeyExists(m, key) {
-			return device.ErrUnexpected
-		}
-	}
-
-	// Handle a potential nil name value
-	name, ok := m["name"].(string)
-	if !ok {
-		name = "N/A"
-	}
-	d.name = name
-	d.Key = m["id"].(string)
-
-	mac := device.Macify(m["mac"].(string))
-	d.mac, err = net.ParseMAC(mac)
+	err = json.Unmarshal(data, &dev)
 	if err != nil {
 		return err
 	}
 
-	d.model = m["model"].(string)
-	d.Generation = uint8(m["gen"].(float64))
-	d.Firmware = m["fw_id"].(string)
-	d.Version = m["ver"].(string)
+	// Different Shelly generations use different JSON field names,
+	// but a Gen2 device should always have these fields populated.
+	if dev.Model == "" && dev.Secured == false && dev.Firmware == "" {
+		return device.ErrUnexpected
+	}
+
+	// Handle a potential nil name value
+	d.name = "N/A"
+	if dev.Name != nil {
+		d.name = *dev.Name
+	}
+
+	d.Realm = dev.Realm
+
+	d.mac, err = net.ParseMAC(device.Macify(dev.MAC))
+	if err != nil {
+		return err
+	}
+
+	d.model = dev.Model
+	d.Generation = dev.Generation
+	d.Firmware = dev.Firmware
+	d.Version = dev.Version
 
 	// Assume we're on the latest version, until we version the device.
 	d.VersionNext = d.Version
-	d.AppName = m["app"].(string)
-	d.secured = m["auth_en"].(bool)
+	d.AppName = dev.AppName
+	d.secured = dev.Secured
 
 	return nil
 }
