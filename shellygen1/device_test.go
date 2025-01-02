@@ -89,12 +89,7 @@ func TestDevice_UnmarshalJSON(t *testing.T) {
 		{
 			name: "success: hydrate device logic",
 			dev:  &Device{},
-			data: []byte(`{"device":{"type":"SHSW-1","mac":"001122334455"},"login":{"enabled":false},"name":"Shelly 1","fw":"20230913-112003/v1.14.0-gcb84623"}`),
-		},
-		{
-			name: "success: hydrate device logic with empty name",
-			dev:  &Device{},
-			data: []byte(`{"device":{"type":"SHSW-1","mac":"001122334455"},"login":{"enabled":false},"name":null,"fw":"20230913-112003/v1.14.0-gcb84623"}`),
+			data: []byte(`{"type":"SHSW-1","mac":"001122334455","auth":false,"fw":"20230913-112003/v1.14.0-gcb84623"}`),
 		},
 	}
 

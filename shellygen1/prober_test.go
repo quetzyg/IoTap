@@ -21,7 +21,7 @@ func TestProber_Request(t *testing.T) {
 			dev: &Device{
 				ip: net.ParseIP("192.168.146.123"),
 			},
-			uri: "http://192.168.146.123/settings",
+			uri: "http://192.168.146.123/shelly",
 			err: nil,
 		},
 	}
