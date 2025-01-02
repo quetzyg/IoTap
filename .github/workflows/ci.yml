@@ -31,7 +31,7 @@ jobs:
       - name: Run Go imports
         run: |-
           go install golang.org/x/tools/cmd/goimports@latest
-          BAD_IMPORTS=$(goimports -local 'github.com/quetzyg' -l command device httpclient ip maputil meta shellygen1 shellygen2)
+          BAD_IMPORTS=$(goimports -local 'github.com/quetzyg' -l command device httpclient ip meta shellygen1 shellygen2)
           if [ "$BAD_IMPORTS" != "" ]; then
             echo "Files with bad imports:"
             echo "$BAD_IMPORTS"
