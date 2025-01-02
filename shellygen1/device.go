@@ -58,17 +58,17 @@ func (d *Device) Driver() string {
 // UnmarshalJSON implements the Unmarshaler interface.
 func (d *Device) UnmarshalJSON(data []byte) error {
 	// Unmarshal logic for the versioner implementation
-	var ver struct {
-		New string `json:"new_version"`
+	var fw struct {
+		NewVersion string `json:"new_version"`
 	}
 
-	err := json.Unmarshal(data, &ver)
+	err := json.Unmarshal(data, &fw)
 	if err != nil {
 		return err
 	}
 
-	if ver.New != "" {
-		d.FirmwareNext = ver.New
+	if fw.NewVersion != "" {
+		d.FirmwareNext = fw.NewVersion
 		return nil
 	}
 
