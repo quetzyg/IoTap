@@ -85,7 +85,9 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	if dev.MAC == "" {
+	// Different Shelly generations use different JSON field names,
+	// but a Gen1 device should always have these fields populated.
+	if dev.Model == "" && dev.Secured == false && dev.Firmware == "" {
 		return device.ErrUnexpected
 	}
 
