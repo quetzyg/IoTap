@@ -40,7 +40,7 @@ func TestFlags_SortField(t *testing.T) {
 		{
 			name:      "get default sort field value when invalid field is passed",
 			args:      []string{Dump, "-sort", "foo"},
-			command:   "",
+			command:   Dump,
 			driver:    "",
 			err:       ErrArgumentParse,
 			sortField: device.FieldName,
@@ -53,8 +53,8 @@ func TestFlags_SortField(t *testing.T) {
 
 			cmd, driver, err := flags.Parse(test.args)
 
-			if cmd != test.command {
-				t.Fatalf("Unexpected command. Got %s, expected %s", cmd, test.command)
+			if cmd.Name() != test.command {
+				t.Fatalf("Unexpected command. Got %s, expected %s", cmd.Name(), test.command)
 			}
 
 			if driver != test.driver {
@@ -100,7 +100,7 @@ func TestFlags_DumpFormat(t *testing.T) {
 		{
 			name:       "get default dump format value when invalid format is passed",
 			args:       []string{Dump, "-format", "foo"},
-			command:    "",
+			command:    Dump,
 			driver:     "",
 			err:        ErrArgumentParse,
 			dumpFormat: device.FormatCSV,
@@ -113,8 +113,8 @@ func TestFlags_DumpFormat(t *testing.T) {
 
 			cmd, driver, err := flags.Parse(test.args)
 
-			if cmd != test.command {
-				t.Fatalf("Unexpected command. Got %s, expected %s", cmd, test.command)
+			if cmd.Name() != test.command {
+				t.Fatalf("Unexpected command. Got %s, expected %s", cmd.Name(), test.command)
 			}
 
 			if driver != test.driver {
@@ -160,7 +160,7 @@ func TestFlags_DumpFile(t *testing.T) {
 		{
 			name:     "get empty dump file path value when argument is missing",
 			args:     []string{Dump, "-f"},
-			command:  "",
+			command:  Dump,
 			driver:   "",
 			err:      ErrArgumentParse,
 			dumpFile: "",
@@ -173,8 +173,8 @@ func TestFlags_DumpFile(t *testing.T) {
 
 			cmd, driver, err := flags.Parse(test.args)
 
-			if cmd != test.command {
-				t.Fatalf("Unexpected command. Got %s, expected %s", cmd, test.command)
+			if cmd.Name() != test.command {
+				t.Fatalf("Unexpected command. Got %s, expected %s", cmd.Name(), test.command)
 			}
 
 			if driver != test.driver {
@@ -220,7 +220,7 @@ func TestFlags_ConfigFile(t *testing.T) {
 		{
 			name:       "get empty config file path value when argument is missing",
 			args:       []string{Config, "-f"},
-			command:    "",
+			command:    Config,
 			driver:     "",
 			err:        ErrArgumentParse,
 			configFile: "",
@@ -233,8 +233,8 @@ func TestFlags_ConfigFile(t *testing.T) {
 
 			cmd, driver, err := flags.Parse(test.args)
 
-			if cmd != test.command {
-				t.Fatalf("Unexpected command. Got %s, expected %s", cmd, test.command)
+			if cmd.Name() != test.command {
+				t.Fatalf("Unexpected command. Got %s, expected %s", cmd.Name(), test.command)
 			}
 
 			if driver != test.driver {
@@ -280,7 +280,7 @@ func TestFlags_DeployFile(t *testing.T) {
 		{
 			name:       "get empty deploy file path value when argument is missing",
 			args:       []string{Deploy, "-f"},
-			command:    "",
+			command:    Deploy,
 			driver:     "",
 			err:        ErrArgumentParse,
 			deployFile: "",
@@ -293,8 +293,8 @@ func TestFlags_DeployFile(t *testing.T) {
 
 			cmd, driver, err := flags.Parse(test.args)
 
-			if cmd != test.command {
-				t.Fatalf("Unexpected command. Got %s, expected %s", cmd, test.command)
+			if cmd.Name() != test.command {
+				t.Fatalf("Unexpected command. Got %s, expected %s", cmd.Name(), test.command)
 			}
 
 			if driver != test.driver {
@@ -345,29 +345,34 @@ func TestFlags_Parse(t *testing.T) {
 
 		// Dump
 		{
-			name: "failure: dump command with undefined flag",
-			args: []string{Dump, "-foo"},
-			err:  ErrArgumentParse,
+			name:    "failure: dump command with undefined flag",
+			args:    []string{Dump, "-foo"},
+			command: Dump,
+			err:     ErrArgumentParse,
 		},
 		{
-			name: "failure: dump command with invalid driver flag value",
-			args: []string{Dump, "-driver"},
-			err:  ErrArgumentParse,
+			name:    "failure: dump command with invalid driver flag value",
+			args:    []string{Dump, "-driver"},
+			command: Dump,
+			err:     ErrArgumentParse,
 		},
 		{
-			name: "failure: dump command with invalid sort flag value",
-			args: []string{Dump, "-sort"},
-			err:  ErrArgumentParse,
+			name:    "failure: dump command with invalid sort flag value",
+			args:    []string{Dump, "-sort"},
+			command: Dump,
+			err:     ErrArgumentParse,
 		},
 		{
-			name: "failure: dump command with invalid format flag value",
-			args: []string{Dump, "-format"},
-			err:  ErrArgumentParse,
+			name:    "failure: dump command with invalid format flag value",
+			args:    []string{Dump, "-format"},
+			command: Dump,
+			err:     ErrArgumentParse,
 		},
 		{
-			name: "failure: dump command with invalid file flag value",
-			args: []string{Dump, "-f"},
-			err:  ErrArgumentParse,
+			name:    "failure: dump command with invalid file flag value",
+			args:    []string{Dump, "-f"},
+			command: Dump,
+			err:     ErrArgumentParse,
 		},
 		{
 			name:    "success: dump command with valid flags",
@@ -376,26 +381,30 @@ func TestFlags_Parse(t *testing.T) {
 			driver:  device.Driver,
 		},
 		{
-			name: "success: dump command with valid + help flags",
-			args: []string{Dump, "-driver", device.Driver, "-sort", device.FieldIP, "-format", device.FormatCSV, "-f", "devices.csv", "-h"},
-			err:  flag.ErrHelp,
+			name:    "success: dump command with valid + help flags",
+			args:    []string{Dump, "-driver", device.Driver, "-sort", device.FieldIP, "-format", device.FormatCSV, "-f", "devices.csv", "-h"},
+			command: Dump,
+			err:     flag.ErrHelp,
 		},
 
 		// Config
 		{
-			name: "failure: config command with undefined flag",
-			args: []string{Config, "-foo"},
-			err:  ErrArgumentParse,
+			name:    "failure: config command with undefined flag",
+			args:    []string{Config, "-foo"},
+			command: Config,
+			err:     ErrArgumentParse,
 		},
 		{
-			name: "failure: config command with invalid driver flag value",
-			args: []string{Config, "-driver"},
-			err:  ErrArgumentParse,
+			name:    "failure: config command with invalid driver flag value",
+			args:    []string{Config, "-driver"},
+			command: Config,
+			err:     ErrArgumentParse,
 		},
 		{
-			name: "failure: config command with invalid file flag value",
-			args: []string{Config, "-f"},
-			err:  ErrArgumentParse,
+			name:    "failure: config command with invalid file flag value",
+			args:    []string{Config, "-f"},
+			command: Config,
+			err:     ErrArgumentParse,
 		},
 		{
 			name:    "success: config command with valid flags",
@@ -404,21 +413,24 @@ func TestFlags_Parse(t *testing.T) {
 			driver:  shellygen1.Driver,
 		},
 		{
-			name: "success: config command with valid + help flags",
-			args: []string{Config, "-driver", shellygen1.Driver, "-f", "config.json", "-h"},
-			err:  flag.ErrHelp,
+			name:    "success: config command with valid + help flags",
+			args:    []string{Config, "-driver", shellygen1.Driver, "-f", "config.json", "-h"},
+			command: Config,
+			err:     flag.ErrHelp,
 		},
 
 		// Version
 		{
-			name: "failure: version command with undefined flag",
-			args: []string{Version, "-foo"},
-			err:  ErrArgumentParse,
+			name:    "failure: version command with undefined flag",
+			args:    []string{Version, "-foo"},
+			command: Version,
+			err:     ErrArgumentParse,
 		},
 		{
-			name: "failure: version command with invalid driver flag value",
-			args: []string{Version, "-driver"},
-			err:  ErrArgumentParse,
+			name:    "failure: version command with invalid driver flag value",
+			args:    []string{Version, "-driver"},
+			command: Version,
+			err:     ErrArgumentParse,
 		},
 		{
 			name:    "success: version command with valid flags",
@@ -427,21 +439,24 @@ func TestFlags_Parse(t *testing.T) {
 			driver:  shellygen2.Driver,
 		},
 		{
-			name: "success: version command with valid + help flags",
-			args: []string{Version, "-driver", shellygen2.Driver, "-h"},
-			err:  flag.ErrHelp,
+			name:    "success: version command with valid + help flags",
+			args:    []string{Version, "-driver", shellygen2.Driver, "-h"},
+			command: Version,
+			err:     flag.ErrHelp,
 		},
 
 		// Update
 		{
-			name: "failure: update command with undefined flag",
-			args: []string{Update, "-foo"},
-			err:  ErrArgumentParse,
+			name:    "failure: update command with undefined flag",
+			args:    []string{Update, "-foo"},
+			command: Update,
+			err:     ErrArgumentParse,
 		},
 		{
-			name: "failure: update command with invalid driver flag value",
-			args: []string{Update, "-driver"},
-			err:  ErrArgumentParse,
+			name:    "failure: update command with invalid driver flag value",
+			args:    []string{Update, "-driver"},
+			command: Update,
+			err:     ErrArgumentParse,
 		},
 		{
 			name:    "success: update command with valid flags",
@@ -450,26 +465,30 @@ func TestFlags_Parse(t *testing.T) {
 			driver:  device.Driver,
 		},
 		{
-			name: "success: update command with valid + help flags",
-			args: []string{Update, "-driver", device.Driver, "-h"},
-			err:  flag.ErrHelp,
+			name:    "success: update command with valid + help flags",
+			args:    []string{Update, "-driver", device.Driver, "-h"},
+			command: Update,
+			err:     flag.ErrHelp,
 		},
 
 		// Deploy
 		{
-			name: "failure: deploy command with undefined flag",
-			args: []string{Deploy, "-foo"},
-			err:  ErrArgumentParse,
+			name:    "failure: deploy command with undefined flag",
+			args:    []string{Deploy, "-foo"},
+			command: Deploy,
+			err:     ErrArgumentParse,
 		},
 		{
-			name: "failure: deploy command with invalid driver flag value",
-			args: []string{Deploy, "-driver"},
-			err:  ErrArgumentParse,
+			name:    "failure: deploy command with invalid driver flag value",
+			args:    []string{Deploy, "-driver"},
+			command: Deploy,
+			err:     ErrArgumentParse,
 		},
 		{
-			name: "failure: deploy command with invalid file flag value",
-			args: []string{Deploy, "-f"},
-			err:  ErrArgumentParse,
+			name:    "failure: deploy command with invalid file flag value",
+			args:    []string{Deploy, "-f"},
+			command: Deploy,
+			err:     ErrArgumentParse,
 		},
 		{
 			name:    "success: deploy command with valid flags",
@@ -478,21 +497,24 @@ func TestFlags_Parse(t *testing.T) {
 			driver:  shellygen1.Driver,
 		},
 		{
-			name: "success: deploy command with valid + help flags",
-			args: []string{Deploy, "-driver", shellygen1.Driver, "-f", "script.js", "-h"},
-			err:  flag.ErrHelp,
+			name:    "success: deploy command with valid + help flags",
+			args:    []string{Deploy, "-driver", shellygen1.Driver, "-f", "script.js", "-h"},
+			command: Deploy,
+			err:     flag.ErrHelp,
 		},
 
 		// Reboot
 		{
-			name: "failure: reboot command with undefined flag",
-			args: []string{Reboot, "-foo"},
-			err:  ErrArgumentParse,
+			name:    "failure: reboot command with undefined flag",
+			args:    []string{Reboot, "-foo"},
+			command: Reboot,
+			err:     ErrArgumentParse,
 		},
 		{
-			name: "failure: reboot command with invalid driver flag value",
-			args: []string{Reboot, "-driver"},
-			err:  ErrArgumentParse,
+			name:    "failure: reboot command with invalid driver flag value",
+			args:    []string{Reboot, "-driver"},
+			command: Reboot,
+			err:     ErrArgumentParse,
 		},
 		{
 			name:    "success: reboot command with valid flags",
@@ -501,9 +523,10 @@ func TestFlags_Parse(t *testing.T) {
 			driver:  shellygen2.Driver,
 		},
 		{
-			name: "success: reboot command with valid + help flags",
-			args: []string{Reboot, "-driver", shellygen2.Driver, "-h"},
-			err:  flag.ErrHelp,
+			name:    "success: reboot command with valid + help flags",
+			args:    []string{Reboot, "-driver", shellygen2.Driver, "-h"},
+			command: Reboot,
+			err:     flag.ErrHelp,
 		},
 	}
 
@@ -511,8 +534,8 @@ func TestFlags_Parse(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			cmd, driver, err := NewFlags().Parse(test.args)
 
-			if cmd != test.command {
-				t.Fatalf("Unexpected command. Got %s, expected %s", cmd, test.command)
+			if cmd != nil && cmd.Name() != test.command {
+				t.Fatalf("Unexpected command. Got %s, expected %s", cmd.Name(), test.command)
 			}
 
 			if driver != test.driver {
