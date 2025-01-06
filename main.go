@@ -118,23 +118,23 @@ func main() {
 	}
 
 	if cmd.Name() == command.Config {
-		var config device.Config
+		var cfg device.Config
 
 		switch driver {
 		case device.Driver:
 			log.Fatalf("The config command is not supported by the %q driver", driver)
 		case shellygen1.Driver:
-			config = &shellygen1.Config{}
+			cfg = &shellygen1.Config{}
 		case shellygen2.Driver:
-			config = &shellygen2.Config{}
+			cfg = &shellygen2.Config{}
 		}
 
-		err = device.LoadConfigFromPath(flags.ConfigFile(), config)
+		err = device.LoadConfigFromPath(flags.ConfigFile(), cfg)
 		if err != nil {
 			log.Fatalf("Unable to load config file: %v\n\n", err)
 		}
 
-		tapper.SetConfig(config)
+		tapper.SetConfig(cfg)
 	}
 
 	if cmd.Name() == command.Secure {
