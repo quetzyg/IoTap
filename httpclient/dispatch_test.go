@@ -49,6 +49,7 @@ func TestDispatch(t *testing.T) {
 		name         string
 		req          *http.Request
 		roundTripper http.RoundTripper
+		challenger   Challenger
 		v            any
 		err          error
 	}{
@@ -91,7 +92,7 @@ func TestDispatch(t *testing.T) {
 				},
 			},
 
-			err: errResponse,
+			err: errRequestUnsuccessful,
 		},
 		{
 			name: "success: no body",
@@ -127,7 +128,7 @@ func TestDispatch(t *testing.T) {
 				Transport: test.roundTripper,
 			}
 
-			err := Dispatch(client, test.req, test.v)
+			err := Dispatch(client, test.req, test.challenger, test.v)
 			if !errors.Is(err, test.err) {
 				t.Fatalf("expected %#v, got %#v", test.err, err)
 			}
