@@ -6,8 +6,10 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/quetzyg/IoTap/command"
+	"github.com/quetzyg/IoTap/config"
 	"github.com/quetzyg/IoTap/device"
 	"github.com/quetzyg/IoTap/ip"
 	"github.com/quetzyg/IoTap/meta"
@@ -100,6 +102,20 @@ func main() {
 	}
 
 	tapper := device.NewTapper(probers)
+
+	dir, _ := os.UserConfigDir()
+	if dir != "" {
+		cfg := &config.Values{}
+
+		err = config.LoadFromPath(filepath.Join(dir, config.File), cfg)
+		if err == nil {
+			log.Printf("Unable to load configuration values: %v\n\n", err)
+		}
+
+		if cfg.Credentials != nil {
+			tapper.SetCredentials(cfg.Credentials)
+		}
+	}
 
 	if cmd.Name() == command.Config {
 		var config device.Config
