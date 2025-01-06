@@ -12,7 +12,6 @@ type Securer interface {
 	Secured() bool
 	SetCredentials(*Credentials)
 	AuthConfigRequest(*AuthConfig) (*http.Request, error)
-	SecureRequest(*http.Request) (*http.Request, error)
 }
 
 // Secure is a procedure implementation for securing an IoT device.

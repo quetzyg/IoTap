@@ -1,12 +1,14 @@
 package shellygen1
 
 import (
+	"encoding/base64"
 	"fmt"
 	"net"
 	"net/http"
 	"net/url"
 	"strings"
 
+	"github.com/quetzyg/IoTap/device"
 	"github.com/quetzyg/IoTap/httpclient"
 )
 
@@ -34,7 +36,13 @@ func request(dev *Device, path string, params any) (*http.Request, error) {
 	r.Header.Set(httpclient.ContentTypeHeader, httpclient.JSONMimeType)
 
 	if dev.Secured() {
-		return dev.SecureRequest(r)
+		if dev.cred == nil {
+			return nil, device.ErrMissingCredentials
+		}
+
+		token := base64.StdEncoding.EncodeToString([]byte(dev.cred.Username + ":" + dev.cred.Password))
+
+		r.Header.Set(httpclient.AuthorizationHeader, "Basic "+token)
 	}
 
 	return r, nil
