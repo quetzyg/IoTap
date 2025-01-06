@@ -19,6 +19,7 @@ type Device struct {
 	name    string
 	model   string
 	secured bool
+	cred    *device.Credentials
 
 	Realm       string
 	Generation  uint8
@@ -56,11 +57,6 @@ func (d *Device) ID() string {
 // Driver name of this Device implementation.
 func (d *Device) Driver() string {
 	return Driver
-}
-
-// Secured returns true if the device requires authentication to be accessed, false otherwise.
-func (d *Device) Secured() bool {
-	return d.secured
 }
 
 // UnmarshalJSON implements the Unmarshaler interface.
