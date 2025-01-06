@@ -138,13 +138,6 @@ func main() {
 	}
 
 	if cmd.Name() == command.Secure {
-		switch driver {
-		case shellygen1.Driver:
-			// All good!
-		case device.Driver, shellygen2.Driver:
-			log.Fatalf("The secure command is not supported by the %q driver", driver)
-		}
-
 		if !flags.SecureOff() {
 			auth := &device.AuthConfig{}
 
