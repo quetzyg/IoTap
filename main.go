@@ -108,7 +108,7 @@ func main() {
 		cfg := &config.Values{}
 
 		err = config.LoadFromPath(filepath.Join(dir, config.File), cfg)
-		if err == nil {
+		if err != nil {
 			log.Printf("Unable to load configuration values: %v\n\n", err)
 		}
 
