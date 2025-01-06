@@ -59,7 +59,7 @@ func (d *Device) Driver() string {
 func (d *Device) UnmarshalJSON(data []byte) error {
 	// Unmarshal logic for the versioner implementation
 	var fw struct {
-		NewVersion string `json:"new_version"`
+		NewVersion *string `json:"new_version"`
 	}
 
 	err := json.Unmarshal(data, &fw)
@@ -67,17 +67,20 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	if fw.NewVersion != "" {
-		d.FirmwareNext = fw.NewVersion
+	if fw.NewVersion != nil {
+		if *fw.NewVersion != "" {
+			d.FirmwareNext = *fw.NewVersion
+		}
+
 		return nil
 	}
 
 	// Device unmarshal logic
 	var dev struct {
-		Model    string `json:"type"`
-		MAC      string `json:"mac"`
-		Secured  bool   `json:"auth"`
-		Firmware string `json:"fw"`
+		Model    *string `json:"type"`
+		MAC      *string `json:"mac"`
+		Secured  *bool   `json:"auth"`
+		Firmware *string `json:"fw"`
 	}
 
 	err = json.Unmarshal(data, &dev)
@@ -87,25 +90,26 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 
 	// Different Shelly generations use different JSON field names,
 	// but a Gen1 device should always have these fields populated.
-	if dev.Model == "" && dev.Secured == false && dev.Firmware == "" {
+	if dev.Model == nil || dev.Secured == nil || dev.Firmware == nil {
 		return device.ErrUnexpected
 	}
 
-	d.model = dev.Model
+	d.model = *dev.Model
 
-	d.mac, err = net.ParseMAC(device.Macify(dev.MAC))
+	d.mac, err = net.ParseMAC(device.Macify(*dev.MAC))
 	if err != nil {
 		return err
 	}
 
-	// Unfortunately, the /shelly endpoint for Gen1 devices does not provide a field for the device name
+	// Unfortunately, the /shelly endpoint for Gen1 devices does not provide
+	// a field for the device name, so we currently populate it with "N/A"
 	d.name = "N/A"
-	d.Firmware = dev.Firmware
+	d.Firmware = *dev.Firmware
 
 	// Assume we're on the latest version, until we version the device.
 	d.FirmwareNext = d.Firmware
 
-	d.secured = dev.Secured
+	d.secured = *dev.Secured
 
 	return nil
 }
