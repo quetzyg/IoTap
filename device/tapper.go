@@ -33,6 +33,11 @@ func NewTapper(probers []Prober) *Tapper {
 	}
 }
 
+// SetCredentials parsed from the configuration file.
+func (t *Tapper) SetCredentials(cred *Credentials) {
+	t.cred = cred
+}
+
 // SetConfig implementation passed by the user.
 func (t *Tapper) SetConfig(cfg Config) {
 	t.config = cfg
