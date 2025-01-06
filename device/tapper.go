@@ -60,7 +60,7 @@ func probeIP(prober Prober, client *http.Client, ip net.IP) (Resource, error) {
 		return nil, err
 	}
 
-	err = httpclient.Dispatch(client, r, dev)
+	err = httpclient.Dispatch(client, r, nil, dev)
 	var ue *url.Error
 	if errors.As(err, &ue) {
 		// Ignore timeouts, refused connections and other classic HTTP shenanigans,

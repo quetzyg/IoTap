@@ -41,7 +41,9 @@ var Version = func(tap *Tapper, res Resource, ch chan<- *ProcedureResult) {
 		Transport: tap.transport,
 	}
 
-	if err = httpclient.Dispatch(client, r, dev); err != nil {
+	cha, _ := res.(httpclient.Challenger)
+
+	if err = httpclient.Dispatch(client, r, cha, dev); err != nil {
 		ch <- &ProcedureResult{
 			dev: res,
 			err: err,

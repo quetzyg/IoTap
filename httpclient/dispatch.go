@@ -2,30 +2,52 @@ package httpclient
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
 )
 
-var errResponse = errors.New("HTTP response error")
-
 // Dispatch an HTTP request and (optionally) unmarshal the payload.
-func Dispatch(client *http.Client, r *http.Request, v any) error {
-	response, err := client.Do(r)
+func Dispatch(client *http.Client, r *http.Request, cha Challenger, v any) error {
+	var (
+		retry *http.Request
+		err   error
+	)
+
+	if cha != nil {
+		retry, err = cloneRequest(r)
+		if err != nil {
+			return err
+		}
+	}
+
+	resp, err := client.Do(r)
 	if err != nil {
 		return err
 	}
 
 	defer func() {
-		err = response.Body.Close()
+		err = resp.Body.Close()
 		if err != nil {
 			log.Printf("Body close error: %v", err)
 		}
 	}()
 
-	b, err := io.ReadAll(response.Body)
+	if cha != nil && cha.ChallengeAccepted(resp) {
+		retry, err = cha.ChallengeResponse(retry, resp)
+		if err != nil {
+			return err
+		}
+
+		return Dispatch(client, retry, nil, v)
+	}
+
+	if resp.StatusCode == http.StatusUnauthorized {
+		return errRequestUnauthorised
+	}
+
+	b, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return err
 	}
@@ -34,8 +56,8 @@ func Dispatch(client *http.Client, r *http.Request, v any) error {
 		return json.Unmarshal(b, v)
 	}
 
-	if response.StatusCode >= http.StatusBadRequest {
-		return fmt.Errorf("%w: %s: status %d (body: %s)", errResponse, r.URL.Path, response.StatusCode, b)
+	if resp.StatusCode >= http.StatusBadRequest {
+		return fmt.Errorf("%w: %s: status %d (body: %s)", errRequestUnsuccessful, r.URL.Path, resp.StatusCode, b)
 	}
 
 	return nil

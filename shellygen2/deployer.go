@@ -31,8 +31,8 @@ func (d *Device) scripts(client *http.Client) ([]*script, error) {
 	}
 
 	resp := &listResponse{}
-	err = httpclient.Dispatch(client, r, resp)
-	if err != nil {
+
+	if err = httpclient.Dispatch(client, r, d, resp); err != nil {
 		return nil, err
 	}
 

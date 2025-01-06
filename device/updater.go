@@ -36,7 +36,9 @@ var Update = func(tap *Tapper, res Resource, ch chan<- *ProcedureResult) {
 		Transport: tap.transport,
 	}
 
-	if err = httpclient.Dispatch(client, r, nil); err != nil {
+	cha, _ := res.(httpclient.Challenger)
+
+	if err = httpclient.Dispatch(client, r, cha, nil); err != nil {
 		ch <- &ProcedureResult{
 			dev: res,
 			err: err,
