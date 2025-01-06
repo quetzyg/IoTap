@@ -26,7 +26,6 @@ type Device struct {
 	Firmware    string
 	Version     string
 	VersionNext string
-	AppName     string
 }
 
 // IP address of the Device.
@@ -63,8 +62,7 @@ func (d *Device) Driver() string {
 func (d *Device) UnmarshalJSON(data []byte) error {
 	// Unmarshal logic for the versioner implementation
 	var fw struct {
-		Src    string `json:"src"`
-		Result struct {
+		Result *struct {
 			Stable struct {
 				Version string `json:"version"`
 			} `json:"stable"`
@@ -76,7 +74,7 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	if fw.Src != "" {
+	if fw.Result != nil {
 		if fw.Result.Stable.Version != "" {
 			d.VersionNext = fw.Result.Stable.Version
 		}
@@ -87,14 +85,13 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 	// Device unmarshal logic
 	var dev struct {
 		Name       *string `json:"name"`
-		Realm      string  `json:"id"`
-		MAC        string  `json:"mac"`
-		Model      string  `json:"model"`
-		Generation uint8   `json:"gen"`
-		Firmware   string  `json:"fw_id"`
-		Version    string  `json:"ver"`
-		AppName    string  `json:"app"`
-		Secured    bool    `json:"auth_en"`
+		Realm      *string `json:"id"`
+		MAC        *string `json:"mac"`
+		Model      *string `json:"model"`
+		Generation *uint8  `json:"gen"`
+		Firmware   *string `json:"fw_id"`
+		Version    *string `json:"ver"`
+		Secured    *bool   `json:"auth_en"`
 	}
 
 	err = json.Unmarshal(data, &dev)
@@ -104,32 +101,31 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 
 	// Different Shelly generations use different JSON field names,
 	// but a Gen2 device should always have these fields populated.
-	if dev.Model == "" && dev.Secured == false && dev.Firmware == "" {
+	if dev.Model == nil || dev.Secured == nil || dev.Firmware == nil || dev.Realm == nil || dev.Version == nil {
 		return device.ErrUnexpected
 	}
 
-	// Handle a potential nil name value
+	// Default device name if unspecified
 	d.name = "N/A"
 	if dev.Name != nil {
 		d.name = *dev.Name
 	}
 
-	d.Realm = dev.Realm
+	d.Realm = *dev.Realm
 
-	d.mac, err = net.ParseMAC(device.Macify(dev.MAC))
+	d.mac, err = net.ParseMAC(device.Macify(*dev.MAC))
 	if err != nil {
 		return err
 	}
 
-	d.model = dev.Model
-	d.Generation = dev.Generation
-	d.Firmware = dev.Firmware
-	d.Version = dev.Version
+	d.model = *dev.Model
+	d.Generation = *dev.Generation
+	d.Firmware = *dev.Firmware
+	d.Version = *dev.Version
 
 	// Assume we're on the latest version, until we version the device.
 	d.VersionNext = d.Version
-	d.AppName = dev.AppName
-	d.secured = dev.Secured
+	d.secured = *dev.Secured
 
 	return nil
 }
