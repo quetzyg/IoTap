@@ -21,7 +21,6 @@ var (
 		mac:      mac,
 		name:     name,
 		model:    model,
-		secured:  false,
 		Firmware: firmware,
 	}
 )
@@ -59,12 +58,6 @@ func TestDevice_ID(t *testing.T) {
 func TestDevice_Driver(t *testing.T) {
 	if dev.Driver() != Driver {
 		t.Fatalf("expected %q, got %q", Driver, dev.Driver())
-	}
-}
-
-func TestDevice_Secured(t *testing.T) {
-	if dev.Secured() != false {
-		t.Fatalf("expected %t, got %t", false, dev.Secured())
 	}
 }
 
