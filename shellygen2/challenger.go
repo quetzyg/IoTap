@@ -15,9 +15,9 @@ import (
 
 var errMissingDigestDirectives = errors.New("missing digest directives")
 
-// RequiresChallenge determines whether the given HTTP response indicates
-// that an authentication challenge is required.
-func (d *Device) RequiresChallenge(resp *http.Response) bool {
+// ChallengeAccepted determines whether the current implementation can accept
+// and handle the authentication challenge presented in the provided HTTP response.
+func (d *Device) ChallengeAccepted(resp *http.Response) bool {
 	if !d.Secured() {
 		return false
 	}

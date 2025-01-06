@@ -10,7 +10,7 @@ import (
 // Implementations determine if a response requires authentication
 // and generate the appropriate challenge response for subsequent requests.
 type Challenger interface {
-	RequiresChallenge(*http.Response) bool
+	ChallengeAccepted(*http.Response) bool
 	ChallengeResponse(r *http.Request, resp *http.Response) (*http.Request, error)
 }
 
