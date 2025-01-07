@@ -52,6 +52,35 @@ func resolveProbers(driver string) []device.Prober {
 	}
 }
 
+// loadConfig in order of precedence:
+// 1. Environment variables (IOTAP_*)
+// 2. Configuration file at default location (~/.config/iotap.json)
+func loadConfig() (*config.Values, error) {
+	cfg := &config.Values{}
+
+	username := os.Getenv("IOTAP_USERNAME")
+	password := os.Getenv("IOTAP_PASSWORD")
+
+	if username != "" || password != "" {
+		cfg.Credentials = &device.Credentials{
+			Username: username,
+			Password: password,
+		}
+
+		return cfg, nil
+	}
+
+	dir, _ := os.UserConfigDir()
+	if dir != "" {
+		err := config.LoadFromPath(filepath.Join(dir, config.File), cfg)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return cfg, nil
+}
+
 func main() {
 	banner()
 
@@ -103,18 +132,13 @@ func main() {
 
 	tapper := device.NewTapper(probers)
 
-	dir, _ := os.UserConfigDir()
-	if dir != "" {
-		cfg := &config.Values{}
+	cfg, err := loadConfig()
+	if err != nil {
+		log.Printf("Unable to load configuration values: %v\n\n", err)
+	}
 
-		err = config.LoadFromPath(filepath.Join(dir, config.File), cfg)
-		if err != nil {
-			log.Printf("Unable to load configuration values: %v\n\n", err)
-		}
-
-		if cfg.Credentials != nil {
-			tapper.SetCredentials(cfg.Credentials)
-		}
+	if cfg.Credentials != nil {
+		tapper.SetCredentials(cfg.Credentials)
 	}
 
 	if cmd.Name() == command.Config {
