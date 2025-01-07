@@ -1,8 +1,9 @@
 package shellygen1
 
 import (
-	"github.com/quetzyg/IoTap/device"
 	"testing"
+
+	"github.com/quetzyg/IoTap/device"
 )
 
 func TestDevice_Secured(t *testing.T) {
