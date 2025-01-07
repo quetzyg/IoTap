@@ -381,8 +381,8 @@ func TestFlags_Parse(t *testing.T) {
 			driver:  device.Driver,
 		},
 		{
-			name:    "success: dump command with valid + help flags",
-			args:    []string{Dump, "-driver", device.Driver, "-sort", device.FieldIP, "-format", device.FormatCSV, "-f", "devices.csv", "-h"},
+			name:    "success: dump command with help flag",
+			args:    []string{Dump, "-h"},
 			command: Dump,
 			err:     flag.ErrHelp,
 		},
@@ -413,9 +413,53 @@ func TestFlags_Parse(t *testing.T) {
 			driver:  shellygen1.Driver,
 		},
 		{
-			name:    "success: config command with valid + help flags",
-			args:    []string{Config, "-driver", shellygen1.Driver, "-f", "config.json", "-h"},
+			name:    "success: config command with help flag",
+			args:    []string{Config, "-h"},
 			command: Config,
+			err:     flag.ErrHelp,
+		},
+
+		// Secure
+		{
+			name:    "failure: secure command with undefined flag",
+			args:    []string{Secure, "-foo"},
+			command: Secure,
+			err:     ErrArgumentParse,
+		},
+		{
+			name:    "failure: secure command with invalid driver flag value",
+			args:    []string{Secure, "-driver"},
+			command: Secure,
+			err:     ErrArgumentParse,
+		},
+		{
+			name:    "failure: secure command with invalid file flag value",
+			args:    []string{Secure, "-f"},
+			command: Secure,
+			err:     ErrArgumentParse,
+		},
+		{
+			name:    "failure: secure command with conflicting flags",
+			args:    []string{Secure, "-f", "secure.json", "--off"},
+			command: Secure,
+			err:     ErrFlagConflict,
+		},
+		{
+			name:    "success: secure command with valid flags #1",
+			args:    []string{Secure, "-driver", shellygen1.Driver, "-f", "secure.json"},
+			command: Secure,
+			driver:  shellygen1.Driver,
+		},
+		{
+			name:    "success: secure command with valid flags #2",
+			args:    []string{Secure, "-driver", shellygen2.Driver, "--off"},
+			command: Secure,
+			driver:  shellygen2.Driver,
+		},
+		{
+			name:    "success: config command with help flag",
+			args:    []string{Secure, "-h"},
+			command: Secure,
 			err:     flag.ErrHelp,
 		},
 
@@ -439,8 +483,8 @@ func TestFlags_Parse(t *testing.T) {
 			driver:  shellygen2.Driver,
 		},
 		{
-			name:    "success: version command with valid + help flags",
-			args:    []string{Version, "-driver", shellygen2.Driver, "-h"},
+			name:    "success: version command with help flag",
+			args:    []string{Version, "-h"},
 			command: Version,
 			err:     flag.ErrHelp,
 		},
@@ -465,8 +509,8 @@ func TestFlags_Parse(t *testing.T) {
 			driver:  device.Driver,
 		},
 		{
-			name:    "success: update command with valid + help flags",
-			args:    []string{Update, "-driver", device.Driver, "-h"},
+			name:    "success: update command with help flag",
+			args:    []string{Update, "-h"},
 			command: Update,
 			err:     flag.ErrHelp,
 		},
@@ -497,8 +541,8 @@ func TestFlags_Parse(t *testing.T) {
 			driver:  shellygen1.Driver,
 		},
 		{
-			name:    "success: deploy command with valid + help flags",
-			args:    []string{Deploy, "-driver", shellygen1.Driver, "-f", "script.js", "-h"},
+			name:    "success: deploy command with help flag",
+			args:    []string{Deploy, "-h"},
 			command: Deploy,
 			err:     flag.ErrHelp,
 		},
@@ -523,8 +567,8 @@ func TestFlags_Parse(t *testing.T) {
 			driver:  shellygen2.Driver,
 		},
 		{
-			name:    "success: reboot command with valid + help flags",
-			args:    []string{Reboot, "-driver", shellygen2.Driver, "-h"},
+			name:    "success: reboot command with help flag",
+			args:    []string{Reboot, "-h"},
 			command: Reboot,
 			err:     flag.ErrHelp,
 		},
