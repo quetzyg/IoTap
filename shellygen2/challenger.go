@@ -13,6 +13,9 @@ import (
 	"github.com/quetzyg/IoTap/httpclient"
 )
 
+// Expected authentication authScheme
+const authScheme = "Digest"
+
 var errMissingDigestDirectives = errors.New("missing digest directives")
 
 // ChallengeAccepted determines whether the current implementation can accept
@@ -22,16 +25,14 @@ func (d *Device) ChallengeAccepted(resp *http.Response) bool {
 		return false
 	}
 
-	return resp.StatusCode == http.StatusUnauthorized && resp.Header.Get(httpclient.WWWAuthenticateHeader) != ""
+	return resp.StatusCode == http.StatusUnauthorized &&
+		strings.HasPrefix(resp.Header.Get(httpclient.WWWAuthenticateHeader), authScheme)
 }
 
 // parseDigest directives from the WWW-Authenticate response header.
 func parseDigest(resp *http.Response) (map[string]string, error) {
-	// Expected authentication scheme
-	const scheme = "Digest"
-
 	prefix, directives, _ := strings.Cut(resp.Header.Get(httpclient.WWWAuthenticateHeader), " ")
-	if prefix != scheme {
+	if prefix != authScheme {
 		return nil, errMissingDigestDirectives
 	}
 
