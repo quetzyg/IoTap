@@ -49,12 +49,12 @@ func TestNewScript(t *testing.T) {
 		},
 		{
 			name: "failure: script empty",
-			r:    io.NopCloser(strings.NewReader("")),
+			r:    strings.NewReader(""),
 			err:  ErrScriptEmpty,
 		},
 		{
 			name: "success",
-			r:    io.NopCloser(strings.NewReader(`var foo = "abc";`)),
+			r:    strings.NewReader(`var foo = "abc";`),
 		},
 	}
 
