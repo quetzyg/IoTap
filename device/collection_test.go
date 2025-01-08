@@ -51,11 +51,6 @@ func (r *resource) Driver() string {
 	return r.driver
 }
 
-// Secured returns true if the item requires authentication to be accessed, false otherwise.
-func (r *resource) Secured() bool {
-	return r.secured
-}
-
 // UnmarshalJSON implements the Unmarshaler interface.
 func (r *resource) UnmarshalJSON(_ []byte) error {
 	if r.unexpected {
