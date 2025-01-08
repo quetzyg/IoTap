@@ -21,6 +21,17 @@ func TestNewTapper(t *testing.T) {
 	}
 }
 
+func TestTapper_SetCredentials(t *testing.T) {
+	tap := &Tapper{}
+
+	tap.SetCredentials(&Credentials{})
+
+	if tap.cred == nil {
+		t.Fatal("credentials are nil")
+
+	}
+}
+
 func TestTapper_SetConfig(t *testing.T) {
 	tap := &Tapper{}
 
@@ -28,6 +39,16 @@ func TestTapper_SetConfig(t *testing.T) {
 
 	if tap.config.Empty() {
 		t.Fatal("config is empty")
+	}
+}
+
+func TestTapper_SetAuthConfig(t *testing.T) {
+	tap := &Tapper{}
+
+	tap.SetAuthConfig(&AuthConfig{})
+
+	if tap.auth == nil {
+		t.Fatal("auth configuration is nil")
 	}
 }
 
@@ -80,6 +101,18 @@ func TestTapper_probe(t *testing.T) {
 			dev:    &resource{},
 			failed: false,
 		},
+		{
+			name:   "success: secure device found",
+			prober: &prober{resource: &securer{}},
+			roundTripper: &RoundTripper{
+				response: &http.Response{
+					StatusCode: http.StatusOK,
+					Body:       io.NopCloser(strings.NewReader("{}")),
+				},
+			},
+			dev:    &securer{},
+			failed: false,
+		},
 	}
 
 	for _, test := range tests {
@@ -126,7 +159,7 @@ func TestTapper_probe(t *testing.T) {
 
 // prober implementation for testing purposes.
 type prober struct {
-	resource  *resource
+	resource  Resource
 	funcError error
 }
 
