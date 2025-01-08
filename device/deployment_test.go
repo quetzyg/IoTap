@@ -9,60 +9,33 @@ import (
 	"testing"
 )
 
-func TestLoadDeployment(t *testing.T) {
+func TestNewDeployment(t *testing.T) {
 	tests := []struct {
 		name string
 		r    io.Reader
-		dep  *Deployment
 		err  error
 	}{
 		{
-			name: "failure: reader error",
-			r:    &badReader{},
-			err:  io.ErrUnexpectedEOF,
-		},
-		{
-			name: "failure: syntax error",
-			r:    strings.NewReader(`!`),
+			name: "failure: invalid deployment data",
+			r:    strings.NewReader(`}`),
 			err:  &json.SyntaxError{},
 		},
 		{
-			name: "failure: empty script file paths",
-			r:    strings.NewReader(`{}`),
-			dep:  &Deployment{},
-			err:  ErrFilePathEmpty,
-		},
-		{
-			name: "failure: deployment with no scripts",
-			r:    strings.NewReader(`{"scripts":["foo.js"]}`),
-			dep:  &Deployment{},
-			err:  &fs.PathError{},
-		},
-		{
-			name: "success: ",
+			name: "success: valid deployment data",
 			r:    strings.NewReader(`{"scripts":["../testdata/script1.js"]}`),
-			dep:  &Deployment{},
 		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			err := loadDeployment(test.r, test.dep)
+			_, err := NewDeployment(test.r)
 
-			var (
-				syntaxError *json.SyntaxError
-				pathError   *fs.PathError
-			)
+			var syntaxError *json.SyntaxError
+
 			switch {
 			case errors.As(test.err, &syntaxError):
 				var se *json.SyntaxError
 				if errors.As(err, &se) {
-					return
-				}
-
-			case errors.As(test.err, &pathError):
-				var pe *fs.PathError
-				if errors.As(err, &pe) {
 					return
 				}
 
@@ -81,7 +54,6 @@ func TestLoadDeploymentFromPath(t *testing.T) {
 	tests := []struct {
 		name string
 		fp   string
-		dep  *Deployment
 		err  error
 	}{
 		{
@@ -97,13 +69,12 @@ func TestLoadDeploymentFromPath(t *testing.T) {
 		{
 			name: "success",
 			fp:   "../testdata/deployment.json",
-			dep:  &Deployment{},
 		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			err := LoadDeploymentFromPath(test.fp, test.dep)
+			_, err := LoadDeployment(test.fp)
 
 			if test.err == nil {
 				if err != nil {

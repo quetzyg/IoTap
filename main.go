@@ -182,9 +182,7 @@ func main() {
 			// All good!
 		}
 
-		dep := &device.Deployment{}
-
-		err = device.LoadDeploymentFromPath(flags.DeployFile(), dep)
+		dep, err := device.LoadDeployment(flags.DeployFile())
 		if err != nil {
 			log.Fatalf("Unable to load deployment file: %v\n\n", err)
 		}

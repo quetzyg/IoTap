@@ -31,27 +31,27 @@ func (d *Deployment) UnmarshalJSON(data []byte) error {
 	return err
 }
 
-// loadDeployment from an I/O reader and unmarshal the data into a *Deployment instance.
-func loadDeployment(r io.Reader, dep *Deployment) error {
-	data, err := io.ReadAll(r)
-	if err != nil {
-		return err
+// NewDeployment creates a new *Deployment instance by parsing data from the provided reader.
+// It returns an error if the data is invalid or cannot be parsed.
+func NewDeployment(r io.Reader) (*Deployment, error) {
+	var dep Deployment
+	if err := json.NewDecoder(r).Decode(&dep); err != nil {
+		return nil, err
 	}
 
-	return json.Unmarshal(data, &dep)
+	return &dep, nil
 }
 
-// LoadDeploymentFromPath reads and loads a deployment from the specified file path.
-// It opens the file, ensures it's closed after reading, and processes the deployment data.
-// Returns an error if the file cannot be opened or the deployment cannot be loaded.
-func LoadDeploymentFromPath(fp string, dep *Deployment) error {
+// LoadDeployment creates a new *Deployment instance from a file at the given path.
+// It returns an error if the file cannot be opened or contains invalid data.
+func LoadDeployment(fp string) (*Deployment, error) {
 	if fp == "" {
-		return ErrFilePathEmpty
+		return nil, ErrFilePathEmpty
 	}
 
 	f, err := os.Open(fp)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	defer func() {
@@ -61,5 +61,5 @@ func LoadDeploymentFromPath(fp string, dep *Deployment) error {
 		}
 	}()
 
-	return loadDeployment(f, dep)
+	return NewDeployment(f)
 }
