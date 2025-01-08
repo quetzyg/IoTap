@@ -3,11 +3,12 @@ package config
 import (
 	"encoding/json"
 	"errors"
-	"github.com/quetzyg/IoTap/device"
 	"io"
 	"reflect"
 	"strings"
 	"testing"
+
+	"github.com/quetzyg/IoTap/device"
 )
 
 // badReader returns an error when read.
