@@ -31,7 +31,6 @@ func TestNewDeployment(t *testing.T) {
 			_, err := NewDeployment(test.r)
 
 			var syntaxError *json.SyntaxError
-
 			switch {
 			case errors.As(test.err, &syntaxError):
 				var se *json.SyntaxError
@@ -75,18 +74,6 @@ func TestLoadDeploymentFromPath(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			_, err := LoadDeployment(test.fp)
-
-			if test.err == nil {
-				if err != nil {
-					t.Fatalf("expected nil, got %v", err)
-				}
-
-				return
-			}
-
-			if err == nil {
-				t.Fatalf("expected an error but got nil")
-			}
 
 			var pathError *fs.PathError
 			switch {

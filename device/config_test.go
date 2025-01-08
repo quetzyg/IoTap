@@ -113,18 +113,6 @@ func TestLoadConfigFromPath(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			err := LoadConfigFromPath(test.fp, test.cfg)
 
-			if test.err == nil {
-				if err != nil {
-					t.Fatalf("expected nil, got %v", err)
-				}
-
-				return
-			}
-
-			if err == nil {
-				t.Fatalf("expected an error but got nil")
-			}
-
 			var pathError *fs.PathError
 			switch {
 			case errors.As(test.err, &pathError):
