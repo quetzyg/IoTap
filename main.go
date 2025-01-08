@@ -133,9 +133,7 @@ func main() {
 
 	if cmd.Name() == command.Secure {
 		if !flags.SecureOff() {
-			auth := &device.AuthConfig{}
-
-			err = device.LoadAuthConfigFromPath(flags.SecureFile(), auth)
+			auth, err := device.LoadAuthConfig(flags.SecureFile())
 			if err != nil {
 				log.Fatalf("Unable to load auth config file: %v\n\n", err)
 			}

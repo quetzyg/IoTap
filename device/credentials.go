@@ -19,27 +19,27 @@ type AuthConfig struct {
 	Credentials
 }
 
-// loadAuthConfig from an I/O reader and unmarshal the data into an *AuthConfig instance.
-func loadAuthConfig(r io.Reader, cfg *AuthConfig) error {
-	data, err := io.ReadAll(r)
-	if err != nil {
-		return err
+// NewAuthConfig creates a new *AuthConfig instance by parsing data from the provided reader.
+// It returns an error if the data is invalid or cannot be parsed.
+func NewAuthConfig(r io.Reader) (*AuthConfig, error) {
+	var auth *AuthConfig
+	if err := json.NewDecoder(r).Decode(&auth); err != nil {
+		return nil, err
 	}
 
-	return json.Unmarshal(data, &cfg)
+	return auth, nil
 }
 
-// LoadAuthConfigFromPath reads and loads an auth configuration from the specified file path.
-// It opens the file, ensures it's closed after reading, and processes the auth configuration data.
-// Returns an error if the file cannot be opened or the auth configuration cannot be loaded.
-func LoadAuthConfigFromPath(fp string, cfg *AuthConfig) error {
+// LoadAuthConfig creates a new *AuthConfig instance from a file at the given path.
+// It returns an error if the file cannot be opened or contains invalid data.
+func LoadAuthConfig(fp string) (*AuthConfig, error) {
 	if fp == "" {
-		return ErrFilePathEmpty
+		return nil, ErrFilePathEmpty
 	}
 
 	f, err := os.Open(fp)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	defer func() {
@@ -49,5 +49,5 @@ func LoadAuthConfigFromPath(fp string, cfg *AuthConfig) error {
 		}
 	}()
 
-	return loadAuthConfig(f, cfg)
+	return NewAuthConfig(f)
 }
