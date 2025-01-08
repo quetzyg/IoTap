@@ -10,7 +10,7 @@ var (
 	// ErrFilePathEmpty indicates that a required file path was not provided.
 	// This error is typically returned when an operation requires a file path,
 	// but an empty string was passed instead.
-	ErrFilePathEmpty = errors.New("the file path is empty")
+	ErrFilePathEmpty = errors.New("the file path cannot be empty")
 
 	// ErrConfigurationEmpty indicates that the loaded configuration file
 	// resulted in an empty Config instance.
@@ -22,7 +22,7 @@ var (
 
 	// ErrScriptEmpty indicates that the loaded script file
 	// resulted in an empty Script instance.
-	ErrScriptEmpty = errors.New("the IoT script is empty")
+	ErrScriptEmpty = errors.New("empty IoT script")
 
 	// ErrUnexpected is an error type used when probing for IoT devices on the network.
 	// This error is returned when a device is found, but doesn't match an expected target device.
