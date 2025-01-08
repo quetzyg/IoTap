@@ -26,8 +26,7 @@ func (d *Deployment) UnmarshalJSON(data []byte) error {
 	}
 
 	d.Policy = tmp.Policy
-
-	d.Scripts, err = LoadScriptsFromPath(tmp.Scripts)
+	d.Scripts, err = LoadScripts(tmp.Scripts)
 
 	return err
 }

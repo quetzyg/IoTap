@@ -36,50 +36,91 @@ func TestScript(t *testing.T) {
 	}
 }
 
-// badReadCloser returns an error when read.
-type badReadCloser struct{}
-
-// Read implements the io.Reader interface.
-func (badReadCloser) Read(_ []byte) (int, error) {
-	return 0, io.ErrUnexpectedEOF
-}
-
-// Close implements the io.Closer interface.
-func (badReadCloser) Close() error {
-	return nil
-}
-
-func TestLoadScript(t *testing.T) {
+func TestNewScript(t *testing.T) {
 	tests := []struct {
 		name string
-		r    io.ReadCloser
-		src  *Script
+		r    io.Reader
 		err  error
 	}{
 		{
 			name: "failure: reader error",
-			r:    &badReadCloser{},
-			src:  &Script{},
+			r:    &badReader{},
 			err:  io.ErrUnexpectedEOF,
 		},
 		{
 			name: "failure: script empty",
 			r:    io.NopCloser(strings.NewReader("")),
-			src:  &Script{},
 			err:  ErrScriptEmpty,
 		},
 		{
 			name: "success",
 			r:    io.NopCloser(strings.NewReader(`var foo = "abc";`)),
-			src:  &Script{},
 		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			err := loadScript(test.r, test.src)
+			_, err := NewScript(test.r)
 
 			if !errors.Is(err, test.err) {
+				t.Fatalf("expected %#v, got %#v", test.err, err)
+			}
+		})
+	}
+}
+
+func TestLoadScript(t *testing.T) {
+	tests := []struct {
+		name string
+		fp   string
+		src  *Script
+		err  error
+	}{
+		{
+			name: "failure: no file path given",
+			fp:   "",
+			err:  ErrFilePathEmpty,
+		},
+		{
+			name: "failure: file path not found",
+			fp:   "foo.bar",
+			err:  &fs.PathError{},
+		},
+		{
+			name: "failure: error loading empty script",
+			fp:   "../testdata/empty.js",
+			err:  ErrScriptEmpty,
+		},
+		{
+			name: "success",
+			fp:   "../testdata/script1.js",
+			src: &Script{
+				path: "../testdata/script1.js",
+				code: []byte(`var foo = "abc";`),
+			},
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			script, err := LoadScript(test.fp)
+
+			if !reflect.DeepEqual(script, test.src) {
+				t.Fatalf("expected %#v, got %#v", test.src, script)
+			}
+
+			var pathError *fs.PathError
+			switch {
+			case errors.As(test.err, &pathError):
+				var pe *fs.PathError
+				if errors.As(err, &pe) {
+					return
+				}
+
+			case errors.Is(err, test.err):
+				return
+
+			default:
 				t.Fatalf("expected %#v, got %#v", test.err, err)
 			}
 		})
@@ -118,7 +159,6 @@ func TestLoadScriptsFromPath(t *testing.T) {
 			fps:  []string{"../testdata/empty.js"},
 			err:  ErrScriptEmpty,
 		},
-
 		{
 			name: "success",
 			fps:  []string{"../testdata/script1.js", "../testdata/script2.js"},
@@ -137,11 +177,7 @@ func TestLoadScriptsFromPath(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			scripts, err := LoadScriptsFromPath(test.fps)
-
-			if !reflect.DeepEqual(scripts, test.src) {
-				t.Fatalf("expected %#v, got %#v", test.src, scripts)
-			}
+			_, err := LoadScripts(test.fps)
 
 			var pathError *fs.PathError
 			switch {
