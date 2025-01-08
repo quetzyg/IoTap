@@ -3,53 +3,46 @@ package config
 import (
 	"encoding/json"
 	"errors"
+	"github.com/quetzyg/IoTap/device"
 	"io"
+	"reflect"
 	"strings"
 	"testing"
 )
 
-// badReadCloser returns an error when read.
-type badReadCloser struct{}
+// badReader returns an error when read.
+type badReader struct{}
 
 // Read implements the io.Reader interface.
-func (badReadCloser) Read(_ []byte) (int, error) {
+func (badReader) Read(_ []byte) (int, error) {
 	return 0, io.ErrUnexpectedEOF
 }
 
-// Close implements the io.Closer interface.
-func (badReadCloser) Close() error {
-	return nil
-}
-
-func TestLoad(t *testing.T) {
+func TestNewValues(t *testing.T) {
 	tests := []struct {
 		name string
-		r    io.ReadCloser
-		val  *Values
+		r    io.Reader
 		err  error
 	}{
 		{
 			name: "failure: reader error",
-			r:    &badReadCloser{},
-			val:  &Values{},
+			r:    &badReader{},
 			err:  io.ErrUnexpectedEOF,
 		},
 		{
 			name: "failure: syntax error",
-			r:    io.NopCloser(strings.NewReader("}")),
-			val:  &Values{},
+			r:    strings.NewReader("}"),
 			err:  &json.SyntaxError{},
 		},
 		{
 			name: "success",
-			r:    io.NopCloser(strings.NewReader(`{}`)),
-			val:  &Values{},
+			r:    strings.NewReader(`{}`),
 		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			err := load(test.r, test.val)
+			_, err := NewValues(test.r)
 
 			var syntaxError *json.SyntaxError
 			switch {
@@ -69,32 +62,67 @@ func TestLoad(t *testing.T) {
 	}
 }
 
-func TestLoadFromPath(t *testing.T) {
+func TestLoadFromEnv(t *testing.T) {
 	tests := []struct {
 		name string
-		fp   string
-		val  *Values
+		envs map[string]string
 		err  error
 	}{
 		{
-			name: "success: invalid file path isn't an error",
-			fp:   "/invalid/file/path/is.ok",
-		},
-		{
-			name: "failure: error loading empty file",
-			fp:   "../testdata/empty.js",
-			err:  &json.SyntaxError{},
+			name: "failure: missing credentials",
+			err:  errCredentialsNotFound,
 		},
 		{
 			name: "success",
-			fp:   "../testdata/values.json",
-			val:  &Values{},
+			envs: map[string]string{
+				iotapUsername: "foo",
+				iotapPassword: "bar",
+			},
 		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			err := LoadFromPath(test.fp, test.val)
+			for k, v := range test.envs {
+				t.Setenv(k, v)
+			}
+
+			_, err := LoadFromEnv()
+
+			if !errors.Is(err, test.err) {
+				t.Fatalf("expected %#v, got %#v", test.err, err)
+			}
+		})
+	}
+}
+
+func TestLoadFromConfigDir(t *testing.T) {
+	tests := []struct {
+		name string
+		dir  string
+		err  error
+	}{
+		{
+			name: "no available config directory",
+			dir:  "",
+		},
+		{
+			name: "failure: error loading empty file",
+			dir:  "invalid/path",
+			err:  &json.SyntaxError{},
+		},
+		{
+			name: "success",
+			dir:  "../testdata/",
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			t.Setenv("XDG_CONFIG_HOME", test.dir)
+			t.Setenv("HOME", test.dir)
+
+			_, err := LoadFromConfigDir()
 
 			var syntaxError *json.SyntaxError
 			switch {
@@ -109,6 +137,56 @@ func TestLoadFromPath(t *testing.T) {
 
 			default:
 				t.Fatalf("expected %#v, got %#v", test.err, err)
+			}
+		})
+	}
+}
+
+func TestLoadValues(t *testing.T) {
+	tests := []struct {
+		name string
+		envs map[string]string
+		val  *Values
+		err  error
+	}{
+		{
+			name: "load from env",
+			envs: map[string]string{
+				iotapUsername: "foo",
+				iotapPassword: "bar",
+			},
+			val: &Values{
+				Credentials: &device.Credentials{
+					Username: "foo",
+					Password: "bar",
+				},
+			},
+		},
+		{
+			name: "load from file",
+			envs: map[string]string{
+				"XDG_CONFIG_HOME": "../testdata/",
+				"HOME":            "../testdata/",
+			},
+			val: &Values{
+				Credentials: &device.Credentials{
+					Username: "admin",
+					Password: "secret",
+				},
+			},
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			for k, v := range test.envs {
+				t.Setenv(k, v)
+			}
+
+			val, _ := LoadValues()
+
+			if !reflect.DeepEqual(val.Credentials, test.val.Credentials) {
+				t.Fatalf("expected %#v, got %#v", test.val.Credentials, val.Credentials)
 			}
 		})
 	}

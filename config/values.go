@@ -7,40 +7,73 @@ import (
 	"io/fs"
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/quetzyg/IoTap/device"
 )
 
-// File defines the default/expected filename for the configuration.
-const File = "iotap.json"
+const (
+	// file defines the default filename for the IoTap configuration.
+	file = "iotap.json"
 
-// Values from a loaded configuration file.
+	// ENV variable names
+	iotapUsername = "IOTAP_USERNAME"
+	iotapPassword = "IOTAP_PASSWORD"
+)
+
+// Values from an IoTap configuration.
 type Values struct {
-	Credentials *device.Credentials `json:"credentials"`
+	Credentials *device.Credentials `json:"credentials,omitempty"`
 }
 
-// load data from an I/O reader and unmarshal it into a *Values instance.
-func load(r io.Reader, values *Values) error {
-	data, err := io.ReadAll(r)
-	if err != nil {
-		return err
+// NewValues creates a new *Values instance by parsing data from the provided reader.
+// It returns an error if the data is invalid or cannot be parsed.
+func NewValues(r io.Reader) (*Values, error) {
+	var val *Values
+	if err := json.NewDecoder(r).Decode(&val); err != nil {
+		return nil, err
 	}
 
-	return json.Unmarshal(data, &values)
+	return val, nil
 }
 
-// LoadFromPath reads and loads configuration values from the specified file path.
-// It opens the file, ensures it's closed after reading, and processes the configuration data.
-// Returns an error if the file cannot be opened or the configuration cannot be loaded.
-func LoadFromPath(fp string, values *Values) error {
-	f, err := os.Open(fp)
+var errCredentialsNotFound = errors.New("credentials not found in the environment")
+
+// LoadFromEnv initializes a new *Values instance using values from the environment.
+// It returns an error if the required environment variables are missing or invalid.
+func LoadFromEnv() (*Values, error) {
+	username := os.Getenv(iotapUsername)
+	password := os.Getenv(iotapPassword)
+
+	if username == "" && password == "" {
+		return nil, errCredentialsNotFound
+	}
+
+	return &Values{
+		Credentials: &device.Credentials{
+			Username: username,
+			Password: password,
+		},
+	}, nil
+}
+
+// LoadFromConfigDir creates a new *Values instance from a user config directory file.
+// It returns an error if the file cannot be opened or contains invalid data.
+func LoadFromConfigDir() (*Values, error) {
+	dir, err := os.UserConfigDir()
 	if err != nil {
-		// An unexistent file is not considered an error
+		// Missing config directories are ignored and not treated as errors.
+		return nil, nil
+	}
+
+	f, err := os.Open(filepath.Join(dir, file))
+	if err != nil {
+		// Missing files are ignored and not treated as errors.
 		if errors.Is(err, fs.ErrNotExist) {
-			return nil
+			return nil, nil
 		}
 
-		return err
+		return nil, err
 	}
 
 	defer func() {
@@ -50,5 +83,17 @@ func LoadFromPath(fp string, values *Values) error {
 		}
 	}()
 
-	return load(f, values)
+	return NewValues(f)
+}
+
+// LoadValues creates a new *Values instance from two sources, with order of precedence:
+// 1. Environment variables (IOTAP_*)
+// 2. Configuration file at default location (~/.config/iotap.json)
+func LoadValues() (*Values, error) {
+	val, err := LoadFromEnv()
+	if err == nil {
+		return val, nil
+	}
+
+	return LoadFromConfigDir()
 }
