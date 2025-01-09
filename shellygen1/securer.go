@@ -22,7 +22,7 @@ func (d *Device) SetCredentials(cred *device.Credentials) {
 // AuthConfigRequest returns an authentication setup HTTP request.
 // See: https://shelly-api-docs.shelly.cloud/gen1/#settings-login
 func (d *Device) AuthConfigRequest(auth *device.AuthConfig) (*http.Request, error) {
-	// A nil auth configuration is considered a device authentication reset
+	// A nil auth configuration disables device authentication
 	if auth == nil {
 		return request(d, securePath, url.Values{
 			"enabled": []string{"false"},
