@@ -36,7 +36,7 @@ func (d *Device) AuthConfigRequest(auth *device.AuthConfig) (*http.Request, erro
 
 	return request(d, securePath, url.Values{
 		"enabled":  []string{"true"},
-		"username": []string{auth.Username},
-		"password": []string{auth.Password},
+		"username": []string{auth.Credentials.Username},
+		"password": []string{auth.Credentials.Password},
 	})
 }

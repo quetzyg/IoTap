@@ -1,4 +1,6 @@
 {
-  "username": "admin",
-  "password": "secret"
+  "credentials": {
+    "username": "admin",
+    "password": "secret"
+  }
 }

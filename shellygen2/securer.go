@@ -38,6 +38,6 @@ func (d *Device) AuthConfigRequest(auth *device.AuthConfig) (*http.Request, erro
 	return request(d, securePath, map[string]string{
 		"user":  "admin",
 		"realm": d.Realm,
-		"ha1":   ha1(d.Realm, auth.Password),
+		"ha1":   ha1(d.Realm, auth.Credentials.Password),
 	})
 }

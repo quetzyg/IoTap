@@ -66,7 +66,7 @@ func TestDevice_AuthConfigRequest(t *testing.T) {
 		{
 			name: "success: turn authentication on",
 			auth: &device.AuthConfig{
-				Credentials: device.Credentials{
+				Credentials: &device.Credentials{
 					Username: "foo",
 					Password: "bar",
 				},

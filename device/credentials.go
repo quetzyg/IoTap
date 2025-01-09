@@ -9,14 +9,14 @@ import (
 
 // Credentials to interact with secured IoT devices.
 type Credentials struct {
-	Username string `json:"username,omitempty"`
+	Username string `json:"username"`
 	Password string `json:"password"`
 }
 
 // AuthConfig to apply when enabling authentication to IoT devices.
 type AuthConfig struct {
-	Policy *Policy `json:"policy,omitempty"`
-	Credentials
+	Policy      *Policy      `json:"policy,omitempty"`
+	Credentials *Credentials `json:"credentials"`
 }
 
 // NewAuthConfig creates a new *AuthConfig instance by parsing data from the provided reader.
@@ -25,6 +25,15 @@ func NewAuthConfig(r io.Reader) (*AuthConfig, error) {
 	var auth *AuthConfig
 	if err := json.NewDecoder(r).Decode(&auth); err != nil {
 		return nil, err
+	}
+
+	if auth.Credentials == nil {
+		return nil, ErrMissingCredentials
+	}
+
+	// Certain devices only require a password for authentication and do not use a username
+	if auth.Credentials.Password == "" {
+		return nil, ErrMissingCredentials
 	}
 
 	return auth, nil

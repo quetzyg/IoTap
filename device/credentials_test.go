@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io"
 	"io/fs"
+	"reflect"
 	"strings"
 	"testing"
 )
@@ -13,6 +14,7 @@ func TestNewAuthConfig(t *testing.T) {
 	tests := []struct {
 		name string
 		r    io.Reader
+		auth *AuthConfig
 		err  error
 	}{
 		{
@@ -21,17 +23,42 @@ func TestNewAuthConfig(t *testing.T) {
 			err:  &json.SyntaxError{},
 		},
 		{
-			name: "success: valid data",
+			name: "failure: wrong JSON structure",
 			r:    strings.NewReader(`{"username":"foo","password":"bar"}`),
+			err:  ErrMissingCredentials,
+		},
+		{
+			name: "failure: partial data",
+			r:    strings.NewReader(`{"credentials":{"username":"foo"}}`),
+			err:  ErrMissingCredentials,
+		},
+		{
+			name: "success: partial data",
+			r:    strings.NewReader(`{"credentials":{"password":"bar"}}`),
+			auth: &AuthConfig{
+				Policy:      nil,
+				Credentials: &Credentials{Username: "", Password: "bar"},
+			},
+		},
+		{
+			name: "success: valid data",
+			r:    strings.NewReader(`{"credentials":{"username":"foo","password":"bar"}}`),
+			auth: &AuthConfig{
+				Policy:      nil,
+				Credentials: &Credentials{Username: "foo", Password: "bar"},
+			},
 		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			_, err := NewAuthConfig(test.r)
+			auth, err := NewAuthConfig(test.r)
+
+			if !reflect.DeepEqual(auth, test.auth) {
+				t.Fatalf("expected %#v, got %#v", test.auth, auth)
+			}
 
 			var syntaxError *json.SyntaxError
-
 			switch {
 			case errors.As(test.err, &syntaxError):
 				var se *json.SyntaxError
@@ -54,6 +81,7 @@ func TestLoadAuthConfig(t *testing.T) {
 	tests := []struct {
 		name string
 		fp   string
+		auth *AuthConfig
 		err  error
 	}{
 		{
@@ -69,12 +97,20 @@ func TestLoadAuthConfig(t *testing.T) {
 		{
 			name: "success",
 			fp:   "../testdata/authconfig.json",
+			auth: &AuthConfig{
+				Policy:      nil,
+				Credentials: &Credentials{Username: "admin", Password: "secret"},
+			},
 		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			_, err := LoadAuthConfig(test.fp)
+			auth, err := LoadAuthConfig(test.fp)
+
+			if !reflect.DeepEqual(auth, test.auth) {
+				t.Fatalf("expected %#v, got %#v", test.auth, auth)
+			}
 
 			var pathError *fs.PathError
 			switch {
