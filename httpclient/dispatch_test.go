@@ -1,9 +1,9 @@
 package httpclient
 
 import (
-	"context"
 	"errors"
 	"io"
+	"net"
 	"net/http"
 	"net/url"
 	"strings"
@@ -86,9 +86,9 @@ func TestDispatch(t *testing.T) {
 			},
 			roundTripper: &RoundTripper{
 				response: nil,
-				err:      context.DeadlineExceeded,
+				err:      net.ErrClosed,
 			},
-			err: context.DeadlineExceeded,
+			err: net.ErrClosed,
 		},
 		{
 			name: "failure: challenge accepted error",
@@ -102,9 +102,9 @@ func TestDispatch(t *testing.T) {
 				},
 			},
 			challenger: &challenger{
-				err: http.ErrHeaderTooLong,
+				err: net.ErrClosed,
 			},
-			err: http.ErrHeaderTooLong,
+			err: net.ErrClosed,
 		},
 		{
 			name: "failure: challenge unauthorised",
