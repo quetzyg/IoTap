@@ -45,7 +45,8 @@ func LoadFromEnv() (*Values, error) {
 	username := os.Getenv(iotapUsername)
 	password := os.Getenv(iotapPassword)
 
-	if username == "" && password == "" {
+	// Certain devices only require a password for authentication and do not use a username
+	if password == "" {
 		return nil, errCredentialsNotFound
 	}
 

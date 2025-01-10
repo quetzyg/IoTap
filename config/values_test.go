@@ -74,7 +74,20 @@ func TestLoadFromEnv(t *testing.T) {
 			err:  errCredentialsNotFound,
 		},
 		{
-			name: "success",
+			name: "failure: only username",
+			envs: map[string]string{
+				iotapUsername: "foo",
+			},
+			err: errCredentialsNotFound,
+		},
+		{
+			name: "success: only password",
+			envs: map[string]string{
+				iotapPassword: "bar",
+			},
+		},
+		{
+			name: "success: username and password",
 			envs: map[string]string{
 				iotapUsername: "foo",
 				iotapPassword: "bar",
