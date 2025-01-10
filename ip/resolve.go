@@ -12,15 +12,21 @@ func next(addr net.IP) {
 	}
 }
 
-// Resolve the IP addresses of a given CIDR.
+// Resolve the IP addresses of a given IP or CIDR string argument.
 func Resolve(cidr string) ([]net.IP, error) {
+	var ips []net.IP
+
+	ip := net.ParseIP(cidr)
+	if ip != nil {
+		return append(ips, ip), nil
+	}
+
 	address, network, err := net.ParseCIDR(cidr)
 	if err != nil {
 		return nil, err
 	}
 
-	var ips []net.IP
-	for ip := address.Mask(network.Mask); network.Contains(ip); next(ip) {
+	for ip = address.Mask(network.Mask); network.Contains(ip); next(ip) {
 		ips = append(ips, net.ParseIP(ip.String()))
 	}
 

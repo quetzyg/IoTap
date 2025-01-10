@@ -45,10 +45,18 @@ func TestResolve(t *testing.T) {
 	}{
 		{
 			name: "failure: invalid CIDR",
+			cidr: "192",
 			err:  &net.ParseError{},
 		},
 		{
-			name: "success",
+			name: "success: IP string",
+			cidr: "192.168.146.123",
+			ips: []net.IP{
+				net.ParseIP("192.168.146.123"),
+			},
+		},
+		{
+			name: "success: CIDR string",
 			cidr: "127.0.0.0/31",
 			ips: []net.IP{
 				net.ParseIP("127.0.0.0"),
