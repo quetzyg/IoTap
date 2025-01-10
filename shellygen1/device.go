@@ -10,6 +10,12 @@ import (
 const (
 	// Driver name for this device implementation.
 	Driver = "shelly_gen1"
+
+	// Vendor represents the name of the company that developed the device.
+	Vendor = "Shelly"
+
+	// Generation of this device implementation.
+	Generation = "1"
 )
 
 // Device implementation for the Shelly Gen1 driver.
@@ -53,6 +59,16 @@ func (d *Device) ID() string {
 // Driver name of this Device implementation.
 func (d *Device) Driver() string {
 	return Driver
+}
+
+// Vendor represents the name of the company that developed the device.
+func (d *Device) Vendor() string {
+	return Vendor
+}
+
+// Generation represents the generation of this device.
+func (d *Device) Generation() string {
+	return Generation
 }
 
 // UnmarshalJSON implements the Unmarshaler interface.

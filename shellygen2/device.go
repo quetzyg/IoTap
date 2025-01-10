@@ -2,6 +2,7 @@ package shellygen2
 
 import (
 	"encoding/json"
+	"fmt"
 	"net"
 
 	"github.com/quetzyg/IoTap/device"
@@ -10,6 +11,9 @@ import (
 const (
 	// Driver name for this device implementation.
 	Driver = "shelly_gen2"
+
+	// Vendor represents the name of the company that developed the device.
+	Vendor = "Shelly"
 )
 
 // Device implementation for the Shelly Gen2 driver.
@@ -22,7 +26,7 @@ type Device struct {
 	cred    *device.Credentials
 
 	Realm       string
-	Generation  uint8
+	Gen         uint8
 	Firmware    string
 	Version     string
 	VersionNext string
@@ -58,6 +62,16 @@ func (d *Device) Driver() string {
 	return Driver
 }
 
+// Vendor represents the name of the company that developed the device.
+func (d *Device) Vendor() string {
+	return Vendor
+}
+
+// Generation represents the generation of this device.
+func (d *Device) Generation() string {
+	return fmt.Sprint(d.Gen)
+}
+
 // UnmarshalJSON implements the Unmarshaler interface.
 func (d *Device) UnmarshalJSON(data []byte) error {
 	// Unmarshal logic for the versioner implementation
@@ -84,14 +98,14 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 
 	// Device unmarshal logic
 	var dev struct {
-		Name       *string `json:"name"`
-		Realm      *string `json:"id"`
-		MAC        *string `json:"mac"`
-		Model      *string `json:"model"`
-		Generation *uint8  `json:"gen"`
-		Firmware   *string `json:"fw_id"`
-		Version    *string `json:"ver"`
-		Secured    *bool   `json:"auth_en"`
+		Name     *string `json:"name"`
+		Realm    *string `json:"id"`
+		MAC      *string `json:"mac"`
+		Model    *string `json:"model"`
+		Gen      *uint8  `json:"gen"`
+		Firmware *string `json:"fw_id"`
+		Version  *string `json:"ver"`
+		Secured  *bool   `json:"auth_en"`
 	}
 
 	err = json.Unmarshal(data, &dev)
@@ -119,7 +133,7 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 	}
 
 	d.model = *dev.Model
-	d.Generation = *dev.Generation
+	d.Gen = *dev.Gen
 	d.Firmware = *dev.Firmware
 	d.Version = *dev.Version
 

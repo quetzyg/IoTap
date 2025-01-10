@@ -12,11 +12,13 @@ import (
 
 // resource implementation for testing purposes.
 type resource struct {
+	vendor     string
 	driver     string
 	ip         net.IP
 	mac        net.HardwareAddr
 	name       string
 	model      string
+	gen        string
 	secured    bool
 	unexpected bool
 }
@@ -49,6 +51,16 @@ func (r *resource) ID() string {
 // Driver name of this resource implementation.
 func (r *resource) Driver() string {
 	return r.driver
+}
+
+// Vendor represents the name of the company that developed the device.
+func (r *resource) Vendor() string {
+	return r.vendor
+}
+
+// Generation represents the generation of this device.
+func (r *resource) Generation() string {
+	return r.gen
 }
 
 // UnmarshalJSON implements the Unmarshaler interface.

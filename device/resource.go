@@ -11,6 +11,8 @@ const Driver = "all"
 // Resource defines the methods an IoT device resource should implement.
 type Resource interface {
 	Driver() string
+	Vendor() string
+	Generation() string
 	IP() net.IP
 	MAC() net.HardwareAddr
 	Name() string

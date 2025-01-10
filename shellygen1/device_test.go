@@ -61,6 +61,18 @@ func TestDevice_Driver(t *testing.T) {
 	}
 }
 
+func TestDevice_Vendor(t *testing.T) {
+	if dev.Vendor() != Vendor {
+		t.Fatalf("expected %q, got %q", Vendor, dev.Vendor())
+	}
+}
+
+func TestDevice_Generation(t *testing.T) {
+	if dev.Generation() != Generation {
+		t.Fatalf("expected %q, got %q", Generation, dev.Generation())
+	}
+}
+
 func TestDevice_UnmarshalJSON(t *testing.T) {
 	tests := []struct {
 		name string

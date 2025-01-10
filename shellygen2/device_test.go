@@ -21,6 +21,7 @@ var (
 		mac:      mac,
 		name:     name,
 		model:    model,
+		Gen:      2,
 		Firmware: firmware,
 	}
 )
@@ -58,6 +59,18 @@ func TestDevice_ID(t *testing.T) {
 func TestDevice_Driver(t *testing.T) {
 	if dev.Driver() != Driver {
 		t.Fatalf("expected %q, got %q", Driver, dev.Driver())
+	}
+}
+
+func TestDevice_Vendor(t *testing.T) {
+	if dev.Vendor() != Vendor {
+		t.Fatalf("expected %q, got %q", Vendor, dev.Vendor())
+	}
+}
+
+func TestDevice_Generation(t *testing.T) {
+	if dev.Generation() != "2" {
+		t.Fatalf("expected %q, got %q", "2", dev.Generation())
 	}
 }
 
