@@ -28,12 +28,12 @@ func TestNewAuthConfig(t *testing.T) {
 			err:  ErrMissingCredentials,
 		},
 		{
-			name: "failure: partial data",
+			name: "failure: only username",
 			r:    strings.NewReader(`{"credentials":{"username":"foo"}}`),
 			err:  ErrMissingCredentials,
 		},
 		{
-			name: "success: partial data",
+			name: "success: only password",
 			r:    strings.NewReader(`{"credentials":{"password":"bar"}}`),
 			auth: &AuthConfig{
 				Policy:      nil,
@@ -41,7 +41,7 @@ func TestNewAuthConfig(t *testing.T) {
 			},
 		},
 		{
-			name: "success: valid data",
+			name: "success: username and password",
 			r:    strings.NewReader(`{"credentials":{"username":"foo","password":"bar"}}`),
 			auth: &AuthConfig{
 				Policy:      nil,
