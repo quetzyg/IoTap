@@ -6,15 +6,15 @@ IoTap is a command-line interface tool for tapping into IoT devices, streamlinin
 
 ## Features
 
-- Network-wide device scanning and discovery
-- Multi-device management commands
-- Export device information to CSV/JSON files or display in terminal
-- Configure device settings and parameters
-- Detect devices running outdated versions
-- Update firmware on outdated devices
-- Perform remote device restarts
-- Easy configuration and script deployment
-- Deploy custom scripts to compatible devices
+- Perform network-wide device scanning and discovery.
+- Run commands across multiple devices simultaneously.
+- Export detailed device information in CSV or JSON formats or view it directly on-screen.
+- Apply configurations to multiple devices.
+- Activate/deactivate device authentication mechanisms.
+- Identify devices running outdated software versions.
+- Update firmware on outdated devices.
+- Perform remote device restarts.
+- Easy script deployment across compatible devices.
 
 ## Prerequisites
 - Go (version 1.23 or later)
@@ -78,7 +78,6 @@ Flags:
         Dump output format (default csv)
   -sort value
         Sort devices by field (default name)
-
 ```
 </details>
 
