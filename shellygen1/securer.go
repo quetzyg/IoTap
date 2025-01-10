@@ -9,11 +9,6 @@ import (
 
 const securePath = "settings/login"
 
-// Secured returns true if the device requires authentication to be accessed, false otherwise.
-func (d *Device) Secured() bool {
-	return d.secured
-}
-
 // SetCredentials for device authentication.
 func (d *Device) SetCredentials(cred *device.Credentials) {
 	d.cred = cred

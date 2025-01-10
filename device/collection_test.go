@@ -63,6 +63,11 @@ func (r *resource) Generation() string {
 	return r.gen
 }
 
+// Secured returns true if the device requires authentication to be accessed, false otherwise.
+func (r *resource) Secured() bool {
+	return r.secured
+}
+
 // UnmarshalJSON implements the Unmarshaler interface.
 func (r *resource) UnmarshalJSON(_ []byte) error {
 	if r.unexpected {

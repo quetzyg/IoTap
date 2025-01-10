@@ -14,8 +14,6 @@ type securer struct {
 	funcError error
 }
 
-func (s *securer) Secured() bool { return true }
-
 func (s *securer) SetCredentials(_ *Credentials) {}
 
 func (s *securer) AuthConfigRequest(*AuthConfig) (*http.Request, error) {
@@ -24,7 +22,6 @@ func (s *securer) AuthConfigRequest(*AuthConfig) (*http.Request, error) {
 	}
 
 	return http.NewRequest(http.MethodGet, "", nil)
-
 }
 
 func TestSecure(t *testing.T) {

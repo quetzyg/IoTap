@@ -18,6 +18,7 @@ type Resource interface {
 	Name() string
 	Model() string
 	ID() string
+	Secured() bool
 }
 
 // Macify takes a non-delimited string representation of a MAC address as input

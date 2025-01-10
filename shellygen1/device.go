@@ -71,6 +71,11 @@ func (d *Device) Generation() string {
 	return Generation
 }
 
+// Secured returns true if the device requires authentication to be accessed, false otherwise.
+func (d *Device) Secured() bool {
+	return d.secured
+}
+
 // UnmarshalJSON implements the Unmarshaler interface.
 func (d *Device) UnmarshalJSON(data []byte) error {
 	// Unmarshal logic for the versioner implementation

@@ -8,14 +8,6 @@ import (
 	"github.com/quetzyg/IoTap/device"
 )
 
-func TestDevice_Secured(t *testing.T) {
-	dev.secured = true
-
-	if dev.Secured() != true {
-		t.Fatalf("expected %t, got %t", true, dev.Secured())
-	}
-}
-
 func TestDevice_SetCredentials(t *testing.T) {
 	if dev.cred != nil {
 		t.Fatalf("expected nil, got %v", dev.cred)
