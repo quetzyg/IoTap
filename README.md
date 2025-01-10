@@ -83,7 +83,7 @@ Flags:
 </details>
 
 <details>
-<summary><strong>config</strong>: Apply configurations to multiple devices</summary>
+<summary><strong>config</strong>: Apply a configuration to multiple devices</summary>
 
 ```bash
 # Apply the configuration from `config.json` to all Shelly Gen1 devices
@@ -105,6 +105,39 @@ Flags:
         Filter by device driver (default all)
   -f string
         Device configuration file path
+```
+</details>
+
+<details>
+<summary><strong>secure</strong>: Enable/disable device authentication</summary>
+
+```bash
+# Disable the authentication on all Shelly Gen1 devices
+iotap 192.168.1.0/24 secure -driver shelly_gen1 --off
+```
+
+```bash
+# Enable the authentication on all devices
+iotap 192.168.1.0/24 secure -f authentication.json
+```
+
+Secure command help
+```bash
+iotap 192.168.1.0/24 config -h
+```
+
+Output:
+```bash
+Usage of secure:
+ ./iotap <CIDR> secure [flags]
+
+Flags:
+  -driver value
+        Filter by device driver (default all)
+  -f string
+        Auth configuration file path (incompatible with --off)
+  -off
+        Turn device authentication off (incompatible with -f)
 ```
 </details>
 
@@ -165,7 +198,7 @@ Flags:
 </details>
 
 <details>
-<summary><strong>deploy</strong>: Deploy scripts to multiple devices</summary>
+<summary><strong>deploy</strong>: Deploy scripts to devices</summary>
 
 ```bash
 # Perform a deployment to Shelly Gen2 devices
@@ -225,11 +258,15 @@ Flags:
 ```
 </details>
 
-## Configuration Files
-Currently, there are two JSON configuration formats: one for Shelly Gen1 and another for Shelly Gen2. Each generation follows a distinct structure tailored to how the respective devices process and expect the data.
+## Device Configuration Files
+Currently, there are two device configuration types:
+- Shelly Gen1
+- Shelly Gen2
 
-### Configuration Policy
-IoTap offers flexible device targeting using a configuration policy mechanism. Within a configuration file, you can include a `policy` section to precisely specify which devices should receive the configuration.
+Each generation follows a distinct structure tailored to how the respective devices process and expect the data.
+
+### Policy Support
+IoTap offers flexible device targeting using a policy mechanism. Within a configuration file, you can include a `policy` section to precisely specify which devices should receive the configuration.
 
 #### Policy Modes
 1. **Whitelist Mode**
@@ -317,7 +354,7 @@ In this scenario, only devices with models `SNSW-001X16EU` and `SNSW-001X8EU` wi
 ```json
 {
   "meta": {
-    "device": "Shelly Plus 1 + Shelly Plus 1 Mini"
+    "device": "Shelly Plus 1 & Shelly Plus 1 Mini"
   },
   "policy": {
     "mode": "whitelist",
@@ -418,13 +455,75 @@ In this scenario, only devices with models `SNSW-001X16EU` and `SNSW-001X8EU` wi
 ```
 </details>
 
+## Auth Configuration file
+The `secure` command requires a single, well-defined auth configuration file.
+
+Similarly to the configuration file formats, this one also supports policy enforcement.
+
+### Policy Support
+IoTap enables flexible device targeting through a policy mechanism. In an auth configuration file, you can include a `policy` section to precisely define which devices the authentication should apply to.
+
+#### Policy Modes
+1. **Whitelist Mode**
+    - When `mode` is set to `whitelist`, the authentication will only be set to devices that meet either of these criteria:
+        - Their model name matches an entry in the `models` array
+        - Their MAC address matches an entry in the `devices` array
+
+2. **Blacklist Mode**
+    - When `mode` is set to `blacklist`, the authentication will not be set to devices if either:
+        - Their model name matches an entry in the `models` array
+        - Their MAC address matches an entry in the `devices` array
+
+<details>
+<summary>Set Authentication Example</summary>
+
+In this scenario, authentication will be set to any device found.
+
+**Example:**
+```json
+{
+  "meta": {
+    "device": "All",
+  },
+  "credentials": {
+    "username": "admin",
+    "password": "secret"
+  }
+}
+```
+</details>
+
+### Authentication Credentials
+When authentication is enabled, `IoTap` requires credentials to make authenticated requests to secured devices. These credentials must match those used when initially enabling authentication on the devices.
+
+#### Configuration Options
+You can provide credentials to IoTap using either of these two methods:
+
+##### 1. Environment Variables
+Set the following environment variables:
+```bash
+export IOTAP_USERNAME=admin
+export IOTAP_PASSWORD=secret
+```
+
+##### 2. Configuration File
+Create a configuration file at `~/.config/iotap.json` with the following content:
+```json
+{
+  "credentials": {
+    "username": "admin",
+    "password": "secret"
+  }
+}
+```
+
 ## Deployment file
-The `deploy` command requires a single, well-defined JSON deployment file format.
+The `deploy` command requires a single, well-defined deployment file.
 
-Similar to the configuration file formats, this format also supports policy enforcement.
+Similarly to the auth configuration file format, this one also supports policy enforcement.
 
-### Deployment Policy
-IoTap enables flexible device targeting through a deployment policy mechanism. In a deployment file, you can include a `policy` section to precisely define which devices the deployment applies to.
+### Policy Support
+IoTap enables flexible device targeting through a policy mechanism. In a deployment file, you can include a `policy` section to precisely define which devices the deployment applies to.
 
 #### Policy Modes
 1. **Whitelist Mode**
