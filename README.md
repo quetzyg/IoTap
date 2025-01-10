@@ -37,10 +37,15 @@ Download the latest release from the [Releases](https://github.com/quetzyg/IoTap
 
 ### Basic Syntax
 ```bash
-iotap <CIDR> <command> [flags]
+iotap <IP|CIDR> <command> [flags]
 ```
 
-### Commands
+#### Explanation:
+- `<IP|CIDR>`: A single IP address (e.g. 192.168.1.1) or a CIDR notation (e.g. 192.168.1.0/24).
+- `<command>`: The command to be executed for each resolved IP.
+- `[flags]`: Optional parameters to customise the command execution.
+
+### Available Commands
 
 <details>
 <summary><strong>dump</strong>: Output device scan results to <strong>STDOUT</strong> or to a file</summary>
@@ -67,7 +72,7 @@ iotap 192.168.1.0/24 dump -h
 Output:
 ```bash
 Usage of dump:
- ./iotap <CIDR> dump [flags]
+ ./iotap <IP|CIDR> dump [flags]
 
 Flags:
   -driver value
@@ -97,7 +102,7 @@ iotap 192.168.1.0/24 config -h
 Output:
 ```bash
 Usage of config:
- ./iotap <CIDR> config [flags]
+ ./iotap <IP|CIDR> config [flags]
 
 Flags:
   -driver value
@@ -128,14 +133,14 @@ iotap 192.168.1.0/24 config -h
 Output:
 ```bash
 Usage of secure:
- ./iotap <CIDR> secure [flags]
+ ./iotap <IP|CIDR> secure [flags]
 
 Flags:
   -driver value
         Filter by device driver (default all)
   -f string
         Auth configuration file path (incompatible with --off)
-  -off
+  --off
         Turn device authentication off (incompatible with -f)
 ```
 </details>
@@ -160,7 +165,7 @@ iotap 192.168.1.0/24 version -h
 Output:
 ```bash
 Usage of version:
- ./iotap <CIDR> version [flags]
+ ./iotap <IP|CIDR> version [flags]
 
 Flags:
   -driver value
@@ -188,7 +193,7 @@ iotap 192.168.1.0/24 update -h
 Output:
 ```bash
 Usage of update:
- ./iotap <CIDR> update [flags]
+ ./iotap <IP|CIDR> update [flags]
 
 Flags:
   -driver value
@@ -212,7 +217,7 @@ iotap 192.168.1.0/24 deploy -h
 Output:
 ```bash
 Usage of deploy:
- ./iotap <CIDR> deploy [flags]
+ ./iotap <IP|CIDR> deploy [flags]
 
 Flags:
   -driver value
@@ -249,7 +254,7 @@ iotap 192.168.1.0/24 reboot -h
 Output:
 ```bash
 Usage of reboot:
- ./iotap <CIDR> reboot [flags]
+ ./iotap <IP|CIDR> reboot [flags]
 
 Flags:
   -driver value
