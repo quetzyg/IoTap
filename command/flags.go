@@ -58,7 +58,7 @@ const (
 // Usage strings
 const (
 	usage = `Usage:
-%s <CIDR> <command> [flags]
+%s <IP|CIDR> <command> [flags]
 
 Commands:
   dump    Output device scan results to STDOUT or to a file
@@ -69,10 +69,10 @@ Commands:
   deploy  Deploy scripts to multiple devices
   reboot  Restart devices
 
-Use %s <CIDR> <command> -h for more information about the command.
+Use %s <IP|CIDR> <command> -h for more information about the command.
 `
 	commandUsage = `Usage of %s:
- %s <CIDR> %s [flags]
+ %s <IP|CIDR> %s [flags]
 
 Flags:
 `

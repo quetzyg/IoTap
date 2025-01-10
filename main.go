@@ -57,7 +57,7 @@ func main() {
 	flags := command.NewFlags()
 
 	if len(os.Args) < 2 {
-		log.Printf("CIDR notation value required (e.g. 192.168.0.0/24)\n\n")
+		log.Printf("IP or CIDR notation value required (e.g. 192.168.146.123, 192.168.0.0/24)\n\n")
 
 		flags.Usage()
 
@@ -160,7 +160,7 @@ func main() {
 
 	var affected = 0
 
-	log.Printf("Scanning the %s network...\n", os.Args[1])
+	log.Printf("Scanning %s...\n", os.Args[1])
 
 	devices, err := tapper.Scan(ips)
 	if err != nil {
