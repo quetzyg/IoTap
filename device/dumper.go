@@ -28,11 +28,12 @@ func dumpCSV(devices Collection, w io.Writer, sep string) error {
 	writer := tabwriter.NewWriter(w, 0, 0, 2, ' ', 0)
 
 	header := []string{
-		"Driver",
+		"Vendor",
 		"MAC Address",
 		"IP Address",
 		"Name",
 		"Model",
+		"Generation",
 		"Firmware",
 		"Secured",
 	}

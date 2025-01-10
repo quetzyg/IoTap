@@ -76,11 +76,12 @@ func (r *resource) UnmarshalJSON(_ []byte) error {
 // with fields separated by a delimiter (e.g., comma or tab).
 func (r *resource) DelimitedRow(sep string) string {
 	return strings.Join([]string{
-		r.Driver(),
+		r.Vendor(),
 		r.mac.String(),
 		r.ip.String(),
 		r.name,
 		r.model,
+		r.Generation(),
 		"v1.2.3",
 		fmt.Sprint(r.secured),
 	}, sep)
@@ -89,13 +90,14 @@ func (r *resource) DelimitedRow(sep string) string {
 // MarshalJSON implements the Marshaler interface.
 func (r *resource) MarshalJSON() ([]byte, error) {
 	return json.Marshal(map[string]any{
-		"driver":   r.Driver(),
-		"mac":      r.mac.String(),
-		"ip":       r.ip,
-		"name":     r.name,
-		"model":    r.model,
-		"firmware": "v1.2.3",
-		"secured":  r.secured,
+		"vendor":     r.Vendor(),
+		"mac":        r.mac.String(),
+		"ip":         r.ip,
+		"name":       r.name,
+		"model":      r.model,
+		"generation": r.Generation(),
+		"firmware":   "v1.2.3",
+		"secured":    r.secured,
 	})
 }
 

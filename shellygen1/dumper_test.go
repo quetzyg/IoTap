@@ -26,7 +26,7 @@ func TestDevice_DelimitedRow(t *testing.T) {
 				Firmware: "20230913-112003/v1.14.0-gcb84623",
 			},
 			sep: ",",
-			row: "shelly_gen1,00:11:22:33:44:55,192.168.146.123,Shelly 1,SHSW-1,20230913-112003/v1.14.0-gcb84623,false",
+			row: "Shelly,00:11:22:33:44:55,192.168.146.123,Shelly 1,SHSW-1,1,20230913-112003/v1.14.0-gcb84623,false",
 		},
 	}
 
@@ -58,7 +58,7 @@ func TestDevice_MarshalJSON(t *testing.T) {
 				secured:  false,
 				Firmware: "20230913-112003/v1.14.0-gcb84623",
 			},
-			json: `{"driver":"shelly_gen1","firmware":"20230913-112003/v1.14.0-gcb84623","ip":"192.168.146.123","mac":"00:11:22:33:44:55","model":"SHSW-1","name":"Shelly 1","secured":false}`,
+			json: `{"firmware":"20230913-112003/v1.14.0-gcb84623","generation":"1","ip":"192.168.146.123","mac":"00:11:22:33:44:55","model":"SHSW-1","name":"Shelly 1","secured":false,"vendor":"Shelly"}`,
 		},
 	}
 

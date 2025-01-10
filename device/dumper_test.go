@@ -21,30 +21,32 @@ func TestDumpCSV(t *testing.T) {
 			name: "success: comma separator",
 			col: Collection{
 				&resource{
-					driver:  "shelly_gen1",
+					vendor:  "Shelly",
 					ip:      net.ParseIP("192.168.146.123"),
 					mac:     net.HardwareAddr{00, 17, 34, 51, 68, 85},
 					name:    "Storage",
 					model:   "SHSW-1",
+					gen:     "1",
 					secured: false,
 				},
 			},
-			out: "Driver,MAC Address,IP Address,Name,Model,Firmware,Secured\nshelly_gen1,00:11:22:33:44:55,192.168.146.123,Storage,SHSW-1,v1.2.3,false\n",
+			out: "Vendor,MAC Address,IP Address,Name,Model,Generation,Firmware,Secured\nShelly,00:11:22:33:44:55,192.168.146.123,Storage,SHSW-1,1,v1.2.3,false\n",
 			sep: ",",
 		},
 		{
 			name: "success: tab separator",
 			col: Collection{
 				&resource{
-					driver:  "shelly_gen1",
+					vendor:  "Shelly",
 					ip:      net.ParseIP("192.168.146.123"),
 					mac:     net.HardwareAddr{00, 17, 34, 51, 68, 85},
 					name:    "Storage",
 					model:   "SHSW-1",
+					gen:     "1",
 					secured: false,
 				},
 			},
-			out: "Driver       MAC Address        IP Address       Name     Model   Firmware  Secured\nshelly_gen1  00:11:22:33:44:55  192.168.146.123  Storage  SHSW-1  v1.2.3    false\n",
+			out: "Vendor  MAC Address        IP Address       Name     Model   Generation  Firmware  Secured\nShelly  00:11:22:33:44:55  192.168.146.123  Storage  SHSW-1  1           v1.2.3    false\n",
 			sep: "\t",
 		},
 	}
@@ -76,23 +78,25 @@ func TestDumpJSON(t *testing.T) {
 			name: "success",
 			col: Collection{
 				&resource{
-					driver:  "shelly_gen1",
+					vendor:  "Shelly",
 					ip:      net.ParseIP("192.168.146.123"),
 					mac:     net.HardwareAddr{00, 17, 34, 51, 68, 85},
 					name:    "Storage",
 					model:   "SHSW-1",
+					gen:     "1",
 					secured: false,
 				},
 			},
 			out: `[
   {
-    "driver": "shelly_gen1",
     "firmware": "v1.2.3",
+    "generation": "1",
     "ip": "192.168.146.123",
     "mac": "00:11:22:33:44:55",
     "model": "SHSW-1",
     "name": "Storage",
-    "secured": false
+    "secured": false,
+    "vendor": "Shelly"
   }
 ]`,
 		},
@@ -131,11 +135,12 @@ func TestExecDump(t *testing.T) {
 			name: "success: csv to screen",
 			col: Collection{
 				&resource{
-					driver:  "shelly_gen1",
+					vendor:  "Shelly",
 					ip:      net.ParseIP("192.168.146.123"),
 					mac:     net.HardwareAddr{00, 17, 34, 51, 68, 85},
 					name:    "Storage",
 					model:   "SHSW-1",
+					gen:     "1",
 					secured: false,
 				},
 			},
@@ -145,11 +150,12 @@ func TestExecDump(t *testing.T) {
 			name: "success: json to screen",
 			col: Collection{
 				&resource{
-					driver:  "shelly_gen1",
+					vendor:  "Shelly",
 					ip:      net.ParseIP("192.168.146.123"),
 					mac:     net.HardwareAddr{00, 17, 34, 51, 68, 85},
 					name:    "Storage",
 					model:   "SHSW-1",
+					gen:     "1",
 					secured: false,
 				},
 			},
@@ -159,11 +165,12 @@ func TestExecDump(t *testing.T) {
 			name: "success: csv to file",
 			col: Collection{
 				&resource{
-					driver:  "shelly_gen1",
+					vendor:  "Shelly",
 					ip:      net.ParseIP("192.168.146.123"),
 					mac:     net.HardwareAddr{00, 17, 34, 51, 68, 85},
 					name:    "Storage",
 					model:   "SHSW-1",
+					gen:     "1",
 					secured: false,
 				},
 			},
@@ -174,11 +181,12 @@ func TestExecDump(t *testing.T) {
 			name: "success: json to file",
 			col: Collection{
 				&resource{
-					driver:  "shelly_gen1",
+					vendor:  "Shelly",
 					ip:      net.ParseIP("192.168.146.123"),
 					mac:     net.HardwareAddr{00, 17, 34, 51, 68, 85},
 					name:    "Storage",
 					model:   "SHSW-1",
+					gen:     "1",
 					secured: false,
 				},
 			},

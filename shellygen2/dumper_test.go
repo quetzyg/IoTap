@@ -22,11 +22,12 @@ func TestDevice_DelimitedRow(t *testing.T) {
 				mac:      net.HardwareAddr{00, 17, 34, 51, 68, 85},
 				name:     "Shelly Pro 1",
 				model:    "SPSW-201XE16EU",
+				Gen:      2,
 				secured:  false,
 				Firmware: "20241011-114449/1.4.4-g6d2a586",
 			},
 			sep: ",",
-			row: "shelly_gen2,00:11:22:33:44:55,192.168.146.123,Shelly Pro 1,SPSW-201XE16EU,20241011-114449/1.4.4-g6d2a586,false",
+			row: "Shelly,00:11:22:33:44:55,192.168.146.123,Shelly Pro 1,SPSW-201XE16EU,2,20241011-114449/1.4.4-g6d2a586,false",
 		},
 	}
 
@@ -55,10 +56,11 @@ func TestDevice_MarshalJSON(t *testing.T) {
 				mac:      net.HardwareAddr{00, 17, 34, 51, 68, 85},
 				name:     "Shelly Pro 1",
 				model:    "SPSW-201XE16EU",
+				Gen:      2,
 				secured:  false,
 				Firmware: "20241011-114449/1.4.4-g6d2a586",
 			},
-			json: `{"driver":"shelly_gen2","firmware":"20241011-114449/1.4.4-g6d2a586","ip":"192.168.146.123","mac":"00:11:22:33:44:55","model":"SPSW-201XE16EU","name":"Shelly Pro 1","secured":false}`,
+			json: `{"firmware":"20241011-114449/1.4.4-g6d2a586","generation":"2","ip":"192.168.146.123","mac":"00:11:22:33:44:55","model":"SPSW-201XE16EU","name":"Shelly Pro 1","secured":false,"vendor":"Shelly"}`,
 		},
 	}
 
