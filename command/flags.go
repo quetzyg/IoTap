@@ -63,9 +63,9 @@ const (
 Commands:
   dump    Output device scan results to STDOUT or to a file
   config  Apply configurations to multiple devices
-  secure  Enable/disable device authentication
-  version Scan and check device versions
-  update  Update outdated devices
+  secure  Enable/disable device authentication mechanisms
+  version Identify devices running outdated software versions
+  update  Update firmware on outdated devices
   deploy  Deploy scripts to multiple devices
   reboot  Restart devices
 
