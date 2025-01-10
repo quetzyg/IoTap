@@ -8,11 +8,12 @@ import (
 
 // Fields to sort a Collection by
 const (
-	FieldDriver = "driver"
-	FieldIP     = "ip"
-	FieldMAC    = "mac"
-	FieldName   = "name"
-	FieldModel  = "model"
+	FieldVendor     = "vendor"
+	FieldIP         = "ip"
+	FieldMAC        = "mac"
+	FieldName       = "name"
+	FieldModel      = "model"
+	FieldGeneration = "generation"
 )
 
 // Collection is a slice of device resources.
@@ -26,9 +27,9 @@ func (c Collection) Empty() bool {
 // SortBy a resource field name.
 func (c Collection) SortBy(field string) error {
 	switch field {
-	case FieldDriver:
+	case FieldVendor:
 		sort.Slice(c, func(i, j int) bool {
-			return c[i].Driver() < c[j].Driver()
+			return c[i].Vendor() < c[j].Vendor()
 		})
 
 	case FieldIP:
@@ -51,6 +52,11 @@ func (c Collection) SortBy(field string) error {
 	case FieldModel:
 		sort.Slice(c, func(i, j int) bool {
 			return c[i].Model() < c[j].Model()
+		})
+
+	case FieldGeneration:
+		sort.Slice(c, func(i, j int) bool {
+			return c[i].Generation() < c[j].Generation()
 		})
 
 	default:

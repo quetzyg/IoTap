@@ -150,16 +150,18 @@ func TestCollection_SortBy(t *testing.T) {
 		err   error
 	}{
 		{
-			name: "success: collection sorted by driver",
+			name: "success: collection sorted by vendor",
 			col: Collection{
-				&resource{driver: "shelly_gen2"},
-				&resource{driver: "shelly_gen1"},
+				&resource{vendor: "Shelly"},
+				&resource{vendor: "Tuya"},
+				&resource{vendor: "SONOFF"},
 			},
 			ord: Collection{
-				&resource{driver: "shelly_gen1"},
-				&resource{driver: "shelly_gen2"},
+				&resource{vendor: "SONOFF"},
+				&resource{vendor: "Shelly"},
+				&resource{vendor: "Tuya"},
 			},
-			field: FieldDriver,
+			field: FieldVendor,
 		},
 		{
 			name: "success: collection sorted by ip",
@@ -212,6 +214,20 @@ func TestCollection_SortBy(t *testing.T) {
 				&resource{model: "SPSW-201XE16EU"},
 			},
 			field: FieldModel,
+		},
+		{
+			name: "success: collection sorted by generation",
+			col: Collection{
+				&resource{gen: "2"},
+				&resource{gen: "3"},
+				&resource{gen: "1"},
+			},
+			ord: Collection{
+				&resource{gen: "1"},
+				&resource{gen: "2"},
+				&resource{gen: "3"},
+			},
+			field: FieldGeneration,
 		},
 		{
 			name:  "failure: invalid sort field",

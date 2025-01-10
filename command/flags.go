@@ -133,7 +133,7 @@ func NewFlags() *Flags {
 	// Dump
 	flags.dumpCmd = flag.NewFlagSet(Dump, flag.ContinueOnError)
 	flags.dumpDriver = setDriverFlag(flags.dumpCmd)
-	flags.dumpSortField = NewStrFlag(device.FieldName, device.FieldDriver, device.FieldIP, device.FieldMAC, device.FieldName, device.FieldModel)
+	flags.dumpSortField = NewStrFlag(device.FieldName, device.FieldVendor, device.FieldIP, device.FieldMAC, device.FieldName, device.FieldModel, device.FieldGeneration)
 	flags.dumpCmd.Var(flags.dumpSortField, "sort", "Sort devices by field")
 	flags.dumpFormat = NewStrFlag(device.FormatCSV, device.FormatCSV, device.FormatJSON)
 	flags.dumpCmd.Var(flags.dumpFormat, "format", "Dump output format")
