@@ -28,6 +28,9 @@ var (
 	// This error is returned when a device is found, but doesn't match an expected target device.
 	ErrUnexpected = errors.New("unexpected IoT device")
 
+	// ErrUnsupportedDriver is returned when an unsupported or unrecognised driver is used.
+	ErrUnsupportedDriver = errors.New("unsupported driver")
+
 	// ErrDriverMismatch is an error type used in the IoT device configuration process.
 	// This error is returned when a device tries to use a wrong Config value.
 	ErrDriverMismatch = errors.New("device driver mismatch")
