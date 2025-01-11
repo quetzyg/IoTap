@@ -37,20 +37,6 @@ func banner() {
 	fmt.Printf("\nVersion %s [%s] (Build time %s)\n\n", meta.Version, meta.Hash, meta.BuildTime)
 }
 
-// resolveProbers for a given driver.
-func resolveProbers(driver string) []device.Prober {
-	switch driver {
-	case device.Driver:
-		return []device.Prober{&shellygen1.Prober{}, &shellygen2.Prober{}}
-	case shellygen1.Driver:
-		return []device.Prober{&shellygen1.Prober{}}
-	case shellygen2.Driver:
-		return []device.Prober{&shellygen2.Prober{}}
-	default:
-		return nil
-	}
-}
-
 func main() {
 	banner()
 
@@ -95,12 +81,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	probers := resolveProbers(driver)
-	if probers == nil {
-		log.Fatalf("Unable to resolve a device prober with the %q driver", driver)
-	}
-
-	tapper := device.NewTapper(probers)
+	tapper := device.NewTapper(device.GetProbers(driver))
 
 	val, err := config.LoadValues()
 	if err != nil {
