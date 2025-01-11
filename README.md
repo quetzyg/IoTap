@@ -1,8 +1,12 @@
-# IoTap: Effortless IoT Device Orchestration
+# IoTap: Effortless IoT Management
 
 ## Overview
 
-IoTap is a command-line interface tool for tapping into IoT devices, streamlining the configuration and control of network-connected devices while ensuring reproducible execution of tasks. Currently supporting [Shelly](https://shelly.cloud) devices (both Gen1 and Gen2), IoTap enables you to manage multiple devices simultaneously through a unified interface. This makes it particularly powerful for batch operations and consistent device management across your network.
+IoTap is a command-line interface tool for tapping into IoT devices, designed to simplify their management and configuration on a large scale.
+
+Born out of necessity, this tool fills a critical gap, offering a solution where none previously existed—particularly for managing extensive IoT deployments.
+
+It is especially effective for performing batch operations and maintaining uniform device management.
 
 ## Features
 
@@ -26,8 +30,8 @@ IoTap is a command-line interface tool for tapping into IoT devices, streamlinin
 ```bash
 git clone https://github.com/quetzyg/IoTap.git
 cd IoTap
-go build
-sudo mv IoTap /usr/local/bin/iotap
+go build -o iotap
+sudo mv iotap /usr/local/bin/
 ```
 
 ### Binary Release
