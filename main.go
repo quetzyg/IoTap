@@ -101,15 +101,13 @@ func main() {
 		tapper.SetConfig(cfg)
 	}
 
-	if cmd.Name() == command.Secure {
-		if !flags.SecureOff() {
-			auth, err := device.LoadAuthConfig(flags.SecureFile())
-			if err != nil {
-				log.Fatalf("Unable to load auth config: %v\n\n", err)
-			}
-
-			tapper.SetAuthConfig(auth)
+	if cmd.Name() == command.Secure && !flags.SecureOff() {
+		auth, err := device.LoadAuthConfig(flags.SecureFile())
+		if err != nil {
+			log.Fatalf("Unable to load auth config: %v\n\n", err)
 		}
+
+		tapper.SetAuthConfig(auth)
 	}
 
 	if cmd.Name() == command.Deploy {
