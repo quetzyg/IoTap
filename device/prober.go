@@ -11,3 +11,13 @@ import (
 type Prober interface {
 	Request(ip net.IP) (*http.Request, Resource, error)
 }
+
+// ProberProvider is a function type that returns a Prober instance.
+type ProberProvider func() Prober
+
+var proberRegistry = make(map[string]ProberProvider)
+
+// RegisterProber registers a ProberProvider for a specified driver.
+func RegisterProber(driver string, prov ProberProvider) {
+	proberRegistry[driver] = prov
+}
