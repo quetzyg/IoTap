@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io"
 	"io/fs"
+	"reflect"
 	"strings"
 	"testing"
 )
@@ -32,18 +33,27 @@ func (badReader) Read(_ []byte) (int, error) {
 	return 0, io.ErrUnexpectedEOF
 }
 
-func TestLoadConfig(t *testing.T) {
+func TestRegisterConfig(t *testing.T) {
+	if len(configRegistry) != 0 {
+		t.Fatal("Config registry should be empty")
+	}
+
+	RegisterConfig("foo", func() Config {
+		return &config{}
+	})
+
+	if len(configRegistry) != 1 {
+		t.Fatalf("Config registry should have one registered config, %d found", len(configRegistry))
+	}
+}
+
+func TestNewConfig(t *testing.T) {
 	tests := []struct {
 		name string
 		r    io.Reader
 		cfg  Config
 		err  error
 	}{
-		{
-			name: "failure: reader error",
-			r:    &badReader{},
-			err:  io.ErrUnexpectedEOF,
-		},
 		{
 			name: "failure: syntax error",
 			r:    strings.NewReader(`!`),
@@ -52,19 +62,26 @@ func TestLoadConfig(t *testing.T) {
 		{
 			name: "failure: configuration empty",
 			r:    strings.NewReader(`{}`),
-			cfg:  &config{},
 			err:  ErrConfigurationEmpty,
 		},
 		{
 			name: "success: ",
 			r:    strings.NewReader(`{"foo":"bar"}`),
-			cfg:  &config{},
+			cfg: &config{
+				Foo: "bar",
+			},
 		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			err := loadConfig(test.r, test.cfg)
+			cfg, err := NewConfig(test.r, func() Config {
+				return &config{}
+			})
+
+			if !reflect.DeepEqual(cfg, test.cfg) {
+				t.Fatalf("expected %#v, got %#v", test.cfg, cfg)
+			}
 
 			var syntaxError *json.SyntaxError
 			switch {
@@ -85,33 +102,50 @@ func TestLoadConfig(t *testing.T) {
 	}
 }
 
-func TestLoadConfigFromPath(t *testing.T) {
+func TestLoadConfig(t *testing.T) {
 	tests := []struct {
-		name string
-		fp   string
-		cfg  Config
-		err  error
+		name   string
+		driver string
+		fp     string
+		cfg    Config
+		err    error
 	}{
 		{
-			name: "failure: empty file path",
-			fp:   "",
-			err:  ErrFilePathEmpty,
+			name: "failure: unsupported driver",
+			err:  ErrUnsupportedDriver,
 		},
 		{
-			name: "failure: file path not found",
-			fp:   "foo.bar",
-			err:  &fs.PathError{},
+			name:   "failure: empty file path",
+			driver: "foo",
+			err:    ErrFilePathEmpty,
 		},
 		{
-			name: "success",
-			fp:   "../testdata/config.json",
-			cfg:  &config{},
+			name:   "failure: file path not found",
+			driver: "foo",
+			fp:     "foo.bar",
+			err:    &fs.PathError{},
+		},
+		{
+			name:   "success",
+			driver: "foo",
+			fp:     "../testdata/config.json",
+			cfg: &config{
+				Foo: "bar",
+			},
 		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			err := LoadConfigFromPath(test.fp, test.cfg)
+			configRegistry["foo"] = func() Config {
+				return &config{}
+			}
+
+			cfg, err := LoadConfig(test.driver, test.fp)
+
+			if !reflect.DeepEqual(cfg, test.cfg) {
+				t.Fatalf("expected %#v, got %#v", test.cfg, cfg)
+			}
 
 			var pathError *fs.PathError
 			switch {

@@ -2,6 +2,7 @@ package device
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -13,36 +14,47 @@ type Config interface {
 	Empty() bool
 }
 
-// loadConfig from an I/O reader and unmarshal the data into a Config implementation.
-func loadConfig(r io.Reader, cfg Config) error {
-	data, err := io.ReadAll(r)
-	if err != nil {
-		return err
-	}
+// ConfigProvider is a function type that returns a Config instance.
+type ConfigProvider func() Config
 
-	err = json.Unmarshal(data, &cfg)
-	if err != nil {
-		return err
+var configRegistry = make(map[string]ConfigProvider)
+
+// RegisterConfig registers a ConfigProvider for a specified driver.
+func RegisterConfig(driver string, prov ConfigProvider) {
+	configRegistry[driver] = prov
+}
+
+// NewConfig creates a Config instance by parsing data from the provided reader and provider function.
+// It returns an error if the data is invalid or cannot be parsed.
+func NewConfig(r io.Reader, factory ConfigProvider) (Config, error) {
+	cfg := factory()
+
+	if err := json.NewDecoder(r).Decode(&cfg); err != nil {
+		return nil, err
 	}
 
 	if cfg.Empty() {
-		return ErrConfigurationEmpty
+		return nil, ErrConfigurationEmpty
 	}
 
-	return nil
+	return cfg, nil
 }
 
-// LoadConfigFromPath reads and loads a configuration from the specified file path.
-// It opens the file, ensures it's closed after reading, and processes the configuration data.
-// Returns an error if the file cannot be opened or the configuration cannot be loaded.
-func LoadConfigFromPath(fp string, cfg Config) error {
+// LoadConfig creates a new Config instance from a driver name and a file at the given path.
+// It returns an error if the file cannot be opened or contains invalid data.
+func LoadConfig(driver, fp string) (Config, error) {
+	factory, ok := configRegistry[driver]
+	if !ok {
+		return nil, fmt.Errorf("%w: %s", ErrUnsupportedDriver, driver)
+	}
+
 	if fp == "" {
-		return ErrFilePathEmpty
+		return nil, ErrFilePathEmpty
 	}
 
 	f, err := os.Open(fp)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	defer func() {
@@ -52,5 +64,5 @@ func LoadConfigFromPath(fp string, cfg Config) error {
 		}
 	}()
 
-	return loadConfig(f, cfg)
+	return NewConfig(f, factory)
 }

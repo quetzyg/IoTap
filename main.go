@@ -104,7 +104,7 @@ func main() {
 
 	val, err := config.LoadValues()
 	if err != nil {
-		log.Printf("Unable to load configuration values: %v\n\n", err)
+		log.Printf("Unable to load IoTap config: %v\n\n", err)
 	}
 
 	if val.Credentials != nil {
@@ -112,20 +112,9 @@ func main() {
 	}
 
 	if cmd.Name() == command.Config {
-		var cfg device.Config
-
-		switch driver {
-		case device.Driver:
-			log.Fatalf("The config command is not supported by the %q driver", driver)
-		case shellygen1.Driver:
-			cfg = &shellygen1.Config{}
-		case shellygen2.Driver:
-			cfg = &shellygen2.Config{}
-		}
-
-		err = device.LoadConfigFromPath(flags.ConfigFile(), cfg)
+		cfg, err := device.LoadConfig(driver, flags.ConfigFile())
 		if err != nil {
-			log.Fatalf("Unable to load config file: %v\n\n", err)
+			log.Fatalf("Unable to load device config: %v\n\n", err)
 		}
 
 		tapper.SetConfig(cfg)
@@ -135,7 +124,7 @@ func main() {
 		if !flags.SecureOff() {
 			auth, err := device.LoadAuthConfig(flags.SecureFile())
 			if err != nil {
-				log.Fatalf("Unable to load auth config file: %v\n\n", err)
+				log.Fatalf("Unable to load auth config: %v\n\n", err)
 			}
 
 			tapper.SetAuthConfig(auth)
