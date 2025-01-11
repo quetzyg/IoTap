@@ -12,8 +12,6 @@ import (
 	"github.com/quetzyg/IoTap/device"
 	"github.com/quetzyg/IoTap/ip"
 	"github.com/quetzyg/IoTap/meta"
-	"github.com/quetzyg/IoTap/shellygen1"
-	"github.com/quetzyg/IoTap/shellygen2"
 )
 
 func init() {
@@ -111,14 +109,7 @@ func main() {
 	}
 
 	if cmd.Name() == command.Deploy {
-		switch driver {
-		case device.AllDrivers, shellygen1.Driver:
-			log.Fatalf("The deploy command is not supported by the %q driver", driver)
-		case shellygen2.Driver:
-			// All good!
-		}
-
-		dep, err := device.LoadDeployment(flags.DeployFile())
+		dep, err := device.LoadDeployment(driver, flags.DeployFile())
 		if err != nil {
 			log.Fatalf("Unable to load deployment file: %v\n\n", err)
 		}

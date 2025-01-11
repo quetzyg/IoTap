@@ -12,4 +12,6 @@ func init() {
 	device.RegisterConfig(Driver, func() device.Config {
 		return &Config{}
 	})
+
+	device.RegisterDeployer(Driver)
 }

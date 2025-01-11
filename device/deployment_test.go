@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io"
 	"io/fs"
+	"reflect"
 	"strings"
 	"testing"
 )
@@ -49,31 +50,77 @@ func TestNewDeployment(t *testing.T) {
 	}
 }
 
+func TestRegisterDeployer(t *testing.T) {
+	if len(deployerRegistry) != 0 {
+		t.Fatal("Deployer registry should be empty")
+	}
+
+	RegisterDeployer("foo")
+
+	if len(deployerRegistry) != 1 {
+		t.Fatalf("Deployer registry should have one registered deployer, %d found", len(configRegistry))
+	}
+}
+
 func TestLoadDeployment(t *testing.T) {
 	tests := []struct {
-		name string
-		fp   string
-		err  error
+		name   string
+		driver string
+		fp     string
+		dep    *Deployment
+		err    error
 	}{
 		{
-			name: "failure: empty file path",
-			fp:   "",
-			err:  ErrFilePathEmpty,
+			name: "failure: unsupported driver",
+			err:  ErrUnsupportedDriver,
 		},
 		{
-			name: "failure: file path not found",
-			fp:   "foo.bar",
-			err:  &fs.PathError{},
+			name:   "failure: empty file path",
+			driver: "foo",
+			err:    ErrFilePathEmpty,
 		},
 		{
-			name: "success",
-			fp:   "../testdata/deployment.json",
+			name:   "failure: file path not found",
+			driver: "foo",
+			fp:     "foo.bar",
+			err:    &fs.PathError{},
+		},
+		{
+			name:   "success",
+			driver: "foo",
+			fp:     "../testdata/deployment.json",
+			dep: &Deployment{
+				Policy: &Policy{
+					Mode:   PolicyModeWhitelist,
+					Models: []string{"SHSW-1"},
+				},
+				Scripts: []*Script{
+					{
+						path: "../testdata/script1.js",
+						code: []byte(`var foo = "abc";`),
+					},
+					{
+						path: "../testdata/script2.js",
+						code: []byte(`var bar = 123;`),
+					},
+				},
+			},
 		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			_, err := LoadDeployment(test.fp)
+			t.Cleanup(func() {
+				deployerRegistry = make(map[string]struct{})
+			})
+
+			deployerRegistry["foo"] = struct{}{}
+
+			dep, err := LoadDeployment(test.driver, test.fp)
+
+			if !reflect.DeepEqual(dep, test.dep) {
+				t.Fatalf("expected %#v, got %s", test.dep, dep.Scripts[0].code)
+			}
 
 			var pathError *fs.PathError
 			switch {

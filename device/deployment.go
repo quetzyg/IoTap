@@ -2,6 +2,7 @@ package device
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -31,6 +32,13 @@ func (d *Deployment) UnmarshalJSON(data []byte) error {
 	return err
 }
 
+var deployerRegistry = make(map[string]struct{})
+
+// RegisterDeployer registers a ConfigProvider for a specified driver.
+func RegisterDeployer(driver string) {
+	deployerRegistry[driver] = struct{}{}
+}
+
 // NewDeployment creates a new *Deployment instance by parsing data from the provided reader.
 // It returns an error if the data is invalid or cannot be parsed.
 func NewDeployment(r io.Reader) (*Deployment, error) {
@@ -44,7 +52,11 @@ func NewDeployment(r io.Reader) (*Deployment, error) {
 
 // LoadDeployment creates a new *Deployment instance from a file at the given path.
 // It returns an error if the file cannot be opened or contains invalid data.
-func LoadDeployment(fp string) (*Deployment, error) {
+func LoadDeployment(driver, fp string) (*Deployment, error) {
+	if _, ok := deployerRegistry[driver]; !ok {
+		return nil, fmt.Errorf("%w: %s", ErrUnsupportedDriver, driver)
+	}
+
 	if fp == "" {
 		return nil, ErrFilePathEmpty
 	}
