@@ -65,7 +65,7 @@ func TestNewConfig(t *testing.T) {
 			err:  ErrConfigurationEmpty,
 		},
 		{
-			name: "success: ",
+			name: "success",
 			r:    strings.NewReader(`{"foo":"bar"}`),
 			cfg: &config{
 				Foo: "bar",
