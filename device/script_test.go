@@ -127,7 +127,7 @@ func TestLoadScript(t *testing.T) {
 	}
 }
 
-func TestLoadScriptsFromPath(t *testing.T) {
+func TestLoadScripts(t *testing.T) {
 	tests := []struct {
 		name string
 		fps  []string

@@ -49,7 +49,7 @@ func TestNewDeployment(t *testing.T) {
 	}
 }
 
-func TestLoadDeploymentFromPath(t *testing.T) {
+func TestLoadDeployment(t *testing.T) {
 	tests := []struct {
 		name string
 		fp   string
