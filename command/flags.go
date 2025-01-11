@@ -111,7 +111,7 @@ type Flags struct {
 
 // setDriverFlag to a flag set. This keeps code tidy, avoiding boilerplate.
 func setDriverFlag(flagSet *flag.FlagSet) *StrFlag {
-	driver := NewStrFlag(device.Driver, device.Driver, shellygen1.Driver, shellygen2.Driver)
+	driver := NewStrFlag(device.AllDrivers, device.AllDrivers, shellygen1.Driver, shellygen2.Driver)
 	flagSet.Var(driver, "driver", "Filter by device driver")
 
 	return driver

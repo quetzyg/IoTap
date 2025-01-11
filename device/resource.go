@@ -5,8 +5,8 @@ import (
 	"strings"
 )
 
-// Driver is the default value when the user does not specify which driver it wants to target.
-const Driver = "all"
+// AllDrivers is the default value when the user does not specify which driver it wants to target.
+const AllDrivers = "all"
 
 // Resource defines the methods an IoT device resource should implement.
 type Resource interface {

@@ -27,14 +27,14 @@ func TestFlags_SortField(t *testing.T) {
 			name:      "get default sort field value",
 			args:      []string{Dump},
 			command:   Dump,
-			driver:    device.Driver,
+			driver:    device.AllDrivers,
 			sortField: device.FieldName,
 		},
 		{
 			name:      "get MAC sort field value",
 			args:      []string{Dump, "-sort", device.FieldMAC},
 			command:   Dump,
-			driver:    device.Driver,
+			driver:    device.AllDrivers,
 			sortField: device.FieldMAC,
 		},
 		{
@@ -87,14 +87,14 @@ func TestFlags_DumpFormat(t *testing.T) {
 			name:       "get default dump format value",
 			args:       []string{Dump},
 			command:    Dump,
-			driver:     device.Driver,
+			driver:     device.AllDrivers,
 			dumpFormat: device.FormatCSV,
 		},
 		{
 			name:       "get JSON dump format value",
 			args:       []string{Dump, "-format", device.FormatJSON},
 			command:    Dump,
-			driver:     device.Driver,
+			driver:     device.AllDrivers,
 			dumpFormat: device.FormatJSON,
 		},
 		{
@@ -147,14 +147,14 @@ func TestFlags_DumpFile(t *testing.T) {
 			name:     "get empty dump file path value",
 			args:     []string{Dump},
 			command:  Dump,
-			driver:   device.Driver,
+			driver:   device.AllDrivers,
 			dumpFile: "",
 		},
 		{
 			name:     "get dump file path value",
 			args:     []string{Dump, "-f", "devices.csv"},
 			command:  Dump,
-			driver:   device.Driver,
+			driver:   device.AllDrivers,
 			dumpFile: "devices.csv",
 		},
 		{
@@ -207,14 +207,14 @@ func TestFlags_ConfigFile(t *testing.T) {
 			name:       "get empty config file path value",
 			args:       []string{Config},
 			command:    Config,
-			driver:     device.Driver,
+			driver:     device.AllDrivers,
 			configFile: "",
 		},
 		{
 			name:       "get config file path value",
 			args:       []string{Config, "-f", "config.json"},
 			command:    Config,
-			driver:     device.Driver,
+			driver:     device.AllDrivers,
 			configFile: "config.json",
 		},
 		{
@@ -267,14 +267,14 @@ func TestFlags_DeployFile(t *testing.T) {
 			name:       "get empty deploy file path value",
 			args:       []string{Deploy},
 			command:    Deploy,
-			driver:     device.Driver,
+			driver:     device.AllDrivers,
 			deployFile: "",
 		},
 		{
 			name:       "get single deploy file path value",
 			args:       []string{Deploy, "-f", "deployment.json"},
 			command:    Deploy,
-			driver:     device.Driver,
+			driver:     device.AllDrivers,
 			deployFile: "deployment.json",
 		},
 		{
@@ -376,9 +376,9 @@ func TestFlags_Parse(t *testing.T) {
 		},
 		{
 			name:    "success: dump command with valid flags",
-			args:    []string{Dump, "-driver", device.Driver, "-sort", device.FieldIP, "-format", device.FormatCSV, "-f", "devices.csv"},
+			args:    []string{Dump, "-driver", device.AllDrivers, "-sort", device.FieldIP, "-format", device.FormatCSV, "-f", "devices.csv"},
 			command: Dump,
-			driver:  device.Driver,
+			driver:  device.AllDrivers,
 		},
 		{
 			name:    "success: dump command with help flag",
@@ -504,9 +504,9 @@ func TestFlags_Parse(t *testing.T) {
 		},
 		{
 			name:    "success: update command with valid flags",
-			args:    []string{Update, "-driver", device.Driver},
+			args:    []string{Update, "-driver", device.AllDrivers},
 			command: Update,
-			driver:  device.Driver,
+			driver:  device.AllDrivers,
 		},
 		{
 			name:    "success: update command with help flag",

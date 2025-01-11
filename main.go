@@ -133,7 +133,7 @@ func main() {
 
 	if cmd.Name() == command.Deploy {
 		switch driver {
-		case device.Driver, shellygen1.Driver:
+		case device.AllDrivers, shellygen1.Driver:
 			log.Fatalf("The deploy command is not supported by the %q driver", driver)
 		case shellygen2.Driver:
 			// All good!
