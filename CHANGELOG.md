@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project uses a date-based versioning system.
 
+## [v25.01.11] - 2025-01-11
+
+### Added
+- Support for executing commands on a single IP address [[7d94d71](https://github.com/quetzyg/IoTap/commit/7d94d71c653484f5ca2bca491caa18764df84f66)].
+- Ability to sort the output of the `dump` command by Vendor and Generation [[d06d4a8](https://github.com/quetzyg/IoTap/commit/d06d4a815007d9999be7e2e1bbf279e2adcf0d82)].
+
 ## [v25.01.10] - 2025-01-10
 
 ### Added
