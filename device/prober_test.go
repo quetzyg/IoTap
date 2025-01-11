@@ -45,6 +45,10 @@ func TestGetProbers(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			t.Cleanup(func() {
+				proberRegistry = make(map[string]ProberProvider)
+			})
+
 			proberRegistry = map[string]ProberProvider{
 				"foo": func() Prober {
 					return &prober{}

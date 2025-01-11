@@ -137,6 +137,10 @@ func TestLoadConfig(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			t.Cleanup(func() {
+				configRegistry = make(map[string]ConfigProvider)
+			})
+
 			configRegistry["foo"] = func() Config {
 				return &config{}
 			}
