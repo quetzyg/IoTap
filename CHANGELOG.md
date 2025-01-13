@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project uses a date-based versioning system.
 
+## [v25.01.13] - 2025-01-13
+
+### Fixed
+- Nil pointer dereference if a configuration file isn't present [[6b1a8e2](https://github.com/quetzyg/IoTap/commit/6b1a8e2dfea15aaddefa9f64f5582c36c71ccaf4)], [[48723d1](https://github.com/quetzyg/IoTap/commit/48723d17f82e67ff7f9ce7bc3c0d98f0db4af9d1)].
+
 ## [v25.01.11] - 2025-01-11
 
 ### Added
