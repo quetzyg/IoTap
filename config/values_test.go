@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
+	"io/fs"
 	"reflect"
 	"strings"
 	"testing"
@@ -117,13 +118,14 @@ func TestLoadFromConfigDir(t *testing.T) {
 		err  error
 	}{
 		{
-			name: "no available config directory",
+			name: "failure: no config directory",
 			dir:  "",
+			err:  fs.ErrNotExist,
 		},
 		{
-			name: "failure: error loading empty file",
-			dir:  "invalid/path",
-			err:  &json.SyntaxError{},
+			name: "failure: no config file",
+			dir:  "../",
+			err:  fs.ErrNotExist,
 		},
 		{
 			name: "success",
@@ -138,18 +140,7 @@ func TestLoadFromConfigDir(t *testing.T) {
 
 			_, err := LoadFromConfigDir()
 
-			var syntaxError *json.SyntaxError
-			switch {
-			case errors.As(test.err, &syntaxError):
-				var se *json.SyntaxError
-				if errors.As(err, &se) {
-					return
-				}
-
-			case errors.Is(err, test.err):
-				return
-
-			default:
+			if !errors.Is(err, test.err) {
 				t.Fatalf("expected %#v, got %#v", test.err, err)
 			}
 		})

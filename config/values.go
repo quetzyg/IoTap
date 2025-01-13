@@ -63,17 +63,11 @@ func LoadFromEnv() (*Values, error) {
 func LoadFromConfigDir() (*Values, error) {
 	dir, err := os.UserConfigDir()
 	if err != nil {
-		// Missing config directories are ignored and not treated as errors.
-		return nil, nil
+		return nil, fs.ErrNotExist
 	}
 
 	f, err := os.Open(filepath.Join(dir, file))
 	if err != nil {
-		// Missing files are ignored and not treated as errors.
-		if errors.Is(err, fs.ErrNotExist) {
-			return nil, nil
-		}
-
 		return nil, err
 	}
 
