@@ -86,16 +86,16 @@ func main() {
 	switch {
 	case err == nil:
 		if val.Credentials != nil {
-			log.Printf("Successfully loaded IoTap config\n\n")
+			log.Printf("Configuration successfully loaded\n\n")
 
 			tapper.SetCredentials(val.Credentials)
 		}
 
 	case errors.Is(err, fs.ErrNotExist):
-		log.Printf("No IoTap config loaded\n\n")
+		log.Printf("No configuration to load\n\n")
 
 	default:
-		log.Printf("Unable to load IoTap config: %v\n\n", err)
+		log.Printf("Unable to load configuration: %v\n\n", err)
 	}
 
 	if cmd.Name() == command.Config {
