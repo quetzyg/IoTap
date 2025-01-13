@@ -24,13 +24,13 @@ func (c *config) Empty() bool {
 }
 
 func compareHTTPRequests(req1, req2 *http.Request) bool {
-	// Compare URL
-	if req1.URL.String() != req2.URL.String() {
+	// Compare HTTP Method
+	if req1.Method != req2.Method {
 		return false
 	}
 
-	// Compare HTTP Method
-	if req1.Method != req2.Method {
+	// Compare URL
+	if req1.URL.String() != req2.URL.String() {
 		return false
 	}
 

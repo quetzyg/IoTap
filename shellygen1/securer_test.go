@@ -2,11 +2,13 @@ package shellygen1
 
 import (
 	"errors"
+	"net"
 	"net/http"
 	"net/url"
 	"testing"
 
 	"github.com/quetzyg/IoTap/device"
+	"github.com/quetzyg/IoTap/httpclient"
 )
 
 func TestDevice_SetCredentials(t *testing.T) {
@@ -38,18 +40,27 @@ func TestDevice_AuthConfigRequest(t *testing.T) {
 		{
 			name: "success: turn authentication off",
 			r: func() *http.Request {
-				uri, _ := request(&Device{}, securePath, url.Values{
-					"enabled": []string{"false"},
-				})
+				r := &http.Request{
+					Method: http.MethodGet,
+					URL: &url.URL{
+						Scheme:   "http",
+						Host:     "192.168.146.123",
+						Path:     securePath,
+						RawQuery: "enabled=false",
+					},
+					Header: http.Header{},
+				}
 
-				return uri
+				r.Header.Set(httpclient.ContentTypeHeader, httpclient.JSONMimeType)
+
+				return r
 			}(),
 		},
 		{
 			name: "failure: excluded via policy",
 			auth: &device.AuthConfig{
 				Policy: &device.Policy{
-					Mode:   device.PolicyModeBlacklist,
+					Mode:   device.PolicyModeWhitelist,
 					Models: []string{"SHSW-1"},
 				},
 			},
@@ -64,20 +75,29 @@ func TestDevice_AuthConfigRequest(t *testing.T) {
 				},
 			},
 			r: func() *http.Request {
-				uri, _ := request(&Device{}, securePath, url.Values{
-					"enabled":  []string{"true"},
-					"username": []string{"foo"},
-					"password": []string{"bar"},
-				})
+				r := &http.Request{
+					Method: http.MethodGet,
+					URL: &url.URL{
+						Scheme:   "http",
+						Host:     "192.168.146.123",
+						Path:     securePath,
+						RawQuery: "enabled=true&password=bar&username=foo",
+					},
+					Header: http.Header{},
+				}
 
-				return uri
+				r.Header.Set(httpclient.ContentTypeHeader, httpclient.JSONMimeType)
+
+				return r
 			}(),
 		},
 	}
 
+	shelly1 := &Device{ip: net.ParseIP("192.168.146.123")}
+
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			r, err := (&Device{model: "SHSW-1"}).AuthConfigRequest(test.auth)
+			r, err := shelly1.AuthConfigRequest(test.auth)
 
 			if err == nil && !compareHTTPRequests(r, test.r) {
 				t.Fatalf("expected %#v, got %#v", test.r, r)
