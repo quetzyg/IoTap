@@ -4,6 +4,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"io/fs"
 	"log"
 	"os"
 
@@ -82,12 +83,19 @@ func main() {
 	tapper := device.NewTapper(device.GetProbers(driver))
 
 	val, err := config.LoadValues()
-	if err != nil {
-		log.Printf("Unable to load IoTap config: %v\n\n", err)
-	}
+	switch {
+	case err == nil:
+		if val.Credentials != nil {
+			log.Printf("Successfully loaded IoTap config\n\n")
 
-	if val.Credentials != nil {
-		tapper.SetCredentials(val.Credentials)
+			tapper.SetCredentials(val.Credentials)
+		}
+
+	case errors.Is(err, fs.ErrNotExist):
+		log.Printf("No IoTap config loaded\n\n")
+
+	default:
+		log.Printf("Unable to load IoTap config: %v\n\n", err)
 	}
 
 	if cmd.Name() == command.Config {
