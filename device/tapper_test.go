@@ -269,3 +269,141 @@ func TestProbeIP(t *testing.T) {
 		})
 	}
 }
+
+func TestTapper_Scan(t *testing.T) {
+	tests := []struct {
+		name         string
+		prober       Prober
+		roundTripper http.RoundTripper
+		col          Collection
+		err          error
+	}{
+		{
+			name: "failure: probe error",
+			prober: &prober{
+				funcError: &url.Error{},
+			},
+			err: Errors{},
+		},
+		{
+			name:   "success: empty collection",
+			prober: &prober{},
+			col:    Collection{},
+		},
+		{
+			name:   "success: collection with one resource",
+			prober: &prober{resource: &resource{}},
+			roundTripper: &RoundTripper{
+				response: &http.Response{
+					StatusCode: http.StatusOK,
+					Body:       io.NopCloser(strings.NewReader("{}")),
+				},
+			},
+			col: Collection{&resource{}},
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			tap := &Tapper{
+				probers:   []Prober{test.prober},
+				transport: test.roundTripper,
+			}
+
+			col, err := tap.Scan([]net.IP{net.ParseIP("192.168.146.123")})
+
+			if !reflect.DeepEqual(col, test.col) {
+				t.Fatalf("expected %#v, got %#v", test.col, col)
+			}
+
+			var scanError Errors
+			switch {
+			case errors.As(test.err, &scanError):
+				var se *Errors
+				if errors.As(err, &se) {
+					return
+				}
+
+			case errors.Is(err, test.err):
+				return
+
+			default:
+				t.Fatalf("expected %#v, got %#v", test.err, err)
+			}
+		})
+	}
+}
+
+func TestTapper_Execute(t *testing.T) {
+	tests := []struct {
+		name     string
+		col      Collection
+		proc     procedure
+		affected int
+		err      error
+	}{
+		{
+			name:     "success: empty collection",
+			col:      Collection{},
+			affected: 0,
+		},
+		{
+			name: "success: excluded device",
+			col:  Collection{&resource{}},
+			proc: func(tap *Tapper, res Resource, ch chan<- *ProcedureResult) {
+				ch <- &ProcedureResult{
+					err: ErrPolicyExcluded,
+				}
+			},
+			affected: 0,
+		},
+		{
+			name: "failure: procedure not supported",
+			col:  Collection{&resource{}},
+			proc: func(tap *Tapper, res Resource, ch chan<- *ProcedureResult) {
+				ch <- &ProcedureResult{
+					err: ErrUnsupportedProcedure,
+				}
+			},
+			affected: 0,
+			err:      Errors{},
+		},
+		{
+			name: "success",
+			col:  Collection{&resource{}},
+			proc: func(tap *Tapper, res Resource, ch chan<- *ProcedureResult) {
+				ch <- &ProcedureResult{
+					dev: res,
+				}
+			},
+			affected: 1,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			tap := &Tapper{}
+
+			affected, err := tap.Execute(test.proc, test.col)
+
+			if affected != test.affected {
+				t.Fatalf("expected %d affected devices, got %d", test.affected, affected)
+			}
+
+			var execError Errors
+			switch {
+			case errors.As(test.err, &execError):
+				var ee Errors
+				if errors.As(err, &ee) {
+					return
+				}
+
+			case errors.Is(err, test.err):
+				return
+
+			default:
+				t.Fatalf("expected %#v, got %#v", test.err, err)
+			}
+		})
+	}
+}
