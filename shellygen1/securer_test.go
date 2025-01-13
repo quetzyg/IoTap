@@ -12,21 +12,23 @@ import (
 )
 
 func TestDevice_SetCredentials(t *testing.T) {
-	if dev.cred != nil {
-		t.Fatalf("expected nil, got %v", dev.cred)
+	shelly1 := &Device{}
+
+	if shelly1.cred != nil {
+		t.Fatalf("expected nil, got %v", shelly1.cred)
 	}
 
-	dev.SetCredentials(&device.Credentials{
+	shelly1.SetCredentials(&device.Credentials{
 		Username: "admin",
 		Password: "admin",
 	})
 
-	if dev.cred.Username != "admin" {
-		t.Fatalf("expected admin, got %s", dev.cred.Username)
+	if shelly1.cred.Username != "admin" {
+		t.Fatalf("expected admin, got %s", shelly1.cred.Username)
 	}
 
-	if dev.cred.Password != "admin" {
-		t.Fatalf("expected admin, got %s", dev.cred.Password)
+	if shelly1.cred.Password != "admin" {
+		t.Fatalf("expected admin, got %s", shelly1.cred.Password)
 	}
 }
 
