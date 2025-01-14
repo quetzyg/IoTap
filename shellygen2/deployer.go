@@ -21,8 +21,8 @@ type listResponse struct {
 	} `json:"result"`
 }
 
-// scripts returns all the script resources of the device.
-func (d *Device) scripts(client *http.Client) ([]*script, error) {
+// fetchScripts constructs and returns a slice of *script resources associated with the device.
+func (d *Device) fetchScripts(client *http.Client) ([]*script, error) {
 	// List all the IoT device scripts
 	// See: https://shelly-api-docs.shelly.cloud/gen2/ComponentsAndServices/Script#scriptlist
 	r, err := request(d, "Script.List", nil)
@@ -50,7 +50,7 @@ func (d *Device) DeployRequests(client *http.Client, dep *device.Deployment) ([]
 
 	// Delete any existing scripts
 	// See: https://shelly-api-docs.shelly.cloud/gen2/ComponentsAndServices/Script#scriptdelete
-	scripts, err := d.scripts(client)
+	scripts, err := d.fetchScripts(client)
 	if err != nil {
 		return nil, err
 	}
