@@ -12,7 +12,7 @@ It is especially effective for performing batch operations and maintaining unifo
 
 - Perform network-wide device scanning and discovery.
 - Run commands across multiple devices simultaneously.
-- Export detailed device information in CSV or JSON formats or view it directly on-screen.
+- Export detailed device information as CSV or JSON to a file or on-screen.
 - Apply configurations to multiple devices.
 - Activate/deactivate device authentication mechanisms.
 - Identify devices running outdated software versions.
