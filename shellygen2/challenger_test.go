@@ -74,7 +74,10 @@ func TestParseDigest(t *testing.T) {
 					Header:     http.Header{},
 				}
 
-				resp.Header.Set(httpclient.WWWAuthenticateHeader, `Digest qop="auth", realm="shellypro1-001122334455", nonce="12345678", algorithm=SHA-256`)
+				resp.Header.Set(
+					httpclient.WWWAuthenticateHeader,
+					`Digest qop="auth", realm="shellypro1-001122334455", nonce="12345678", algorithm=SHA-256`,
+				)
 
 				return resp
 			}(),
@@ -197,7 +200,10 @@ func TestDevice_ChallengeResponse(t *testing.T) {
 					Header:     http.Header{},
 				}
 
-				resp.Header.Set(httpclient.WWWAuthenticateHeader, `Digest qop="auth", realm="shellypro1-001122334455", nonce="12345678", algorithm=SHA-256`)
+				resp.Header.Set(
+					httpclient.WWWAuthenticateHeader,
+					`Digest qop="auth", realm="shellypro1-001122334455", nonce="12345678", algorithm=SHA-256`,
+				)
 
 				return resp
 			}(),
@@ -212,7 +218,10 @@ func TestDevice_ChallengeResponse(t *testing.T) {
 					Header: http.Header{},
 				}
 
-				r.Header.Set(httpclient.AuthorizationHeader, `^Digest username="admin", realm="shellypro1-001122334455", nonce="12345678", uri="foo", response="[a-f0-9]{64}", algorithm=SHA-256, qop=auth, nc=00000001, cnonce="[a-f0-9]{32}"$`)
+				r.Header.Set(
+					httpclient.AuthorizationHeader,
+					`^Digest username="admin", realm="shellypro1-001122334455", nonce="12345678", uri="foo", response="[a-f0-9]{64}", algorithm=SHA-256, qop=auth, nc=00000001, cnonce="[a-f0-9]{32}"$`,
+				)
 
 				return r
 			}(),
