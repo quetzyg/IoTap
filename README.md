@@ -65,7 +65,7 @@ iotap 192.168.1.0/24 dump -f devices.csv
 iotap 192.168.1.0/24 dump -f devices.json -format json
 
 # Dump device results filtered by driver and sorted by IP
-iotap 192.168.1.0/24 dump -driver shelly_gen2 -sort ip
+iotap 192.168.1.0/24 dump -driver shellygen2 -sort ip
 ```
 
 Dump command help
@@ -95,7 +95,7 @@ Flags:
 
 ```bash
 # Apply the configuration from `config.json` to all Shelly Gen1 devices
-iotap 192.168.1.0/24 config -driver shelly_gen1 -f config.json
+iotap 192.168.1.0/24 config -driver shellygen1 -f config.json
 ```
 
 Configuration command help
@@ -121,7 +121,7 @@ Flags:
 
 ```bash
 # Disable the authentication on all Shelly Gen1 devices
-iotap 192.168.1.0/24 secure -driver shelly_gen1 --off
+iotap 192.168.1.0/24 secure -driver shellygen1 --off
 ```
 
 ```bash
@@ -158,7 +158,7 @@ Identify device versions across the network, listing any that are out of date.
 iotap 192.168.1.0/24 version
 
 # Check versions for specific driver (Shelly Gen2)
-iotap 192.168.1.0/24 version -driver shelly_gen2
+iotap 192.168.1.0/24 version -driver shellygen2
 ```
 
 Version command help
@@ -186,7 +186,7 @@ Update devices to the latest available vendor firmware.
 iotap 192.168.1.0/24 update
 
 # Update the firmware for specific devices (Shelly Gen1)
-iotap 192.168.1.0/24 update -driver shelly_gen1
+iotap 192.168.1.0/24 update -driver shellygen1
 ```
 
 Update command help
@@ -210,7 +210,7 @@ Flags:
 
 ```bash
 # Perform a deployment to Shelly Gen2 devices
-iotap 192.168.1.0/24 deploy -driver shelly_gen2 -f deployment.json
+iotap 192.168.1.0/24 deploy -driver shellygen2 -f deployment.json
 ```
 
 Deploy command help
@@ -231,7 +231,7 @@ Flags:
 ```
 
 ### Important Notes
-- At the moment, **only** the `shelly_gen2` driver supports this command.
+- At the moment, **only** the `shellygen2` driver supports this command.
 
 - As part of the deployment task, the `deploy` command will **remove** any previously existing scripts from the device.
 
@@ -247,7 +247,7 @@ Flags:
 iotap 192.168.1.0/24 reboot
 
 # Reboot specific devices by driver
-iotap 192.168.1.0/24 reboot -driver shelly_gen1
+iotap 192.168.1.0/24 reboot -driver shellygen1
 ```
 
 Reboot command help
