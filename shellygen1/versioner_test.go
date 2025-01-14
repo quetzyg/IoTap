@@ -89,7 +89,7 @@ func TestDevice_UpdateDetails(t *testing.T) {
 				Firmware:     "1.0",
 				FirmwareNext: "2.0",
 			},
-			details: "[shelly_gen1] DEV-A001 @ 192.168.146.123 can be updated from 1.0 to 2.0",
+			details: "[shellygen1] DEV-A001 @ 192.168.146.123 can be updated from 1.0 to 2.0",
 		},
 	}
 
