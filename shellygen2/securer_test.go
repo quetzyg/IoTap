@@ -9,21 +9,23 @@ import (
 )
 
 func TestDevice_SetCredentials(t *testing.T) {
-	if dev.cred != nil {
-		t.Fatalf("expected nil, got %v", dev.cred)
+	shelly2 := &Device{}
+
+	if shelly2.cred != nil {
+		t.Fatalf("expected nil, got %v", shelly2.cred)
 	}
 
-	dev.SetCredentials(&device.Credentials{
+	shelly2.SetCredentials(&device.Credentials{
 		Username: "admin",
 		Password: "admin",
 	})
 
-	if dev.cred.Username != "admin" {
-		t.Fatalf("expected admin, got %s", dev.cred.Username)
+	if shelly2.cred.Username != "admin" {
+		t.Fatalf("expected admin, got %s", shelly2.cred.Username)
 	}
 
-	if dev.cred.Password != "admin" {
-		t.Fatalf("expected admin, got %s", dev.cred.Password)
+	if shelly2.cred.Password != "admin" {
+		t.Fatalf("expected admin, got %s", shelly2.cred.Password)
 	}
 }
 
@@ -76,9 +78,11 @@ func TestDevice_AuthConfigRequest(t *testing.T) {
 		},
 	}
 
+	shelly2 := &Device{model: "SPSW-201XE16EU", Realm: "shellypro1-001122334455"}
+
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			r, err := (&Device{model: "SPSW-201XE16EU", Realm: "shellypro1-001122334455"}).AuthConfigRequest(test.auth)
+			r, err := shelly2.AuthConfigRequest(test.auth)
 
 			switch {
 			case err == nil:

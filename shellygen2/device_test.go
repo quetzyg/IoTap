@@ -10,75 +10,94 @@ import (
 	"github.com/quetzyg/IoTap/device"
 )
 
-var (
-	ip       = net.ParseIP("192.168.146.123")
-	mac      = net.HardwareAddr{00, 17, 34, 51, 68, 85}
-	name     = "Shelly Pro 1"
-	model    = "SPSW-201XE16EU"
-	firmware = "20241011-114449/1.4.4-g6d2a586"
-	dev      = &Device{
-		ip:       ip,
-		mac:      mac,
-		name:     name,
-		model:    model,
-		Gen:      2,
-		Firmware: firmware,
-	}
-)
-
 func TestDevice_IP(t *testing.T) {
-	if !dev.IP().Equal(ip) {
-		t.Fatalf("expected %v, got %v", ip, dev.IP())
+	ip := net.ParseIP("192.168.146.123")
+	shelly2 := &Device{
+		ip: ip,
+	}
+
+	if !shelly2.IP().Equal(ip) {
+		t.Fatalf("expected %v, got %v", ip, shelly2.IP())
 	}
 }
 
 func TestDevice_MAC(t *testing.T) {
-	if !bytes.Equal(dev.MAC(), mac) {
-		t.Fatalf("expected %q, got %q", mac, dev.MAC())
+	mac := net.HardwareAddr{00, 17, 34, 51, 68, 85}
+	shelly2 := &Device{
+		mac: mac,
+	}
+
+	if !bytes.Equal(shelly2.MAC(), mac) {
+		t.Fatalf("expected %q, got %q", mac, shelly2.MAC())
 	}
 }
 
 func TestDevice_Name(t *testing.T) {
-	if dev.Name() != name {
-		t.Fatalf("expected %q, got %q", name, dev.Name())
+	name := "Shelly Pro 1"
+	shelly2 := &Device{
+		name: name,
+	}
+
+	if shelly2.Name() != name {
+		t.Fatalf("expected %q, got %q", name, shelly2.Name())
 	}
 }
 
 func TestDevice_Model(t *testing.T) {
-	if dev.Model() != model {
-		t.Fatalf("expected %q, got %q", model, dev.Model())
+	model := "SPSW-201XE16EU"
+	shelly2 := &Device{
+		model: model,
+	}
+
+	if shelly2.Model() != model {
+		t.Fatalf("expected %q, got %q", model, shelly2.Model())
 	}
 }
 
 func TestDevice_ID(t *testing.T) {
-	if dev.ID() != mac.String() {
-		t.Fatalf("expected %q, got %q", mac.String(), dev.ID())
+	mac := net.HardwareAddr{00, 17, 34, 51, 68, 85}
+	shelly2 := &Device{
+		mac: mac,
+	}
+
+	if shelly2.ID() != mac.String() {
+		t.Fatalf("expected %q, got %q", mac.String(), shelly2.ID())
 	}
 }
 
 func TestDevice_Driver(t *testing.T) {
-	if dev.Driver() != Driver {
-		t.Fatalf("expected %q, got %q", Driver, dev.Driver())
+	shelly2 := &Device{}
+
+	if shelly2.Driver() != Driver {
+		t.Fatalf("expected %q, got %q", Driver, shelly2.Driver())
 	}
 }
 
 func TestDevice_Vendor(t *testing.T) {
-	if dev.Vendor() != Vendor {
-		t.Fatalf("expected %q, got %q", Vendor, dev.Vendor())
+	shelly2 := &Device{}
+
+	if shelly2.Vendor() != Vendor {
+		t.Fatalf("expected %q, got %q", Vendor, shelly2.Vendor())
 	}
 }
 
 func TestDevice_Generation(t *testing.T) {
-	if dev.Generation() != "2" {
-		t.Fatalf("expected %q, got %q", "2", dev.Generation())
+	shelly2 := &Device{
+		Gen: 2,
+	}
+
+	if shelly2.Generation() != "2" {
+		t.Fatalf("expected %q, got %q", "2", shelly2.Generation())
 	}
 }
 
 func TestDevice_Secured(t *testing.T) {
-	dev.secured = true
+	shelly2 := &Device{
+		secured: true,
+	}
 
-	if dev.Secured() != true {
-		t.Fatalf("expected %t, got %t", true, dev.Secured())
+	if shelly2.Secured() != true {
+		t.Fatalf("expected %t, got %t", true, shelly2.Secured())
 	}
 }
 

@@ -26,9 +26,11 @@ func TestProber_Request(t *testing.T) {
 		},
 	}
 
+	prober := &Prober{}
+
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			r, dev, err := (&Prober{}).Request(test.ip)
+			r, dev, err := prober.Request(test.ip)
 
 			if r.URL.String() != test.uri {
 				t.Fatalf("expected %#v, got %#v", test.uri, r.URL.String())
