@@ -25,19 +25,18 @@ func (c *config) Empty() bool {
 	return true
 }
 
-func compareHTTPRequests(req1, req2 *http.Request) bool {
-	// Compare HTTP Method
-	if req1.Method != req2.Method {
-		return false
+func compareRequests(t *testing.T, expected, actual *http.Request) {
+	if expected.Method != actual.Method {
+		t.Fatalf("expected %q, got %q", expected.Method, actual.Method)
 	}
 
-	// Compare URL
-	if req1.URL.String() != req2.URL.String() {
-		return false
+	if expected.URL.String() != actual.URL.String() {
+		t.Fatalf("expected %q, got %q", expected.URL.String(), actual.URL.String())
 	}
 
-	// Compare Headers
-	return reflect.DeepEqual(req1.Header, req2.Header)
+	if !reflect.DeepEqual(expected.Header, actual.Header) {
+		t.Fatalf("expected %#v, got %#v", expected.Header, actual.Header)
+	}
 }
 
 func TestDevice_ConfigureRequests(t *testing.T) {
@@ -150,9 +149,7 @@ func TestDevice_ConfigureRequests(t *testing.T) {
 			rs, err := shelly1.ConfigureRequests(test.cfg)
 
 			for i, r := range rs {
-				if !compareHTTPRequests(r, test.rs[i]) {
-					t.Fatalf("expected %#v, got %#v", test.rs, rs)
-				}
+				compareRequests(t, test.rs[i], r)
 			}
 
 			if !errors.Is(err, test.err) {

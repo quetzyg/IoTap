@@ -101,8 +101,8 @@ func TestDevice_AuthConfigRequest(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			r, err := shelly1.AuthConfigRequest(test.auth)
 
-			if err == nil && !compareHTTPRequests(r, test.r) {
-				t.Fatalf("expected %#v, got %#v", test.r, r)
+			if err == nil {
+				compareRequests(t, test.r, r)
 			}
 
 			if !errors.Is(err, test.err) {
