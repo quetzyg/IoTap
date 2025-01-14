@@ -10,7 +10,7 @@ import (
 
 const (
 	// Driver name for this device implementation.
-	Driver = "shelly_gen2"
+	Driver = "shellygen2"
 
 	// Vendor represents the name of the company that developed the device.
 	Vendor = "Shelly"

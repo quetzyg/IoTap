@@ -96,7 +96,7 @@ func TestDevice_UpdateDetails(t *testing.T) {
 				Version:     "1.0",
 				VersionNext: "2.0",
 			},
-			details: "[shelly_gen2] DEV-A001 @ 192.168.146.123 can be updated from 1.0 to 2.0",
+			details: "[shellygen2] DEV-A001 @ 192.168.146.123 can be updated from 1.0 to 2.0",
 		},
 	}
 
