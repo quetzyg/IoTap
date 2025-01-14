@@ -27,27 +27,25 @@ func (c *config) Empty() bool {
 	return true
 }
 
-func compareHTTPRequests(req1, req2 *http.Request) bool {
-	// Compare HTTP Method
-	if req1.Method != req2.Method {
-		return false
+func compareRequests(t *testing.T, expected, actual *http.Request) {
+	if expected.Method != actual.Method {
+		t.Fatalf("expected %q, got %q", expected.Method, actual.Method)
 	}
 
-	// Compare URL
-	if req1.URL.String() != req2.URL.String() {
-		return false
+	if expected.URL.String() != actual.URL.String() {
+		t.Fatalf("expected %q, got %q", expected.URL.String(), actual.URL.String())
 	}
 
-	// Compare Headers
-	if !reflect.DeepEqual(req1.Header, req2.Header) {
-		return false
+	if !reflect.DeepEqual(expected.Header, actual.Header) {
+		t.Fatalf("expected %#v, got %#v", expected.Header, actual.Header)
 	}
 
-	// Compare Body
-	body1, _ := io.ReadAll(req1.Body)
-	body2, _ := io.ReadAll(req2.Body)
+	body1, _ := io.ReadAll(expected.Body)
+	body2, _ := io.ReadAll(actual.Body)
 
-	return bytes.Equal(body1, body2)
+	if !bytes.Equal(body1, body2) {
+		t.Fatalf("expected %q, got %q", body1, body2)
+	}
 }
 
 func TestDevice_ConfigureRequests(t *testing.T) {
@@ -163,9 +161,7 @@ func TestDevice_ConfigureRequests(t *testing.T) {
 			rs, err := shelly2.ConfigureRequests(test.cfg)
 
 			for i, r := range rs {
-				if !compareHTTPRequests(r, test.rs[i]) {
-					t.Fatalf("expected %#v, got %#v", test.rs, rs)
-				}
+				compareRequests(t, r, test.rs[i])
 			}
 
 			if !errors.Is(err, test.err) {

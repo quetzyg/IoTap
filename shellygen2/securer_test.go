@@ -80,14 +80,17 @@ func TestDevice_AuthConfigRequest(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			r, err := (&Device{model: "SPSW-201XE16EU", Realm: "shellypro1-001122334455"}).AuthConfigRequest(test.auth)
 
-			if err == nil && !compareHTTPRequests(r, test.r) {
-				t.Fatalf("expected %#v, got %#v", test.r, r)
-			}
+			switch {
+			case err == nil:
+				compareRequests(t, test.r, r)
+				return
 
-			if !errors.Is(err, test.err) {
+			case errors.Is(err, test.err):
+				return
+
+			default:
 				t.Fatalf("expected %#v, got %#v", test.err, err)
 			}
 		})
-
 	}
 }
