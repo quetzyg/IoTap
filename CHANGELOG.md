@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project uses a date-based versioning system.
 
+## [v25.01.14] - 2025-01-14
+
+### Changed
+- Remove the underscore from the Shelly driver names [[73683d6](https://github.com/quetzyg/IoTap/commit/73683d6ec2c3bd03f1167b839ef0c7438597cb3e)], [[d0fcfca](https://github.com/quetzyg/IoTap/commit/d0fcfca6aa5618c85ff6f6ba8582eb2e4157f81c)].
+
 ## [v25.01.13] - 2025-01-13
 
 ### Fixed
