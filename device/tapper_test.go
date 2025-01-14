@@ -74,12 +74,12 @@ func TestTapper_SetDeployment(t *testing.T) {
 
 func TestTapper_probe(t *testing.T) {
 	tests := []struct {
-		name         string
-		prober       Prober
-		roundTripper http.RoundTripper
-		dev          Resource
-		failed       bool
-		err          error
+		name   string
+		prober Prober
+		rt     http.RoundTripper
+		dev    Resource
+		failed bool
+		err    error
 	}{
 		{
 			name: "failure: probe error",
@@ -92,7 +92,7 @@ func TestTapper_probe(t *testing.T) {
 		{
 			name:   "success: device found",
 			prober: &prober{resource: &resource{}},
-			roundTripper: &RoundTripper{
+			rt: &roundTripper{
 				response: &http.Response{
 					StatusCode: http.StatusOK,
 					Body:       io.NopCloser(strings.NewReader("{}")),
@@ -104,7 +104,7 @@ func TestTapper_probe(t *testing.T) {
 		{
 			name:   "success: secure device found",
 			prober: &prober{resource: &securer{}},
-			roundTripper: &RoundTripper{
+			rt: &roundTripper{
 				response: &http.Response{
 					StatusCode: http.StatusOK,
 					Body:       io.NopCloser(strings.NewReader("{}")),
@@ -124,7 +124,7 @@ func TestTapper_probe(t *testing.T) {
 			ch := make(chan *ProcedureResult, 1)
 
 			client := &http.Client{
-				Transport: test.roundTripper,
+				Transport: test.rt,
 			}
 
 			tap.probe(ch, client, net.ParseIP("192.168.146.123"))
@@ -174,24 +174,24 @@ func (p *prober) Request(_ net.IP) (*http.Request, Resource, error) {
 	return r, p.resource, err
 }
 
-// RoundTripper is a custom type used for mocking HTTP responses.
-type RoundTripper struct {
+// roundTripper is a custom type used for mocking HTTP responses.
+type roundTripper struct {
 	response *http.Response
 	err      error
 }
 
-// RoundTrip implements the RoundTripper interface.
-func (rt RoundTripper) RoundTrip(_ *http.Request) (*http.Response, error) {
+// RoundTrip implements the http.RoundTripper interface.
+func (rt *roundTripper) RoundTrip(_ *http.Request) (*http.Response, error) {
 	return rt.response, rt.err
 }
 
 func TestProbeIP(t *testing.T) {
 	tests := []struct {
-		name         string
-		prober       Prober
-		roundTripper http.RoundTripper
-		res          Resource
-		err          error
+		name   string
+		prober Prober
+		rt     http.RoundTripper
+		res    Resource
+		err    error
 	}{
 		{
 			name: "failure: bad prober",
@@ -203,14 +203,14 @@ func TestProbeIP(t *testing.T) {
 		{
 			name:   "failure: http response error",
 			prober: &prober{},
-			roundTripper: &RoundTripper{
+			rt: &roundTripper{
 				err: &url.Error{},
 			},
 		},
 		{
 			name:   "failure: unexpected device",
 			prober: &prober{resource: &resource{unexpected: true}},
-			roundTripper: &RoundTripper{
+			rt: &roundTripper{
 				response: &http.Response{
 					StatusCode: http.StatusOK,
 					Body:       io.NopCloser(strings.NewReader("{}")),
@@ -220,7 +220,7 @@ func TestProbeIP(t *testing.T) {
 		{
 			name:   "failure: parsing error",
 			prober: &prober{resource: &resource{}},
-			roundTripper: &RoundTripper{
+			rt: &roundTripper{
 				response: &http.Response{
 					StatusCode: http.StatusOK,
 					Body:       io.NopCloser(strings.NewReader("}")),
@@ -230,7 +230,7 @@ func TestProbeIP(t *testing.T) {
 		{
 			name:   "success",
 			prober: &prober{resource: &resource{}},
-			roundTripper: &RoundTripper{
+			rt: &roundTripper{
 				response: &http.Response{
 					StatusCode: http.StatusOK,
 					Body:       io.NopCloser(strings.NewReader("{}")),
@@ -243,7 +243,7 @@ func TestProbeIP(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			client := &http.Client{
-				Transport: test.roundTripper,
+				Transport: test.rt,
 			}
 
 			res, err := probeIP(test.prober, client, net.ParseIP("192.168.146.123"))
@@ -272,11 +272,11 @@ func TestProbeIP(t *testing.T) {
 
 func TestTapper_Scan(t *testing.T) {
 	tests := []struct {
-		name         string
-		prober       Prober
-		roundTripper http.RoundTripper
-		col          Collection
-		err          error
+		name   string
+		prober Prober
+		rt     http.RoundTripper
+		col    Collection
+		err    error
 	}{
 		{
 			name: "failure: probe error",
@@ -293,7 +293,7 @@ func TestTapper_Scan(t *testing.T) {
 		{
 			name:   "success: collection with one resource",
 			prober: &prober{resource: &resource{}},
-			roundTripper: &RoundTripper{
+			rt: &roundTripper{
 				response: &http.Response{
 					StatusCode: http.StatusOK,
 					Body:       io.NopCloser(strings.NewReader("{}")),
@@ -307,7 +307,7 @@ func TestTapper_Scan(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			tap := &Tapper{
 				probers:   []Prober{test.prober},
-				transport: test.roundTripper,
+				transport: test.rt,
 			}
 
 			col, err := tap.Scan([]net.IP{net.ParseIP("192.168.146.123")})

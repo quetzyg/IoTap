@@ -24,10 +24,10 @@ func (u *updater) UpdateRequest() (*http.Request, error) {
 
 func TestUpdate(t *testing.T) {
 	tests := []struct {
-		name         string
-		roundTripper http.RoundTripper
-		dev          Resource
-		err          error
+		name string
+		rt   http.RoundTripper
+		dev  Resource
+		err  error
 	}{
 		{
 			name: "failure: unsupported procedure",
@@ -44,7 +44,7 @@ func TestUpdate(t *testing.T) {
 		{
 			name: "failure: http response error",
 			dev:  &updater{},
-			roundTripper: &RoundTripper{
+			rt: &roundTripper{
 				err: &url.Error{},
 			},
 			err: &url.Error{},
@@ -52,7 +52,7 @@ func TestUpdate(t *testing.T) {
 		{
 			name: "success",
 			dev:  &updater{},
-			roundTripper: &RoundTripper{
+			rt: &roundTripper{
 				response: &http.Response{
 					StatusCode: http.StatusOK,
 					Body:       io.NopCloser(strings.NewReader("{}")),
@@ -64,7 +64,7 @@ func TestUpdate(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			tap := &Tapper{
-				transport: test.roundTripper,
+				transport: test.rt,
 			}
 
 			ch := make(chan *ProcedureResult, 1)

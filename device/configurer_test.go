@@ -29,10 +29,10 @@ func (c *configurer) ConfigureRequests(Config) ([]*http.Request, error) {
 
 func TestConfigure(t *testing.T) {
 	tests := []struct {
-		name         string
-		roundTripper http.RoundTripper
-		dev          Resource
-		err          error
+		name string
+		rt   http.RoundTripper
+		dev  Resource
+		err  error
 	}{
 		{
 			name: "failure: unsupported procedure",
@@ -49,7 +49,7 @@ func TestConfigure(t *testing.T) {
 		{
 			name: "failure: http response error",
 			dev:  &configurer{},
-			roundTripper: &RoundTripper{
+			rt: &roundTripper{
 				err: &url.Error{},
 			},
 			err: &url.Error{},
@@ -57,7 +57,7 @@ func TestConfigure(t *testing.T) {
 		{
 			name: "success",
 			dev:  &configurer{},
-			roundTripper: &RoundTripper{
+			rt: &roundTripper{
 				response: &http.Response{
 					StatusCode: http.StatusOK,
 					Body:       io.NopCloser(strings.NewReader("{}")),
@@ -69,7 +69,7 @@ func TestConfigure(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			tap := &Tapper{
-				transport: test.roundTripper,
+				transport: test.rt,
 			}
 
 			ch := make(chan *ProcedureResult, 1)

@@ -10,14 +10,14 @@ import (
 	"testing"
 )
 
-// RoundTripper is a custom type used for mocking HTTP responses.
-type RoundTripper struct {
+// roundTripper is a custom type used for mocking HTTP responses.
+type roundTripper struct {
 	response *http.Response
 	err      error
 }
 
-// RoundTrip implements the RoundTripper interface.
-func (rt RoundTripper) RoundTrip(_ *http.Request) (*http.Response, error) {
+// RoundTrip implements the http.RoundTripper interface.
+func (rt *roundTripper) RoundTrip(_ *http.Request) (*http.Response, error) {
 	return rt.response, rt.err
 }
 
@@ -63,12 +63,12 @@ var (
 
 func TestDispatch(t *testing.T) {
 	tests := []struct {
-		name         string
-		req          *http.Request
-		roundTripper http.RoundTripper
-		challenger   Challenger
-		v            any
-		err          error
+		name       string
+		req        *http.Request
+		rt         http.RoundTripper
+		challenger Challenger
+		v          any
+		err        error
 	}{
 		{
 			name: "failure: clone request error",
@@ -84,7 +84,7 @@ func TestDispatch(t *testing.T) {
 				Method: http.MethodGet,
 				URL:    uri,
 			},
-			roundTripper: &RoundTripper{
+			rt: &roundTripper{
 				response: nil,
 				err:      net.ErrClosed,
 			},
@@ -96,7 +96,7 @@ func TestDispatch(t *testing.T) {
 				Method: http.MethodGet,
 				URL:    uri,
 			},
-			roundTripper: &RoundTripper{
+			rt: &roundTripper{
 				response: &http.Response{
 					StatusCode: http.StatusUnauthorized,
 				},
@@ -112,7 +112,7 @@ func TestDispatch(t *testing.T) {
 				Method: http.MethodGet,
 				URL:    uri,
 			},
-			roundTripper: &RoundTripper{
+			rt: &roundTripper{
 				response: &http.Response{
 					StatusCode: http.StatusUnauthorized,
 				},
@@ -134,7 +134,7 @@ func TestDispatch(t *testing.T) {
 				Method: http.MethodGet,
 				URL:    uri,
 			},
-			roundTripper: &RoundTripper{
+			rt: &roundTripper{
 				response: &http.Response{
 					StatusCode: http.StatusOK,
 					Body:       &badReader{},
@@ -148,7 +148,7 @@ func TestDispatch(t *testing.T) {
 				Method: http.MethodGet,
 				URL:    uri,
 			},
-			roundTripper: &RoundTripper{
+			rt: &roundTripper{
 				response: &http.Response{
 					StatusCode: http.StatusOK,
 					Body:       io.NopCloser(strings.NewReader("{}")),
@@ -161,7 +161,7 @@ func TestDispatch(t *testing.T) {
 				Method: http.MethodGet,
 				URL:    uri,
 			},
-			roundTripper: &RoundTripper{
+			rt: &roundTripper{
 				response: &http.Response{
 					StatusCode: http.StatusBadRequest,
 					Body:       io.NopCloser(strings.NewReader("Bad Request")),
@@ -176,7 +176,7 @@ func TestDispatch(t *testing.T) {
 				Method: http.MethodGet,
 				URL:    uri,
 			},
-			roundTripper: &RoundTripper{
+			rt: &roundTripper{
 				response: &http.Response{
 					StatusCode: http.StatusOK,
 				},
@@ -187,7 +187,7 @@ func TestDispatch(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			client := &http.Client{
-				Transport: test.roundTripper,
+				Transport: test.rt,
 			}
 
 			err := Dispatch(client, test.req, test.challenger, test.v)

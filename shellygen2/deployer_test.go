@@ -21,28 +21,28 @@ type roundTripper struct {
 	err      error
 }
 
-// RoundTrip implements the roundTripper interface.
-func (rt roundTripper) RoundTrip(_ *http.Request) (*http.Response, error) {
+// RoundTrip implements the http.RoundTripper interface.
+func (rt *roundTripper) RoundTrip(_ *http.Request) (*http.Response, error) {
 	return rt.response, rt.err
 }
 
 func TestFetchScripts(t *testing.T) {
 	tests := []struct {
-		name         string
-		roundTripper http.RoundTripper
-		scripts      []*script
-		err          error
+		name    string
+		rt      http.RoundTripper
+		scripts []*script
+		err     error
 	}{
 		{
 			name: "failure: dispatch failed",
-			roundTripper: &roundTripper{
+			rt: &roundTripper{
 				err: net.ErrClosed,
 			},
 			err: net.ErrClosed,
 		},
 		{
 			name: "success: scripts retrieved",
-			roundTripper: &roundTripper{
+			rt: &roundTripper{
 				response: &http.Response{
 					StatusCode: http.StatusOK,
 					Body:       io.NopCloser(strings.NewReader(`{"result":{"scripts":[{"id":1}]}}`)),
@@ -58,7 +58,7 @@ func TestFetchScripts(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			scripts, err := shelly2.fetchScripts(&http.Client{Transport: test.roundTripper})
+			scripts, err := shelly2.fetchScripts(&http.Client{Transport: test.rt})
 
 			if !reflect.DeepEqual(scripts, test.scripts) {
 				t.Fatalf("expected %#v, got %#v", test.scripts, scripts)
@@ -77,11 +77,11 @@ func TestFetchScripts(t *testing.T) {
 
 func TestDevice_DeployRequests(t *testing.T) {
 	tests := []struct {
-		name         string
-		dep          *device.Deployment
-		roundTripper http.RoundTripper
-		rs           []*http.Request
-		err          error
+		name string
+		dep  *device.Deployment
+		rt   http.RoundTripper
+		rs   []*http.Request
+		err  error
 	}{
 		{
 			name: "failure: excluded via policy",
@@ -96,7 +96,7 @@ func TestDevice_DeployRequests(t *testing.T) {
 		{
 			name: "failure: unable to fetch scripts",
 			dep:  &device.Deployment{},
-			roundTripper: &roundTripper{
+			rt: &roundTripper{
 				err: net.ErrClosed,
 			},
 			err: net.ErrClosed,
@@ -115,7 +115,7 @@ func TestDevice_DeployRequests(t *testing.T) {
 					}
 				}(),
 			},
-			roundTripper: &roundTripper{
+			rt: &roundTripper{
 				response: &http.Response{
 					StatusCode: http.StatusOK,
 					Body:       io.NopCloser(strings.NewReader(`{"result":{"scripts":[{"id":1}]}}`)),
@@ -210,7 +210,7 @@ func TestDevice_DeployRequests(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			client := &http.Client{
-				Transport: test.roundTripper,
+				Transport: test.rt,
 			}
 			rs, err := shelly2.DeployRequests(client, test.dep)
 
