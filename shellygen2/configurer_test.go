@@ -161,7 +161,7 @@ func TestDevice_ConfigureRequests(t *testing.T) {
 			rs, err := shelly2.ConfigureRequests(test.cfg)
 
 			for i, r := range rs {
-				compareRequests(t, r, test.rs[i])
+				compareRequests(t, test.rs[i], r)
 			}
 
 			if !errors.Is(err, test.err) {
