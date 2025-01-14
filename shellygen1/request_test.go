@@ -1,15 +1,18 @@
 package shellygen1
 
 import (
+	"errors"
 	"net"
+	"net/http"
 	"net/url"
 	"reflect"
 	"testing"
+
+	"github.com/quetzyg/IoTap/device"
+	"github.com/quetzyg/IoTap/httpclient"
 )
 
 func TestBuildURL(t *testing.T) {
-	ip := net.ParseIP("192.168.146.12")
-
 	tests := []struct {
 		name     string
 		path     string
@@ -37,12 +40,94 @@ func TestBuildURL(t *testing.T) {
 		},
 	}
 
+	ip := net.ParseIP("192.168.146.12")
+
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			uri := buildURL(ip, test.path)
 
 			if uri != test.expected {
 				t.Fatalf("expected %s, got %s", test.expected, uri)
+			}
+		})
+	}
+}
+
+func TestRequest(t *testing.T) {
+	tests := []struct {
+		name   string
+		dev    *Device
+		params url.Values
+		r      *http.Request
+		err    error
+	}{
+		{
+			name: "success: request with parameters",
+			dev:  &Device{ip: net.ParseIP("192.168.146.123")},
+			params: url.Values{
+				"bar": []string{"baz"},
+			},
+			r: func() *http.Request {
+				r1 := &http.Request{
+					Method: http.MethodGet,
+					URL: &url.URL{
+						Scheme:   "http",
+						Host:     "192.168.146.123",
+						Path:     probePath,
+						RawQuery: "bar=baz",
+					},
+					Header: http.Header{},
+				}
+
+				r1.Header.Set(httpclient.ContentTypeHeader, httpclient.JSONMimeType)
+
+				return r1
+			}(),
+		},
+		{
+			name: "failure: credentials missing",
+			dev:  &Device{secured: true},
+			err:  device.ErrMissingCredentials,
+		},
+		{
+			name: "success: secured request",
+			dev: &Device{ip: net.ParseIP("192.168.146.123"), secured: true, cred: &device.Credentials{
+				Username: "admin",
+				Password: "secret",
+			}},
+			r: func() *http.Request {
+				r1 := &http.Request{
+					Method: http.MethodGet,
+					URL: &url.URL{
+						Scheme: "http",
+						Host:   "192.168.146.123",
+						Path:   probePath,
+					},
+					Header: http.Header{},
+				}
+
+				r1.Header.Set(httpclient.ContentTypeHeader, httpclient.JSONMimeType)
+				r1.Header.Set(httpclient.AuthorizationHeader, "Basic YWRtaW46c2VjcmV0")
+
+				return r1
+			}(),
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			r, err := request(test.dev, probePath, test.params)
+
+			switch {
+			case err == nil:
+				compareRequests(t, test.r, r)
+				return
+
+			case errors.Is(err, test.err):
+				return
+
+			default:
+				t.Fatalf("expected %#v, got %#v", test.err, err)
 			}
 		})
 	}
