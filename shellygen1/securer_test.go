@@ -109,6 +109,5 @@ func TestDevice_AuthConfigRequest(t *testing.T) {
 				t.Fatalf("expected %#v, got %#v", test.err, err)
 			}
 		})
-
 	}
 }
