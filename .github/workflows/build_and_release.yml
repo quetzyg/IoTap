@@ -68,7 +68,7 @@ jobs:
         run: |-
           BINARY="iotap"
           if [ "${{ matrix.goos }}" = "windows" ]; then
-            BINARY=$BINARY_NAME.exe
+            BINARY=$BINARY.exe
           fi
           go build -v \
           -trimpath \
@@ -82,7 +82,7 @@ jobs:
         run: |-
           BINARY="iotap"
           if [ "${{ matrix.goos }}" = "windows" ]; then
-            BINARY=$BINARY_NAME.exe
+            BINARY=$BINARY.exe
           fi
           tar -zcvf iotap-${{ matrix.goos }}-${{ matrix.goarch }}.tar.gz $BINARY LICENSE.md CHANGELOG.md
 
