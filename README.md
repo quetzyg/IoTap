@@ -26,16 +26,25 @@ It is especially effective for performing batch operations and maintaining unifo
 
 ## Installation
 
+You can install the tool using one of the following methods.
+
+### Binary Release
+Download precompiled binaries from the [releases](https://github.com/quetzyg/IoTap/releases) page.
+
+Binaries are available for:
+- Linux (AMD64)
+- Windows (AMD64)
+- macOS (Apple Silicon)
+
 ### From Source
+Clone the repository and compile the code manually to build the tool from the latest source.
+
 ```bash
 git clone https://github.com/quetzyg/IoTap.git
 cd IoTap
 go build -o iotap
 sudo mv iotap /usr/local/bin/
 ```
-
-### Binary Release
-Download the latest release from the [Releases](https://github.com/quetzyg/IoTap/releases) page.
 
 ## Usage
 
@@ -68,7 +77,7 @@ iotap 192.168.1.0/24 dump -f devices.json -format json
 iotap 192.168.1.0/24 dump -driver shellygen2 -sort ip
 ```
 
-Dump command help
+Dump command help:
 ```bash
 iotap 192.168.1.0/24 dump -h
 ```
@@ -98,7 +107,7 @@ Flags:
 iotap 192.168.1.0/24 config -driver shellygen1 -f config.json
 ```
 
-Configuration command help
+Configuration command help:
 ```bash
 iotap 192.168.1.0/24 config -h
 ```
@@ -129,7 +138,7 @@ iotap 192.168.1.0/24 secure -driver shellygen1 --off
 iotap 192.168.1.0/24 secure -f authentication.json
 ```
 
-Secure command help
+Secure command help:
 ```bash
 iotap 192.168.1.0/24 config -h
 ```
@@ -161,7 +170,7 @@ iotap 192.168.1.0/24 version
 iotap 192.168.1.0/24 version -driver shellygen2
 ```
 
-Version command help
+Version command help:
 ```bash
 iotap 192.168.1.0/24 version -h
 ```
@@ -189,7 +198,7 @@ iotap 192.168.1.0/24 update
 iotap 192.168.1.0/24 update -driver shellygen1
 ```
 
-Update command help
+Update command help:
 ```bash
 iotap 192.168.1.0/24 update -h
 ```
@@ -213,7 +222,7 @@ Flags:
 iotap 192.168.1.0/24 deploy -driver shellygen2 -f deployment.json
 ```
 
-Deploy command help
+Deploy command help:
 ```bash
 iotap 192.168.1.0/24 deploy -h
 ```
@@ -250,7 +259,7 @@ iotap 192.168.1.0/24 reboot
 iotap 192.168.1.0/24 reboot -driver shellygen1
 ```
 
-Reboot command help
+Reboot command help:
 ```bash
 iotap 192.168.1.0/24 reboot -h
 ```
@@ -266,33 +275,68 @@ Flags:
 ```
 </details>
 
-## Device Configuration Files
+## IoTap Configuration
+
+The only configuration that may be required is a set of credentials.
+
+These must match the ones used when authentication was first enabled on the target devices.
+
+The configuration can be loaded in two ways:
+
+1. **Environment Variables:**
+   - Credentials can be set using the following environment variables:
+     ```bash
+     export IOTAP_USERNAME=admin
+     export IOTAP_PASSWORD=secret
+     ```
+
+2. **Predefined JSON File:**
+   - The tool can load configuration from a JSON file located at `~/.config/iotap.json`.
+   - Example file content:
+     ```json
+     {
+         "credentials": {
+             "username": "admin",
+             "password": "secret"
+         }
+     }
+     ```
+
+## Command Configuration Files
+
+Certain IoTap commands require a configuration file. These must be in the JSON format and are categorised as follows:
+
+1. **Device Configuration:** Used with the `config` command to define parameters for configuring one or more IoT devices.
+
+2. **Authentication Configuration:** Used with the `secure` command to specify the credentials that devices will use once authentication is enforced.
+
+3. **Deployment Configuration:** Used with the `deploy` command to provide paths to scripts for deployment on supported devices.
+
+Each configuration file allows defining a Policy, to enable the inclusion or exclusion of devices based on criteria such as MAC address or device model.
+
+### Policies
+
+Policies are a mechanism to selectively apply configurations to specific devices or groups of devices. By using these, users can:
+
+- **Whitelist:** Include only devices that match specified MAC addresses or device models.
+
+- **Blacklist:** Exclude devices that match specified MAC addresses or device models.
+
+### Device Configuration
+
+The device configuration file defines the parameters to be set on one or more IoT devices. This file enables users to customise the behavior and settings of the devices under management.
+
 Currently, there are two device configuration types:
 - Shelly Gen1
 - Shelly Gen2
 
 Each generation follows a distinct structure tailored to how the respective devices process and expect the data.
 
-### Policy Support
-IoTap offers flexible device targeting using a policy mechanism. Within a configuration file, you can include a `policy` section to precisely specify which devices should receive the configuration.
-
-#### Policy Modes
-1. **Whitelist Mode**
-    - When `mode` is set to `whitelist`, configurations will only be applied to devices that meet either of these criteria:
-        - Their model name matches an entry in the `models` array
-        - Their MAC address matches an entry in the `devices` array
-
-2. **Blacklist Mode**
-    - When `mode` is set to `blacklist`, configurations will not be applied to devices if either:
-        - Their model name matches an entry in the `models` array
-        - Their MAC address matches an entry in the `devices` array
-
 <details>
-<summary><strong>Shelly Gen1</strong>: Configuration Example</summary>
+<summary><strong>Shelly Gen1 Example</strong></summary>
 
 In this scenario, devices with MAC addresses `AA:BB:CC:DD:EE:FF` and `11:22:33:44:55:66` will be skipped, while the remaining discovered devices will be configured.
 
-**Example:**
 ```json
 {
   "meta": {
@@ -354,11 +398,10 @@ In this scenario, devices with MAC addresses `AA:BB:CC:DD:EE:FF` and `11:22:33:4
 </details>
 
 <details>
-<summary><strong>Shelly Gen2</strong>: Configuration Example</summary>
+<summary><strong>Shelly Gen2 Example</strong></summary>
 
 In this scenario, only devices with models `SNSW-001X16EU` and `SNSW-001X8EU` will be configured.
 
-**Example:**
 ```json
 {
   "meta": {
@@ -463,31 +506,15 @@ In this scenario, only devices with models `SNSW-001X16EU` and `SNSW-001X8EU` wi
 ```
 </details>
 
-## Auth Configuration file
-The `secure` command requires a single, well-defined auth configuration file.
+### Authentication Configuration
 
-Similarly to the configuration file formats, this one also supports policy enforcement.
-
-### Policy Support
-IoTap enables flexible device targeting through a policy mechanism. In an auth configuration file, you can include a `policy` section to precisely define which devices the authentication should apply to.
-
-#### Policy Modes
-1. **Whitelist Mode**
-    - When `mode` is set to `whitelist`, the authentication will only be set to devices that meet either of these criteria:
-        - Their model name matches an entry in the `models` array
-        - Their MAC address matches an entry in the `devices` array
-
-2. **Blacklist Mode**
-    - When `mode` is set to `blacklist`, the authentication will not be set to devices if either:
-        - Their model name matches an entry in the `models` array
-        - Their MAC address matches an entry in the `devices` array
+The authentication configuration file specifies the credentials that one or more devices should use to enforce security.
 
 <details>
-<summary>Set Authentication Example</summary>
+<summary><strong>Example</strong></summary>
 
-In this scenario, authentication will be set to any device found.
+In this scenario, authentication will be set to any device that supports such feature.
 
-**Example:**
 ```json
 {
   "meta": {
@@ -501,55 +528,15 @@ In this scenario, authentication will be set to any device found.
 ```
 </details>
 
-### Authentication Credentials
-When authentication is enabled, `IoTap` requires credentials to make authenticated requests to secured devices. These credentials must match those used when initially enabling authentication on the devices.
+### Deployment Configuration
 
-#### Configuration Options
-You can provide credentials to IoTap using either of these two methods:
-
-##### 1. Environment Variables
-Set the following environment variables:
-```bash
-export IOTAP_USERNAME=admin
-export IOTAP_PASSWORD=secret
-```
-
-##### 2. Configuration File
-Create a configuration file at `~/.config/iotap.json` with the following content:
-```json
-{
-  "credentials": {
-    "username": "admin",
-    "password": "secret"
-  }
-}
-```
-
-## Deployment file
-The `deploy` command requires a single, well-defined deployment file.
-
-Similarly to the auth configuration file format, this one also supports policy enforcement.
-
-### Policy Support
-IoTap enables flexible device targeting through a policy mechanism. In a deployment file, you can include a `policy` section to precisely define which devices the deployment applies to.
-
-#### Policy Modes
-1. **Whitelist Mode**
-    - When `mode` is set to `whitelist`, scripts will only be deployed to devices that meet either of these criteria:
-        - Their model name matches an entry in the `models` array
-        - Their MAC address matches an entry in the `devices` array
-
-2. **Blacklist Mode**
-    - When `mode` is set to `blacklist`, scripts will not be deployed to devices if either:
-        - Their model name matches an entry in the `models` array
-        - Their MAC address matches an entry in the `devices` array
+The deployment configuration file allows users to define paths to scripts that can be deployed to devices supporting script execution.
 
 <details>
-<summary><strong>Shelly Gen2</strong>: Deployment Example</summary>
+<summary><strong>Example</strong></summary>
 
 In this scenario, scripts will only be deployed to devices where the model name is `SPSW-001XE16EU`.
 
-**Example:**
 ```json
 {
   "meta": {
@@ -574,14 +561,14 @@ The following table outlines the devices that have been successfully tested:
 
 | Vendor | Generation | Model | Links |
 |--------|------------|-------|-------|
-| Shelly | Gen1 | Shelly 1 | ([Product](https://www.shelly.com/en-pt/products/product-overview/shelly-1), [KB](https://kb.shelly.cloud/knowledge-base/shelly-1), [API](https://shelly-api-docs.shelly.cloud/gen1/#shelly1-shelly1pm)) |
-| Shelly | Gen2 | Shelly Plus 1| ([Product](https://www.shelly.com/en-pt/products/product-overview/shelly-plus-1), [KB](https://kb.shelly.cloud/knowledge-base/shelly-plus-1), [API](https://shelly-api-docs.shelly.cloud/gen2/Devices/Gen2/ShellyPlus1))|
-| Shelly | Gen2 | Shelly Plus 1 (Mini)| ([Product](https://www.shelly.com/en-pt/products/product-overview/shelly-plus-1-mini), [KB](https://kb.shelly.cloud/knowledge-base/shelly-plus-1-mini), [API](https://shelly-api-docs.shelly.cloud/gen2/Devices/Gen2/ShellyPlus1))|
-| Shelly | Gen2 | Shelly Pro 1| ([Product](https://www.shelly.com/en-pt/products/product-overview/shelly-pro-1), [KB](https://kb.shelly.cloud/knowledge-base/shelly-pro-1-v1), [API](https://shelly-api-docs.shelly.cloud/gen2/Devices/Gen2/ShellyPro1))|
+| Shelly | Gen1 | Shelly 1 | [KB](https://kb.shelly.cloud/knowledge-base/shelly-1), [API](https://shelly-api-docs.shelly.cloud/gen1/#shelly1-shelly1pm)|
+| Shelly | Gen2 | Shelly Plus 1| [KB](https://kb.shelly.cloud/knowledge-base/shelly-plus-1), [API](https://shelly-api-docs.shelly.cloud/gen2/Devices/Gen2/ShellyPlus1)|
+| Shelly | Gen2 | Shelly Plus 1 (Mini)| [KB](https://kb.shelly.cloud/knowledge-base/shelly-plus-1-mini), [API](https://shelly-api-docs.shelly.cloud/gen2/Devices/Gen2/ShellyPlus1)|
+| Shelly | Gen2 | Shelly Pro 1| [KB](https://kb.shelly.cloud/knowledge-base/shelly-pro-1-v1), [API](https://shelly-api-docs.shelly.cloud/gen2/Devices/Gen2/ShellyPro1)|
 
 ### Broader Device Support
 
-While the above devices have been successfully tested, IoTap is designed with flexibility and broad compatibility in mind, meaning that it may already support a greater number of Shelly Gen1 and Gen2 devices.
+While the above devices have been successfully tested, IoTap is designed with flexibility and broad compatibility in mind, meaning that it should support a greater number of Shelly Gen1 and Gen2 devices.
 
 ### Hardware and Vendor Collaboration
 
