@@ -106,3 +106,4 @@ jobs:
           tag: v${{ needs.version.outputs.number }}
           artifacts: "iotap-*/*.tar.gz"
           token: ${{ secrets.GITHUB_TOKEN }}
+          generateReleaseNotes: true
