@@ -45,10 +45,10 @@ jobs:
 
       - name: Run tests
         run: |-
-          go test -race -shuffle=on -failfast -vet=off -v ./... -coverprofile=coverage.out
-          go tool cover -html=coverage.out -o coverage.html
+          go test -race -shuffle=on -failfast -vet=off -v ./... -coverprofile=coverage.txt
+          go tool cover -html=coverage.txt -o coverage.html
 
-      - name: Check test coverage
-        uses: vladopajic/go-test-coverage@v2
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
         with:
-          config: ./.testcoverage.yml
+          token: ${{ secrets.CODECOV_TOKEN }}
