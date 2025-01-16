@@ -99,7 +99,7 @@ func main() {
 	}
 
 	if cmd.Name() == command.Config {
-		cfg, err := device.LoadConfig(driver, flags.ConfigFile())
+		cfg, err := device.LoadConfig(driver, flags.File())
 		if err != nil {
 			log.Fatalf("Unable to load device config: %v\n\n", err)
 		}
@@ -108,7 +108,7 @@ func main() {
 	}
 
 	if cmd.Name() == command.Secure && !flags.SecureOff() {
-		auth, err := device.LoadAuthConfig(flags.SecureFile())
+		auth, err := device.LoadAuthConfig(flags.File())
 		if err != nil {
 			log.Fatalf("Unable to load auth config: %v\n\n", err)
 		}
@@ -117,7 +117,7 @@ func main() {
 	}
 
 	if cmd.Name() == command.Deploy {
-		dep, err := device.LoadDeployment(driver, flags.DeployFile())
+		dep, err := device.LoadDeployment(driver, flags.File())
 		if err != nil {
 			log.Fatalf("Unable to load deployment file: %v\n\n", err)
 		}
@@ -147,7 +147,7 @@ func main() {
 			log.Fatalf("Unable to sort results: %v\n", err)
 		}
 
-		err = device.ExecDump(devices, flags.DumpFormat(), flags.DumpFile())
+		err = device.ExecDump(devices, flags.DumpFormat(), flags.File())
 
 	case command.Config:
 		log.Print("Deploying configuration to devices...")

@@ -136,34 +136,34 @@ func TestFlags_DumpFormat(t *testing.T) {
 
 func TestFlags_DumpFile(t *testing.T) {
 	tests := []struct {
-		name     string
-		args     []string
-		command  string
-		driver   string
-		err      error
-		dumpFile string
+		name    string
+		args    []string
+		command string
+		driver  string
+		err     error
+		file    string
 	}{
 		{
-			name:     "get empty dump file path value",
-			args:     []string{Dump},
-			command:  Dump,
-			driver:   device.AllDrivers,
-			dumpFile: "",
+			name:    "get empty dump file path value",
+			args:    []string{Dump},
+			command: Dump,
+			driver:  device.AllDrivers,
+			file:    "",
 		},
 		{
-			name:     "get dump file path value",
-			args:     []string{Dump, "-f", "devices.csv"},
-			command:  Dump,
-			driver:   device.AllDrivers,
-			dumpFile: "devices.csv",
+			name:    "get dump file path value",
+			args:    []string{Dump, "-f", "devices.csv"},
+			command: Dump,
+			driver:  device.AllDrivers,
+			file:    "devices.csv",
 		},
 		{
-			name:     "get empty dump file path value when argument is missing",
-			args:     []string{Dump, "-f"},
-			command:  Dump,
-			driver:   "",
-			err:      ErrArgumentParse,
-			dumpFile: "",
+			name:    "get empty dump file path value when argument is missing",
+			args:    []string{Dump, "-f"},
+			command: Dump,
+			driver:  "",
+			err:     ErrArgumentParse,
+			file:    "",
 		},
 	}
 
@@ -185,10 +185,10 @@ func TestFlags_DumpFile(t *testing.T) {
 				t.Fatalf("expected %#v, got %#v", test.err, err)
 			}
 
-			file := flags.DumpFile()
+			file := flags.File()
 
-			if file != test.dumpFile {
-				t.Fatalf("Unexpected dump file. Got %s, expected %s", file, test.dumpFile)
+			if file != test.file {
+				t.Fatalf("Unexpected dump file. Got %s, expected %s", file, test.file)
 			}
 		})
 	}
@@ -196,34 +196,34 @@ func TestFlags_DumpFile(t *testing.T) {
 
 func TestFlags_ConfigFile(t *testing.T) {
 	tests := []struct {
-		name       string
-		args       []string
-		command    string
-		driver     string
-		err        error
-		configFile string
+		name    string
+		args    []string
+		command string
+		driver  string
+		err     error
+		file    string
 	}{
 		{
-			name:       "get empty config file path value",
-			args:       []string{Config},
-			command:    Config,
-			driver:     device.AllDrivers,
-			configFile: "",
+			name:    "get empty config file path value",
+			args:    []string{Config},
+			command: Config,
+			driver:  device.AllDrivers,
+			file:    "",
 		},
 		{
-			name:       "get config file path value",
-			args:       []string{Config, "-f", "config.json"},
-			command:    Config,
-			driver:     device.AllDrivers,
-			configFile: "config.json",
+			name:    "get config file path value",
+			args:    []string{Config, "-f", "config.json"},
+			command: Config,
+			driver:  device.AllDrivers,
+			file:    "config.json",
 		},
 		{
-			name:       "get empty config file path value when argument is missing",
-			args:       []string{Config, "-f"},
-			command:    Config,
-			driver:     "",
-			err:        ErrArgumentParse,
-			configFile: "",
+			name:    "get empty config file path value when argument is missing",
+			args:    []string{Config, "-f"},
+			command: Config,
+			driver:  "",
+			err:     ErrArgumentParse,
+			file:    "",
 		},
 	}
 
@@ -245,10 +245,10 @@ func TestFlags_ConfigFile(t *testing.T) {
 				t.Fatalf("expected %#v, got %#v", test.err, err)
 			}
 
-			file := flags.ConfigFile()
+			file := flags.File()
 
-			if file != test.configFile {
-				t.Fatalf("Unexpected config file. Got %s, expected %s", file, test.configFile)
+			if file != test.file {
+				t.Fatalf("Unexpected config file. Got %s, expected %s", file, test.file)
 			}
 		})
 	}
@@ -256,34 +256,34 @@ func TestFlags_ConfigFile(t *testing.T) {
 
 func TestFlags_DeployFile(t *testing.T) {
 	tests := []struct {
-		name       string
-		args       []string
-		command    string
-		driver     string
-		err        error
-		deployFile string
+		name    string
+		args    []string
+		command string
+		driver  string
+		err     error
+		file    string
 	}{
 		{
-			name:       "get empty deploy file path value",
-			args:       []string{Deploy},
-			command:    Deploy,
-			driver:     device.AllDrivers,
-			deployFile: "",
+			name:    "get empty deploy file path value",
+			args:    []string{Deploy},
+			command: Deploy,
+			driver:  device.AllDrivers,
+			file:    "",
 		},
 		{
-			name:       "get single deploy file path value",
-			args:       []string{Deploy, "-f", "deployment.json"},
-			command:    Deploy,
-			driver:     device.AllDrivers,
-			deployFile: "deployment.json",
+			name:    "get single deploy file path value",
+			args:    []string{Deploy, "-f", "deployment.json"},
+			command: Deploy,
+			driver:  device.AllDrivers,
+			file:    "deployment.json",
 		},
 		{
-			name:       "get empty deploy file path value when argument is missing",
-			args:       []string{Deploy, "-f"},
-			command:    Deploy,
-			driver:     "",
-			err:        ErrArgumentParse,
-			deployFile: "",
+			name:    "get empty deploy file path value when argument is missing",
+			args:    []string{Deploy, "-f"},
+			command: Deploy,
+			driver:  "",
+			err:     ErrArgumentParse,
+			file:    "",
 		},
 	}
 
@@ -305,10 +305,10 @@ func TestFlags_DeployFile(t *testing.T) {
 				t.Fatalf("expected %#v, got %#v", test.err, err)
 			}
 
-			file := flags.DeployFile()
+			file := flags.File()
 
-			if file != test.deployFile {
-				t.Fatalf("Unexpected deploy file. Got %q, expected %q", file, test.deployFile)
+			if file != test.file {
+				t.Fatalf("Unexpected deploy file. Got %q, expected %q", file, test.file)
 			}
 		})
 	}
