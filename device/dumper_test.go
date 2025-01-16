@@ -30,7 +30,7 @@ func TestDumpCSV(t *testing.T) {
 					secured: false,
 				},
 			},
-			out: "Vendor,MAC Address,IP Address,Name,Model,Generation,Firmware,Secured\nShelly,00:11:22:33:44:55,192.168.146.123,Storage,SHSW-1,1,v1.2.3,false\n",
+			out: "Vendor,MAC Address,URL,Name,Model,Generation,Firmware,Secured\nShelly,00:11:22:33:44:55,http://192.168.146.123,Storage,SHSW-1,1,v1.2.3,false\n",
 			sep: ",",
 		},
 		{
@@ -46,7 +46,7 @@ func TestDumpCSV(t *testing.T) {
 					secured: false,
 				},
 			},
-			out: "Vendor  MAC Address        IP Address       Name     Model   Generation  Firmware  Secured\nShelly  00:11:22:33:44:55  192.168.146.123  Storage  SHSW-1  1           v1.2.3    false\n",
+			out: "Vendor  MAC Address        URL                     Name     Model   Generation  Firmware  Secured\nShelly  00:11:22:33:44:55  http://192.168.146.123  Storage  SHSW-1  1           v1.2.3    false\n",
 			sep: "\t",
 		},
 	}
@@ -91,11 +91,11 @@ func TestDumpJSON(t *testing.T) {
   {
     "firmware": "v1.2.3",
     "generation": "1",
-    "ip": "192.168.146.123",
     "mac": "00:11:22:33:44:55",
     "model": "SHSW-1",
     "name": "Storage",
     "secured": false,
+    "url": "http://192.168.146.123",
     "vendor": "Shelly"
   }
 ]`,

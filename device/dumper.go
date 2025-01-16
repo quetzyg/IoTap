@@ -30,7 +30,7 @@ func dumpCSV(devices Collection, w io.Writer, sep string) error {
 	header := []string{
 		"Vendor",
 		"MAC Address",
-		"IP Address",
+		"URL",
 		"Name",
 		"Model",
 		"Generation",

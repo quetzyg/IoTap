@@ -12,7 +12,7 @@ func (d *Device) DelimitedRow(sep string) string {
 	return strings.Join([]string{
 		d.Vendor(),
 		d.mac.String(),
-		d.ip.String(),
+		fmt.Sprintf("http://%s", d.ip),
 		d.name,
 		d.model,
 		d.Generation(),
@@ -26,7 +26,7 @@ func (d *Device) MarshalJSON() ([]byte, error) {
 	return json.Marshal(map[string]any{
 		"vendor":     d.Vendor(),
 		"mac":        d.mac.String(),
-		"ip":         d.ip,
+		"url":        fmt.Sprintf("http://%s", d.ip),
 		"name":       d.name,
 		"model":      d.model,
 		"generation": d.Generation(),

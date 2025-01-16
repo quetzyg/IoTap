@@ -83,7 +83,7 @@ func (r *resource) DelimitedRow(sep string) string {
 	return strings.Join([]string{
 		r.Vendor(),
 		r.mac.String(),
-		r.ip.String(),
+		fmt.Sprintf("http://%s", r.ip),
 		r.name,
 		r.model,
 		r.Generation(),
@@ -97,7 +97,7 @@ func (r *resource) MarshalJSON() ([]byte, error) {
 	return json.Marshal(map[string]any{
 		"vendor":     r.Vendor(),
 		"mac":        r.mac.String(),
-		"ip":         r.ip,
+		"url":        fmt.Sprintf("http://%s", r.ip),
 		"name":       r.name,
 		"model":      r.model,
 		"generation": r.Generation(),
