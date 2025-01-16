@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project uses a date-based versioning system.
 
+## [v25.01.16] - 2025-01-16
+
+### Changed
+- Remove the underscore from the Shelly driver names [[73683d6](https://github.com/quetzyg/IoTap/commit/73683d6ec2c3bd03f1167b839ef0c7438597cb3e)], [[d0fcfca](https://github.com/quetzyg/IoTap/commit/d0fcfca6aa5618c85ff6f6ba8582eb2e4157f81c)].
+- Updated command-line flags for consistency and brevity [[f6279a2](https://github.com/quetzyg/IoTap/commit/f6279a2fa898ad0b6eb2ea26c669809c940821ef)].
+
+### Fixed
+- Windows binary file name [[22b7d9d](https://github.com/quetzyg/IoTap/commit/22b7d9da2d8c16d49b0e98aea8e7ac980cd38cef)]. Thanks for noticing, [@ana-lisboa](https://github.com/ana-lisboa)!
+
 ## [v25.01.14] - 2025-01-14
 
 ### Changed
