@@ -19,21 +19,21 @@ type StrFlag struct {
 }
 
 // String implements the Stringer interface.
-func (f *StrFlag) String() string {
-	return f.value
+func (sf *StrFlag) String() string {
+	return sf.value
 }
 
 // Set the flag value after validating the input.
-func (f *StrFlag) Set(value string) error {
-	for _, v := range f.options {
+func (sf *StrFlag) Set(value string) error {
+	for _, v := range sf.options {
 		if value == v {
-			f.value = value
+			sf.value = value
 
 			return nil
 		}
 	}
 
-	return fmt.Errorf("expected one of: %s", strings.Join(f.options, ", "))
+	return fmt.Errorf("expected one of: %s", strings.Join(sf.options, ", "))
 }
 
 // NewStrFlag creates a new *StrFlag instance.
@@ -194,37 +194,37 @@ func NewFlags() *Flags {
 }
 
 // Usage outputs examples to the screen.
-func (p *Flags) Usage() {
+func (f *Flags) Usage() {
 	flag.Usage()
 }
 
 // Driver returns the driver name value.
-func (p *Flags) Driver() string {
-	return p.driver.String()
+func (f *Flags) Driver() string {
+	return f.driver.String()
 }
 
 // File returns the file path value.
-func (p *Flags) File() string {
-	return *p.file
+func (f *Flags) File() string {
+	return *f.file
 }
 
 // SortField returns the field by which the dump results should be sorted by.
-func (p *Flags) SortField() string {
-	return p.dumpSortField.String()
+func (f *Flags) SortField() string {
+	return f.dumpSortField.String()
 }
 
 // DumpFormat returns the dump data format value.
-func (p *Flags) DumpFormat() string {
-	return p.dumpFormat.String()
+func (f *Flags) DumpFormat() string {
+	return f.dumpFormat.String()
 }
 
 // SecureOff returns true if device authentication should be turned off, false otherwise.
-func (p *Flags) SecureOff() bool {
-	return *p.secureOff
+func (f *Flags) SecureOff() bool {
+	return *f.secureOff
 }
 
 // Parse the CLI arguments.
-func (p *Flags) Parse(arguments []string) (*flag.FlagSet, string, error) {
+func (f *Flags) Parse(arguments []string) (*flag.FlagSet, string, error) {
 	if len(arguments) == 0 {
 		return nil, "", ErrNotFound
 	}
@@ -237,64 +237,64 @@ func (p *Flags) Parse(arguments []string) (*flag.FlagSet, string, error) {
 	// Handle commands
 	switch arguments[0] {
 	case Dump:
-		err = p.dumpCmd.Parse(arguments[1:])
+		err = f.dumpCmd.Parse(arguments[1:])
 		if err != nil {
-			return p.dumpCmd, "", fmt.Errorf("%w: %w", ErrArgumentParse, err)
+			return f.dumpCmd, "", fmt.Errorf("%w: %w", ErrArgumentParse, err)
 		}
 
-		return p.dumpCmd, p.driver.String(), nil
+		return f.dumpCmd, f.driver.String(), nil
 
 	case Config:
-		err = p.configCmd.Parse(arguments[1:])
+		err = f.configCmd.Parse(arguments[1:])
 		if err != nil {
-			return p.configCmd, "", fmt.Errorf("%w: %w", ErrArgumentParse, err)
+			return f.configCmd, "", fmt.Errorf("%w: %w", ErrArgumentParse, err)
 		}
 
-		return p.configCmd, p.driver.String(), nil
+		return f.configCmd, f.driver.String(), nil
 
 	case Secure:
-		err = p.secureCmd.Parse(arguments[1:])
+		err = f.secureCmd.Parse(arguments[1:])
 		if err != nil {
-			return p.secureCmd, "", fmt.Errorf("%w: %w", ErrArgumentParse, err)
+			return f.secureCmd, "", fmt.Errorf("%w: %w", ErrArgumentParse, err)
 		}
 
-		if p.SecureOff() && p.File() != "" {
-			return p.secureCmd, "", fmt.Errorf("%w: '-f' and '--off' flags cannot be used together", ErrFlagConflict)
+		if f.SecureOff() && f.File() != "" {
+			return f.secureCmd, "", fmt.Errorf("%w: '-f' and '--off' flags cannot be used together", ErrFlagConflict)
 		}
 
-		return p.secureCmd, p.driver.String(), nil
+		return f.secureCmd, f.driver.String(), nil
 
 	case Version:
-		err = p.versionCmd.Parse(arguments[1:])
+		err = f.versionCmd.Parse(arguments[1:])
 		if err != nil {
-			return p.versionCmd, "", fmt.Errorf("%w: %w", ErrArgumentParse, err)
+			return f.versionCmd, "", fmt.Errorf("%w: %w", ErrArgumentParse, err)
 		}
 
-		return p.versionCmd, p.driver.String(), nil
+		return f.versionCmd, f.driver.String(), nil
 
 	case Update:
-		err = p.updateCmd.Parse(arguments[1:])
+		err = f.updateCmd.Parse(arguments[1:])
 		if err != nil {
-			return p.updateCmd, "", fmt.Errorf("%w: %w", ErrArgumentParse, err)
+			return f.updateCmd, "", fmt.Errorf("%w: %w", ErrArgumentParse, err)
 		}
 
-		return p.updateCmd, p.driver.String(), nil
+		return f.updateCmd, f.driver.String(), nil
 
 	case Deploy:
-		err = p.deployCmd.Parse(arguments[1:])
+		err = f.deployCmd.Parse(arguments[1:])
 		if err != nil {
-			return p.deployCmd, "", fmt.Errorf("%w: %w", ErrArgumentParse, err)
+			return f.deployCmd, "", fmt.Errorf("%w: %w", ErrArgumentParse, err)
 		}
 
-		return p.deployCmd, p.driver.String(), nil
+		return f.deployCmd, f.driver.String(), nil
 
 	case Reboot:
-		err = p.rebootCmd.Parse(arguments[1:])
+		err = f.rebootCmd.Parse(arguments[1:])
 		if err != nil {
-			return p.rebootCmd, "", fmt.Errorf("%w: %w", ErrArgumentParse, err)
+			return f.rebootCmd, "", fmt.Errorf("%w: %w", ErrArgumentParse, err)
 		}
 
-		return p.rebootCmd, p.driver.String(), nil
+		return f.rebootCmd, f.driver.String(), nil
 
 	default:
 		return nil, "", fmt.Errorf("%w: %s", ErrInvalid, arguments[0])
