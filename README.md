@@ -64,17 +64,17 @@ iotap <IP|CIDR> <command> [flags]
 <summary><strong>dump</strong>: Output device scan results to <strong>STDOUT</strong> or to a file</summary>
 
 ```bash
-# Dump device results to screen in tabular form
+# Dump device results to screen in CSV format (default)
 iotap 192.168.1.0/24 dump
 
-# Dump device results to CSV file
-iotap 192.168.1.0/24 dump -f devices.csv
+# Dump device results in CSV format to a file
+iotap 192.168.1.0/24 dump -o devices.csv
 
-# Dump device results to JSON file
-iotap 192.168.1.0/24 dump -f devices.json -format json
+# Dump device results in JSON format to a file
+iotap 192.168.1.0/24 dump -o devices.json -f json
 
-# Dump device results filtered by driver and sorted by IP
-iotap 192.168.1.0/24 dump -driver shellygen2 -sort ip
+# Dump Shelly Gen2 only device results to the screen, sorted by IP
+iotap 192.168.1.0/24 dump -d shellygen2 -s ip
 ```
 
 Dump command help:
@@ -88,13 +88,13 @@ Usage of dump:
  ./iotap <IP|CIDR> dump [flags]
 
 Flags:
-  -driver value
-        Filter by device driver (default all)
-  -f string
-        Output the scan results to a file
-  -format value
-        Dump output format (default csv)
-  -sort value
+  -d value
+        Device driver (default all)
+  -f value
+        Dump format (default csv)
+  -o string
+        Scan results output file
+  -s value
         Sort devices by field (default name)
 ```
 </details>
@@ -104,7 +104,7 @@ Flags:
 
 ```bash
 # Apply the configuration from `config.json` to all Shelly Gen1 devices
-iotap 192.168.1.0/24 config -driver shellygen1 -f config.json
+iotap 192.168.1.0/24 config -d shellygen1 -c config.json
 ```
 
 Configuration command help:
@@ -118,10 +118,10 @@ Usage of config:
  ./iotap <IP|CIDR> config [flags]
 
 Flags:
-  -driver value
-        Filter by device driver (default all)
-  -f string
-        Device configuration file path
+  -c string
+        Device configuration file
+  -d value
+        Device driver (default all)
 ```
 </details>
 
@@ -130,12 +130,12 @@ Flags:
 
 ```bash
 # Disable the authentication on all Shelly Gen1 devices
-iotap 192.168.1.0/24 secure -driver shellygen1 --off
+iotap 192.168.1.0/24 secure -d shellygen1 --off
 ```
 
 ```bash
 # Enable the authentication on all devices
-iotap 192.168.1.0/24 secure -f authentication.json
+iotap 192.168.1.0/24 secure -c authentication.json
 ```
 
 Secure command help:
@@ -149,12 +149,12 @@ Usage of secure:
  ./iotap <IP|CIDR> secure [flags]
 
 Flags:
-  -driver value
-        Filter by device driver (default all)
-  -f string
-        Auth configuration file path (incompatible with --off)
-  --off
-        Turn device authentication off (incompatible with -f)
+  -c string
+        Auth configuration file (incompatible with --off)
+  -d value
+        Device driver (default all)
+  -off
+        Turn device authentication off (incompatible with -c)
 ```
 </details>
 
@@ -166,8 +166,8 @@ Identify device versions across the network, listing any that are out of date.
 # Check versions for all devices
 iotap 192.168.1.0/24 version
 
-# Check versions for specific driver (Shelly Gen2)
-iotap 192.168.1.0/24 version -driver shellygen2
+# Check versions of specific devices (Shelly Gen2)
+iotap 192.168.1.0/24 version -d shellygen2
 ```
 
 Version command help:
@@ -181,8 +181,8 @@ Usage of version:
  ./iotap <IP|CIDR> version [flags]
 
 Flags:
-  -driver value
-        Filter by device driver (default all)
+  -d value
+        Device driver (default all)
 ```
 </details>
 
@@ -195,7 +195,7 @@ Update devices to the latest available vendor firmware.
 iotap 192.168.1.0/24 update
 
 # Update the firmware for specific devices (Shelly Gen1)
-iotap 192.168.1.0/24 update -driver shellygen1
+iotap 192.168.1.0/24 update -d shellygen1
 ```
 
 Update command help:
@@ -209,8 +209,8 @@ Usage of update:
  ./iotap <IP|CIDR> update [flags]
 
 Flags:
-  -driver value
-        Filter by device driver (default all)
+  -d value
+        Device driver (default all)
 ```
 </details>
 
@@ -219,7 +219,7 @@ Flags:
 
 ```bash
 # Perform a deployment to Shelly Gen2 devices
-iotap 192.168.1.0/24 deploy -driver shellygen2 -f deployment.json
+iotap 192.168.1.0/24 deploy -d shellygen2 -c deployment.json
 ```
 
 Deploy command help:
@@ -233,20 +233,15 @@ Usage of deploy:
  ./iotap <IP|CIDR> deploy [flags]
 
 Flags:
-  -driver value
-        Filter by device driver (default all)
-  -f string
-        Device deployment file path
+  -c string
+        Deployment configuration file
+  -d value
+        Device driver (default all)
 ```
-
-### Important Notes
-- At the moment, **only** the `shellygen2` driver supports this command.
-
-- As part of the deployment task, the `deploy` command will **remove** any previously existing scripts from the device.
-
-- Use only [Shelly Script Language](https://shelly-api-docs.shelly.cloud/gen2/Scripts/ShellyScriptLanguageFeatures) code.
-
 </details>
+
+> [!WARNING]
+> As part of the deployment task, the `deploy` command will **remove** any previously existing scripts from the device.
 
 <details>
 <summary><strong>reboot</strong>: Restart devices</summary>
@@ -255,8 +250,8 @@ Flags:
 # Reboot all devices
 iotap 192.168.1.0/24 reboot
 
-# Reboot specific devices by driver
-iotap 192.168.1.0/24 reboot -driver shellygen1
+# Reboot devices by a specific driver
+iotap 192.168.1.0/24 reboot -d shellygen1
 ```
 
 Reboot command help:
@@ -270,8 +265,8 @@ Usage of reboot:
  ./iotap <IP|CIDR> reboot [flags]
 
 Flags:
-  -driver value
-        Filter by device driver (default all)
+  -d value
+        Device driver (default all)
 ```
 </details>
 
@@ -555,6 +550,9 @@ In this scenario, scripts will only be deployed to devices where the model name 
 }
 ```
 </details>
+
+> [!IMPORTANT]
+> Ensure the scripts you deploy are valid [Shelly Script Language](https://shelly-api-docs.shelly.cloud/gen2/Scripts/ShellyScriptLanguageFeatures) code.
 
 ## Device Support
 The following table outlines the devices that have been successfully tested:
