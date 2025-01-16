@@ -596,7 +596,7 @@ While creative ideas are welcome, implementation will be based on potential impa
 
 If you have a feature request, please submit it as an [**Idea**](https://github.com/quetzyg/IoTap/discussions/categories/ideas) in the Discussions—the more compelling the use case and potential benefit, the higher the likelihood of adoption.
 
-**Sponsored development**: if you or your organization want to accelerate a feature that has wide applicability, sponsorship can help move it to the top of the priority list.
+**Sponsored development**: if you or your organisation want to accelerate a feature that has wide applicability, sponsorship can help move it to the top of the priority list.
 
 ## Disclaimer
 Use responsibly! Always ensure you have proper authorisation before tapping into network devices.
