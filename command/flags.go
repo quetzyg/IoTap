@@ -119,8 +119,8 @@ func NewFlags() *Flags {
 
 	// Dump
 	flags.dumpCmd = flag.NewFlagSet(Dump, flag.ContinueOnError)
-	flags.dumpCmd.Var(flags.driver, "driver", "Filter by device driver")
-	flags.dumpCmd.StringVar(flags.file, "f", "", "Output the scan results to a file")
+	flags.dumpCmd.Var(flags.driver, "d", "Device driver")
+	flags.dumpCmd.StringVar(flags.file, "o", "", "Scan results output file")
 	flags.dumpSortField = NewStrFlag(
 		device.FieldName,
 		device.FieldVendor,
@@ -130,9 +130,9 @@ func NewFlags() *Flags {
 		device.FieldModel,
 		device.FieldGeneration,
 	)
-	flags.dumpCmd.Var(flags.dumpSortField, "sort", "Sort devices by field")
+	flags.dumpCmd.Var(flags.dumpSortField, "s", "Sort devices by field")
 	flags.dumpFormat = NewStrFlag(device.FormatCSV, device.FormatCSV, device.FormatJSON)
-	flags.dumpCmd.Var(flags.dumpFormat, "format", "Dump output format")
+	flags.dumpCmd.Var(flags.dumpFormat, "f", "Dump format")
 	flags.dumpCmd.Usage = func() {
 		fmt.Printf(commandUsage, Dump, os.Args[0], Dump)
 		flags.dumpCmd.PrintDefaults()
@@ -140,8 +140,8 @@ func NewFlags() *Flags {
 
 	// Config
 	flags.configCmd = flag.NewFlagSet(Config, flag.ContinueOnError)
-	flags.configCmd.Var(flags.driver, "driver", "Filter by device driver")
-	flags.configCmd.StringVar(flags.file, "f", "", "Device configuration file path")
+	flags.configCmd.Var(flags.driver, "d", "Device driver")
+	flags.configCmd.StringVar(flags.file, "c", "", "Device configuration file")
 	flags.configCmd.Usage = func() {
 		fmt.Printf(commandUsage, Config, os.Args[0], Config)
 		flags.configCmd.PrintDefaults()
@@ -149,9 +149,9 @@ func NewFlags() *Flags {
 
 	// Secure
 	flags.secureCmd = flag.NewFlagSet(Secure, flag.ContinueOnError)
-	flags.secureCmd.Var(flags.driver, "driver", "Filter by device driver")
-	flags.secureCmd.StringVar(flags.file, "f", "", "Auth configuration file path (incompatible with --off)")
-	flags.secureOff = flags.secureCmd.Bool("off", false, "Turn device authentication off (incompatible with -f)")
+	flags.secureCmd.Var(flags.driver, "d", "Device driver")
+	flags.secureCmd.StringVar(flags.file, "c", "", "Auth configuration file (incompatible with --off)")
+	flags.secureOff = flags.secureCmd.Bool("off", false, "Turn device authentication off (incompatible with -c)")
 	flags.secureCmd.Usage = func() {
 		fmt.Printf(commandUsage, Secure, os.Args[0], Secure)
 		flags.secureCmd.PrintDefaults()
@@ -159,7 +159,7 @@ func NewFlags() *Flags {
 
 	// Version
 	flags.versionCmd = flag.NewFlagSet(Version, flag.ContinueOnError)
-	flags.versionCmd.Var(flags.driver, "driver", "Filter by device driver")
+	flags.versionCmd.Var(flags.driver, "d", "Device driver")
 	flags.versionCmd.Usage = func() {
 		fmt.Printf(commandUsage, Version, os.Args[0], Version)
 		flags.versionCmd.PrintDefaults()
@@ -167,7 +167,7 @@ func NewFlags() *Flags {
 
 	// Update
 	flags.updateCmd = flag.NewFlagSet(Update, flag.ContinueOnError)
-	flags.updateCmd.Var(flags.driver, "driver", "Filter by device driver")
+	flags.updateCmd.Var(flags.driver, "d", "Device driver")
 	flags.updateCmd.Usage = func() {
 		fmt.Printf(commandUsage, Update, os.Args[0], Update)
 		flags.updateCmd.PrintDefaults()
@@ -175,8 +175,8 @@ func NewFlags() *Flags {
 
 	// Deploy
 	flags.deployCmd = flag.NewFlagSet(Deploy, flag.ContinueOnError)
-	flags.deployCmd.Var(flags.driver, "driver", "Filter by device driver")
-	flags.deployCmd.StringVar(flags.file, "f", "", "Device deployment file path")
+	flags.deployCmd.Var(flags.driver, "d", "Device driver")
+	flags.deployCmd.StringVar(flags.file, "c", "", "Deployment configuration file")
 	flags.deployCmd.Usage = func() {
 		fmt.Printf(commandUsage, Deploy, os.Args[0], Deploy)
 		flags.deployCmd.PrintDefaults()
@@ -184,7 +184,7 @@ func NewFlags() *Flags {
 
 	// Reboot
 	flags.rebootCmd = flag.NewFlagSet(Reboot, flag.ContinueOnError)
-	flags.rebootCmd.Var(flags.driver, "driver", "Filter by device driver")
+	flags.rebootCmd.Var(flags.driver, "d", "Device driver")
 	flags.rebootCmd.Usage = func() {
 		fmt.Printf(commandUsage, Reboot, os.Args[0], Reboot)
 		flags.rebootCmd.PrintDefaults()
