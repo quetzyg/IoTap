@@ -37,13 +37,19 @@ var Version = func(tap *Tapper, res Resource, ch chan<- *ProcedureResult) {
 		return
 	}
 
-	client := &http.Client{
+	dispatcher := httpclient.NewDispatcher(&http.Client{
 		Transport: tap.transport,
+	})
+
+	opts := []httpclient.DispatchOption{
+		httpclient.WithBinding(dev),
 	}
 
-	cha, _ := res.(httpclient.Challenger)
+	if challenger, ok := res.(httpclient.Challenger); ok {
+		opts = append(opts, httpclient.WithChallenger(challenger))
+	}
 
-	if err = httpclient.Dispatch(client, r, cha, dev); err != nil {
+	if err = dispatcher.Dispatch(r, opts...); err != nil {
 		ch <- &ProcedureResult{
 			dev: res,
 			err: err,

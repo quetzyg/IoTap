@@ -36,10 +36,18 @@ var Deploy = func(tap *Tapper, res Resource, ch chan<- *ProcedureResult) {
 		return
 	}
 
-	cha, _ := res.(httpclient.Challenger)
+	dispatcher := httpclient.NewDispatcher(&http.Client{
+		Transport: tap.transport,
+	})
+
+	var opts []httpclient.DispatchOption
+
+	if challenger, ok := res.(httpclient.Challenger); ok {
+		opts = append(opts, httpclient.WithChallenger(challenger))
+	}
 
 	for _, r := range rs {
-		if err = httpclient.Dispatch(client, r, cha, nil); err != nil {
+		if err = dispatcher.Dispatch(r, opts...); err != nil {
 			ch <- &ProcedureResult{
 				dev: res,
 				err: err,

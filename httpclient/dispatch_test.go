@@ -51,32 +51,33 @@ func (c *challenger) ChallengeResponse(_ *http.Request, _ *http.Response) (*http
 	return c.req, nil
 }
 
-var (
-	uri = &url.URL{
-		Scheme: "http",
-		Host:   "192.168.146.12",
-		Path:   "/settings",
-	}
-
-	v map[string]any
-)
-
 func TestDispatch(t *testing.T) {
+	var (
+		uri = &url.URL{
+			Scheme: "http",
+			Host:   "192.168.146.12",
+			Path:   "/settings",
+		}
+
+		bind map[string]any
+	)
+
 	tests := []struct {
-		name       string
-		req        *http.Request
-		rt         http.RoundTripper
-		challenger Challenger
-		v          any
-		err        error
+		name string
+		req  *http.Request
+		rt   http.RoundTripper
+		opts []DispatchOption
+		err  error
 	}{
 		{
 			name: "failure: clone request error",
 			req: &http.Request{
 				Body: &badReader{},
 			},
-			challenger: &challenger{},
-			err:        io.ErrUnexpectedEOF,
+			opts: []DispatchOption{
+				WithChallenger(&challenger{}),
+			},
+			err: io.ErrUnexpectedEOF,
 		},
 		{
 			name: "failure: timeout",
@@ -101,8 +102,10 @@ func TestDispatch(t *testing.T) {
 					StatusCode: http.StatusUnauthorized,
 				},
 			},
-			challenger: &challenger{
-				err: net.ErrClosed,
+			opts: []DispatchOption{
+				WithChallenger(&challenger{
+					err: net.ErrClosed,
+				}),
 			},
 			err: net.ErrClosed,
 		},
@@ -117,14 +120,16 @@ func TestDispatch(t *testing.T) {
 					StatusCode: http.StatusUnauthorized,
 				},
 			},
-			challenger: &challenger{
-				req: &http.Request{
-					Method: http.MethodGet,
-					URL:    uri,
-					Header: http.Header{
-						AuthorizationHeader: []string{`Digest foobar`},
+			opts: []DispatchOption{
+				WithChallenger(&challenger{
+					req: &http.Request{
+						Method: http.MethodGet,
+						URL:    uri,
+						Header: http.Header{
+							AuthorizationHeader: []string{`Digest foobar`},
+						},
 					},
-				},
+				}),
 			},
 			err: errRequestUnauthorised,
 		},
@@ -154,7 +159,9 @@ func TestDispatch(t *testing.T) {
 					Body:       io.NopCloser(strings.NewReader("{}")),
 				},
 			},
-			v: &v,
+			opts: []DispatchOption{
+				WithBinding(bind),
+			},
 		}, {
 			name: "failure: bad request",
 			req: &http.Request{
@@ -186,11 +193,11 @@ func TestDispatch(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			client := &http.Client{
+			dispatcher := NewDispatcher(&http.Client{
 				Transport: test.rt,
-			}
+			})
 
-			err := Dispatch(client, test.req, test.challenger, test.v)
+			err := dispatcher.Dispatch(test.req, test.opts...)
 
 			var urlError *url.Error
 			switch {

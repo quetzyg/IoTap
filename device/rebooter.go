@@ -32,13 +32,17 @@ var Reboot = func(tap *Tapper, res Resource, ch chan<- *ProcedureResult) {
 		return
 	}
 
-	client := &http.Client{
+	dispatcher := httpclient.NewDispatcher(&http.Client{
 		Transport: tap.transport,
+	})
+
+	var opts []httpclient.DispatchOption
+
+	if challenger, ok := res.(httpclient.Challenger); ok {
+		opts = append(opts, httpclient.WithChallenger(challenger))
 	}
 
-	cha, _ := res.(httpclient.Challenger)
-
-	if err = httpclient.Dispatch(client, r, cha, nil); err != nil {
+	if err = dispatcher.Dispatch(r, opts...); err != nil {
 		ch <- &ProcedureResult{
 			dev: res,
 			err: err,

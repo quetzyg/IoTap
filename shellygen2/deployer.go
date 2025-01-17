@@ -32,7 +32,9 @@ func (d *Device) fetchScripts(client *http.Client) ([]*script, error) {
 
 	resp := &listResponse{}
 
-	if err = httpclient.Dispatch(client, r, d, resp); err != nil {
+	dispatcher := httpclient.NewDispatcher(client)
+
+	if err = dispatcher.Dispatch(r, httpclient.WithBinding(resp), httpclient.WithChallenger(d)); err != nil {
 		return nil, err
 	}
 
