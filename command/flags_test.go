@@ -14,6 +14,14 @@ func TestFlags_Usage(t *testing.T) {
 	NewFlags().Usage()
 }
 
+func TestFlags_Driver(t *testing.T) {
+	drv := NewFlags().Driver()
+
+	if drv != device.AllDrivers {
+		t.Fatalf("expected %q, got %q", device.AllDrivers, drv)
+	}
+}
+
 func TestFlags_SortField(t *testing.T) {
 	tests := []struct {
 		name      string
