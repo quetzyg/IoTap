@@ -1,5 +1,8 @@
 # IoTap: Effortless IoT Management
-[![codecov](https://codecov.io/gh/quetzyg/IoTap/graph/badge.svg?token=ABiTPw2nI5)](https://codecov.io/gh/quetzyg/IoTap) [![Go Report Card](https://goreportcard.com/badge/github.com/quetzyg/IoTap)](https://goreportcard.com/report/github.com/quetzyg/IoTap)
+[![Go Report Card](https://goreportcard.com/badge/github.com/quetzyg/IoTap)](https://goreportcard.com/report/github.com/quetzyg/IoTap)
+[![CI](https://github.com/quetzyg/IoTap/actions/workflows/ci.yml/badge.svg)](https://github.com/quetzyg/IoTap/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/quetzyg/IoTap/graph/badge.svg?token=ABiTPw2nI5)](https://codecov.io/gh/quetzyg/IoTap)
+
 ## Overview
 
 IoTap is a command-line interface tool for tapping into IoT devices, designed to simplify their management and configuration on a large scale.
