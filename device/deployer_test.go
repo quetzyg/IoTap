@@ -27,6 +27,18 @@ func (d *deployer) DeployRequests(*http.Client, *Deployment) ([]*http.Request, e
 	}, nil
 }
 
+type deployChallenger struct {
+	deployer
+}
+
+func (dc *deployChallenger) ChallengeAccepted(*http.Response) bool {
+	return true
+}
+
+func (dc *deployChallenger) ChallengeResponse(r *http.Request, _ *http.Response) (*http.Request, error) {
+	return r, nil
+}
+
 func TestDeploy(t *testing.T) {
 	tests := []struct {
 		name string
@@ -57,6 +69,16 @@ func TestDeploy(t *testing.T) {
 		{
 			name: "success",
 			dev:  &deployer{},
+			rt: &roundTripper{
+				response: &http.Response{
+					StatusCode: http.StatusOK,
+					Body:       io.NopCloser(strings.NewReader("{}")),
+				},
+			},
+		},
+		{
+			name: "success: challenger implementation",
+			dev:  &deployChallenger{},
 			rt: &roundTripper{
 				response: &http.Response{
 					StatusCode: http.StatusOK,

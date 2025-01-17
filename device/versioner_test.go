@@ -29,6 +29,18 @@ func (v *versioner) UpdateDetails() string {
 	return ""
 }
 
+type versionChallenger struct {
+	versioner
+}
+
+func (vc *versionChallenger) ChallengeAccepted(*http.Response) bool {
+	return true
+}
+
+func (vc *versionChallenger) ChallengeResponse(r *http.Request, _ *http.Response) (*http.Request, error) {
+	return r, nil
+}
+
 func TestVersion(t *testing.T) {
 	tests := []struct {
 		name string
@@ -59,6 +71,16 @@ func TestVersion(t *testing.T) {
 		{
 			name: "success",
 			dev:  &versioner{},
+			rt: &roundTripper{
+				response: &http.Response{
+					StatusCode: http.StatusOK,
+					Body:       io.NopCloser(strings.NewReader("{}")),
+				},
+			},
+		},
+		{
+			name: "success: challenger implementation",
+			dev:  &versionChallenger{},
 			rt: &roundTripper{
 				response: &http.Response{
 					StatusCode: http.StatusOK,

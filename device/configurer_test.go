@@ -27,6 +27,18 @@ func (c *configurer) ConfigureRequests(Config) ([]*http.Request, error) {
 	}, nil
 }
 
+type configChallenger struct {
+	configurer
+}
+
+func (cc *configChallenger) ChallengeAccepted(*http.Response) bool {
+	return true
+}
+
+func (cc *configChallenger) ChallengeResponse(r *http.Request, _ *http.Response) (*http.Request, error) {
+	return r, nil
+}
+
 func TestConfigure(t *testing.T) {
 	tests := []struct {
 		name string
@@ -57,6 +69,16 @@ func TestConfigure(t *testing.T) {
 		{
 			name: "success",
 			dev:  &configurer{},
+			rt: &roundTripper{
+				response: &http.Response{
+					StatusCode: http.StatusOK,
+					Body:       io.NopCloser(strings.NewReader("{}")),
+				},
+			},
+		},
+		{
+			name: "success: challenger implementation",
+			dev:  &configChallenger{},
 			rt: &roundTripper{
 				response: &http.Response{
 					StatusCode: http.StatusOK,

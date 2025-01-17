@@ -22,6 +22,18 @@ func (r *rebooter) RebootRequest() (*http.Request, error) {
 	return http.NewRequest(http.MethodGet, "", nil)
 }
 
+type rebootChallenger struct {
+	rebooter
+}
+
+func (rc *rebootChallenger) ChallengeAccepted(*http.Response) bool {
+	return true
+}
+
+func (rc *rebootChallenger) ChallengeResponse(r *http.Request, _ *http.Response) (*http.Request, error) {
+	return r, nil
+}
+
 func TestReboot(t *testing.T) {
 	tests := []struct {
 		name string
@@ -52,6 +64,16 @@ func TestReboot(t *testing.T) {
 		{
 			name: "success",
 			dev:  &rebooter{},
+			rt: &roundTripper{
+				response: &http.Response{
+					StatusCode: http.StatusOK,
+					Body:       io.NopCloser(strings.NewReader("{}")),
+				},
+			},
+		},
+		{
+			name: "success: challenger implementation",
+			dev:  &rebootChallenger{},
 			rt: &roundTripper{
 				response: &http.Response{
 					StatusCode: http.StatusOK,

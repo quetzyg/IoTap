@@ -22,6 +22,18 @@ func (u *updater) UpdateRequest() (*http.Request, error) {
 	return http.NewRequest(http.MethodGet, "", nil)
 }
 
+type updateChallenger struct {
+	updater
+}
+
+func (uc *updateChallenger) ChallengeAccepted(*http.Response) bool {
+	return true
+}
+
+func (uc *updateChallenger) ChallengeResponse(r *http.Request, _ *http.Response) (*http.Request, error) {
+	return r, nil
+}
+
 func TestUpdate(t *testing.T) {
 	tests := []struct {
 		name string
@@ -52,6 +64,16 @@ func TestUpdate(t *testing.T) {
 		{
 			name: "success",
 			dev:  &updater{},
+			rt: &roundTripper{
+				response: &http.Response{
+					StatusCode: http.StatusOK,
+					Body:       io.NopCloser(strings.NewReader("{}")),
+				},
+			},
+		},
+		{
+			name: "success: challenger implementation",
+			dev:  &updateChallenger{},
 			rt: &roundTripper{
 				response: &http.Response{
 					StatusCode: http.StatusOK,

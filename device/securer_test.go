@@ -24,6 +24,18 @@ func (s *securer) AuthConfigRequest(*AuthConfig) (*http.Request, error) {
 	return http.NewRequest(http.MethodGet, "", nil)
 }
 
+type secureChallenger struct {
+	securer
+}
+
+func (sc *secureChallenger) ChallengeAccepted(*http.Response) bool {
+	return true
+}
+
+func (sc *secureChallenger) ChallengeResponse(r *http.Request, _ *http.Response) (*http.Request, error) {
+	return r, nil
+}
+
 func TestSecure(t *testing.T) {
 	tests := []struct {
 		name string
@@ -54,6 +66,16 @@ func TestSecure(t *testing.T) {
 		{
 			name: "success",
 			dev:  &securer{},
+			rt: &roundTripper{
+				response: &http.Response{
+					StatusCode: http.StatusOK,
+					Body:       io.NopCloser(strings.NewReader("{}")),
+				},
+			},
+		},
+		{
+			name: "success: challenger implementation",
+			dev:  &secureChallenger{},
 			rt: &roundTripper{
 				response: &http.Response{
 					StatusCode: http.StatusOK,
