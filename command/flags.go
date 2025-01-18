@@ -259,7 +259,7 @@ func (f *Flags) Parse(arguments []string) (*flag.FlagSet, string, error) {
 		}
 
 		if f.SecureOff() && f.File() != "" {
-			return f.secureCmd, "", fmt.Errorf("%w: '-f' and '--off' flags cannot be used together", ErrFlagConflict)
+			return f.secureCmd, "", fmt.Errorf("%w: '-c' and '--off' flags cannot be used together", ErrFlagConflict)
 		}
 
 		return f.secureCmd, f.driver.String(), nil
