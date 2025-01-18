@@ -52,15 +52,11 @@ func (c *challenger) ChallengeResponse(_ *http.Request, _ *http.Response) (*http
 }
 
 func TestDispatch(t *testing.T) {
-	var (
-		uri = &url.URL{
-			Scheme: "http",
-			Host:   "192.168.146.12",
-			Path:   "/settings",
-		}
-
-		bind map[string]any
-	)
+	var uri = &url.URL{
+		Scheme: "http",
+		Host:   "192.168.146.12",
+		Path:   "/settings",
+	}
 
 	tests := []struct {
 		name string
@@ -160,7 +156,7 @@ func TestDispatch(t *testing.T) {
 				},
 			},
 			opts: []DispatchOption{
-				WithBinding(bind),
+				WithBinding(make(map[string]any)),
 			},
 		}, {
 			name: "failure: bad request",
