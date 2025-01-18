@@ -9,7 +9,7 @@ IoTap is a command-line interface tool for tapping into IoT devices, designed to
 
 Born out of necessity, this tool fills a critical gap, offering a solution where none previously existed—particularly for managing extensive IoT deployments.
 
-It is especially effective for performing batch operations and maintaining uniform device management.
+It is especially effective for performing batch operations and ensuring consistent, reproducible, and idempotent device management.
 
 ## Features
 
