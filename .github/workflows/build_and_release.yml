@@ -15,7 +15,6 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     environment: release
-    timeout-minutes: 60
     outputs:
       number: ${{ steps.version.outputs.number }}
       time: ${{ steps.version.outputs.time }}
