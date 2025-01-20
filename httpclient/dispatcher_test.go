@@ -51,7 +51,7 @@ func (c *challenger) ChallengeResponse(_ *http.Request, _ *http.Response) (*http
 	return c.req, nil
 }
 
-func TestDispatch(t *testing.T) {
+func TestDispatcher_Dispatch(t *testing.T) {
 	var uri = &url.URL{
 		Scheme: "http",
 		Host:   "192.168.146.12",
