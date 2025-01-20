@@ -79,7 +79,7 @@ func (d *Device) Secured() bool {
 
 // UnmarshalJSON implements the Unmarshaler interface.
 func (d *Device) UnmarshalJSON(data []byte) error {
-	// Unmarshal logic for the versioner implementation
+	// Versioner logic
 	var fw struct {
 		Result *struct {
 			Stable struct {
@@ -101,7 +101,7 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 
-	// Device unmarshal logic
+	// Prober logic
 	var dev struct {
 		Name     *string `json:"name"`
 		Realm    *string `json:"id"`
