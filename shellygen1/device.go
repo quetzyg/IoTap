@@ -78,7 +78,7 @@ func (d *Device) Secured() bool {
 
 // UnmarshalJSON implements the Unmarshaler interface.
 func (d *Device) UnmarshalJSON(data []byte) error {
-	// Unmarshal logic for the versioner implementation
+	// Versioner logic
 	var fw struct {
 		NewVersion *string `json:"new_version"`
 	}
@@ -96,7 +96,25 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 
-	// Device unmarshal logic
+	// Enricher logic
+	var set struct {
+		Device struct {
+			MAC *string `json:"mac"`
+		} `json:"device"`
+		Name *string `json:"name"`
+	}
+
+	err = json.Unmarshal(data, &set)
+	if err != nil {
+		return err
+	}
+
+	if set.Device.MAC != nil && set.Name != nil {
+		d.name = *set.Name
+		return nil
+	}
+
+	// Prober logic
 	var dev struct {
 		Model    *string `json:"type"`
 		MAC      *string `json:"mac"`
@@ -122,8 +140,8 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	// Unfortunately, the /shelly endpoint for Gen1 devices does not provide
-	// a field for the device name, so we currently populate it with "N/A"
+	// The /shelly endpoint for Gen1 devices does not provide
+	// a name field, so we default to "N/A" and enrich later
 	d.name = "N/A"
 	d.Firmware = *dev.Firmware
 
