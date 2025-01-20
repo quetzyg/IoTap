@@ -107,9 +107,14 @@ func TestDevice_UnmarshalJSON(t *testing.T) {
 		err  error
 	}{
 		{
-			name: "success: version device logic",
+			name: "success: versioner logic",
 			dev:  &Device{},
 			data: []byte(`{"new_version":"20230913-112003/v1.14.0-gcb84623"}`),
+		},
+		{
+			name: "success: enricher logic",
+			dev:  &Device{},
+			data: []byte(`{"device":{"mac":"001122334455"},"name":"shelly1"}`),
 		},
 		{
 			name: "failure: unexpected IoT device",
@@ -118,7 +123,7 @@ func TestDevice_UnmarshalJSON(t *testing.T) {
 			err:  device.ErrUnexpected,
 		},
 		{
-			name: "success: hydrate device logic",
+			name: "success: prober logic",
 			dev:  &Device{},
 			data: []byte(`{"type":"SHSW-1","mac":"001122334455","auth":false,"fw":"20230913-112003/v1.14.0-gcb84623"}`),
 		},
