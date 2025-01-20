@@ -147,6 +147,11 @@ func main() {
 			log.Fatalf("Unable to sort results: %v\n", err)
 		}
 
+		_, err = tapper.Execute(device.Enrich, devices)
+		if err != nil {
+			goto ErrorHandling
+		}
+
 		err = device.ExecDump(devices, flags.DumpFormat(), flags.File())
 
 	case command.Config:
