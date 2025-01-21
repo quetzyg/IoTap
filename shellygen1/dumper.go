@@ -11,12 +11,12 @@ import (
 func (d *Device) DelimitedRow(sep string) string {
 	return strings.Join([]string{
 		d.Vendor(),
-		d.mac.String(),
-		fmt.Sprintf("http://%s", d.ip),
-		d.name,
 		d.model,
 		d.Generation(),
 		d.Firmware,
+		d.mac.String(),
+		fmt.Sprintf("http://%s", d.ip),
+		d.name,
 		fmt.Sprint(d.secured),
 	}, sep)
 }

@@ -29,12 +29,12 @@ func dumpCSV(devices Collection, w io.Writer, sep string) error {
 
 	header := []string{
 		"Vendor",
+		"Model",
+		"Gen",
+		"Firmware",
 		"MAC Address",
 		"URL",
 		"Name",
-		"Model",
-		"Generation",
-		"Firmware",
 		"Secured",
 	}
 

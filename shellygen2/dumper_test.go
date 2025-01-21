@@ -27,7 +27,7 @@ func TestDevice_DelimitedRow(t *testing.T) {
 				Firmware: "20241011-114449/1.4.4-g6d2a586",
 			},
 			sep: ",",
-			row: "Shelly,00:11:22:33:44:55,http://192.168.146.123,Shelly Pro 1,SPSW-201XE16EU,2,20241011-114449/1.4.4-g6d2a586,false",
+			row: "Shelly,SPSW-201XE16EU,2,20241011-114449/1.4.4-g6d2a586,00:11:22:33:44:55,http://192.168.146.123,Shelly Pro 1,false",
 		},
 	}
 

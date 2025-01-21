@@ -82,12 +82,12 @@ func (r *resource) UnmarshalJSON(_ []byte) error {
 func (r *resource) DelimitedRow(sep string) string {
 	return strings.Join([]string{
 		r.Vendor(),
-		r.mac.String(),
-		fmt.Sprintf("http://%s", r.ip),
-		r.name,
 		r.model,
 		r.Generation(),
 		"v1.2.3",
+		r.mac.String(),
+		fmt.Sprintf("http://%s", r.ip),
+		r.name,
 		fmt.Sprint(r.secured),
 	}, sep)
 }
