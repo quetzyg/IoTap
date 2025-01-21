@@ -24,8 +24,8 @@ var (
 	// resulted in an empty Script instance.
 	ErrScriptEmpty = errors.New("empty IoT script")
 
-	// ErrUnexpected is an error type used when probing for IoT devices on the network.
-	// This error is returned when a device is found, but doesn't match an expected target device.
+	// ErrUnexpected is returned when unmarshaling payloads that do not conform
+	// to the anticipated device structure.
 	ErrUnexpected = errors.New("unexpected IoT device")
 
 	// ErrUnsupportedDriver is returned when an unsupported or unrecognised driver is used.
