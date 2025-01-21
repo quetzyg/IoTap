@@ -77,10 +77,11 @@ func (d *Device) Secured() bool {
 	return d.secured
 }
 
-// UnmarshalJSON implements the Unmarshaler interface.
-func (d *Device) UnmarshalJSON(data []byte) error {
-	// Versioner logic
-	var fw struct {
+// versionUnmarshal checks if a firmware update is available for the device
+// by extracting the "new_version" field from the JSON payload. If a valid
+// firmware version is found, it updates the device's FirmwareNext field.
+func (d *Device) versionUnmarshal(data []byte) error {
+	var v struct {
 		Result *struct {
 			Stable struct {
 				Version string `json:"version"`
@@ -88,21 +89,25 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 		} `json:"result"`
 	}
 
-	err := json.Unmarshal(data, &fw)
+	err := json.Unmarshal(data, &v)
 	if err != nil {
 		return err
 	}
 
-	if fw.Result != nil {
-		if fw.Result.Stable.Version != "" {
-			d.VersionNext = fw.Result.Stable.Version
-		}
-
+	if v.Result != nil && v.Result.Stable.Version != "" {
+		d.VersionNext = v.Result.Stable.Version
 		return nil
 	}
 
-	// Prober logic
-	var dev struct {
+	return device.ErrUnexpected
+}
+
+// probeUnmarshal attempts to extract and parse fundamental device information
+// from the JSON payload. This typically includes the device model, MAC address,
+// security status, and firmware version. If the required fields are missing,
+// it returns an error indicating an unexpected format.
+func (d *Device) probeUnmarshal(data []byte) error {
+	var v struct {
 		Name     *string `json:"name"`
 		Realm    *string `json:"id"`
 		MAC      *string `json:"mac"`
@@ -113,38 +118,49 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 		Secured  *bool   `json:"auth_en"`
 	}
 
-	err = json.Unmarshal(data, &dev)
+	err := json.Unmarshal(data, &v)
 	if err != nil {
 		return err
 	}
 
 	// Different Shelly generations use different JSON field names,
 	// but a Gen2 device should always have these fields populated.
-	if dev.Model == nil || dev.Secured == nil || dev.Firmware == nil || dev.Realm == nil || dev.Version == nil {
+	if v.Realm == nil || v.MAC == nil || v.Model == nil ||
+		v.Gen == nil || v.Firmware == nil || v.Version == nil ||
+		v.Secured == nil {
 		return device.ErrUnexpected
 	}
 
-	// Default device name if unspecified
-	d.name = "N/A"
-	if dev.Name != nil {
-		d.name = *dev.Name
-	}
-
-	d.Realm = *dev.Realm
-
-	d.mac, err = net.ParseMAC(device.Macify(*dev.MAC))
+	d.mac, err = net.ParseMAC(device.Macify(*v.MAC))
 	if err != nil {
 		return err
 	}
 
-	d.model = *dev.Model
-	d.Gen = *dev.Gen
-	d.Firmware = *dev.Firmware
-	d.Version = *dev.Version
+	// Default device name if unspecified
+	d.name = "N/A"
+	if v.Name != nil {
+		d.name = *v.Name
+	}
 
-	// Assume we're on the latest version, until we version the device.
-	d.VersionNext = d.Version
-	d.secured = *dev.Secured
+	d.Realm = *v.Realm
+	d.model = *v.Model
+	d.Gen = *v.Gen
+	d.Firmware = *v.Firmware
+
+	// Assume we're on the latest version, until the device is versioned.
+	d.VersionNext = *v.Version
+	d.Version = *v.Version
+
+	d.secured = *v.Secured
 
 	return nil
+}
+
+// UnmarshalJSON implements the Unmarshaler interface.
+func (d *Device) UnmarshalJSON(data []byte) error {
+	if err := d.versionUnmarshal(data); err == nil {
+		return nil
+	}
+
+	return d.probeUnmarshal(data)
 }

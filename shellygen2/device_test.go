@@ -101,6 +101,134 @@ func TestDevice_Secured(t *testing.T) {
 	}
 }
 
+func TestDevice_versionUnmarshal(t *testing.T) {
+	tests := []struct {
+		name string
+		dev  *Device
+		data []byte
+		err  error
+	}{
+		{
+			name: "failure: syntax error",
+			dev:  &Device{},
+			data: []byte(`}`),
+			err:  &json.SyntaxError{},
+		},
+		{
+			name: "failure: unexpected data",
+			dev:  &Device{},
+			data: []byte(`{"foo":"bar"}`),
+			err:  device.ErrUnexpected,
+		},
+		{
+			name: "failure: empty data",
+			dev:  &Device{},
+			data: []byte(`{"result":{"stable":{"version":""}}}`),
+			err:  device.ErrUnexpected,
+		},
+		{
+			name: "success",
+			dev:  &Device{},
+			data: []byte(`{"result":{"stable":{"version":"20241011-114449/1.4.4-g6d2a586"}}}`),
+		},
+	}
+
+	shelly2 := &Device{}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+
+			err := shelly2.versionUnmarshal(test.data)
+
+			var syntaxError *json.SyntaxError
+			switch {
+			case errors.As(test.err, &syntaxError):
+				var se *json.SyntaxError
+				if errors.As(err, &se) {
+					return
+				}
+
+			case errors.Is(err, test.err):
+				return
+
+			default:
+				t.Fatalf("expected %#v, got %#v", test.err, err)
+			}
+		})
+	}
+}
+
+func TestDevice_probeUnmarshal(t *testing.T) {
+	tests := []struct {
+		name string
+		dev  *Device
+		data []byte
+		err  error
+	}{
+		{
+			name: "failure: syntax error",
+			dev:  &Device{},
+			data: []byte(`}`),
+			err:  &json.SyntaxError{},
+		},
+		{
+			name: "failure: unexpected data",
+			dev:  &Device{},
+			data: []byte(`{"foo":"bar"}`),
+			err:  device.ErrUnexpected,
+		},
+		{
+			name: "failure: bad MAC address",
+			dev:  &Device{},
+			data: []byte(`{"name":"Shelly Pro 1","id":"shellypro1-001122334455","mac":"foo","model":"SPSW-201XE16EU","gen":2,"fw_id":"20230913-112003/v1.14.0-gcb84623","ver":"1.4.4","app":"Pro1","auth_en":false}`),
+			err:  &net.AddrError{},
+		},
+		{
+			name: "success",
+			dev:  &Device{},
+			data: []byte(`{"name":"Shelly Pro 1","id":"shellypro1-001122334455","mac":"001122334455","model":"SPSW-201XE16EU","gen":2,"fw_id":"20230913-112003/v1.14.0-gcb84623","ver":"1.4.4","app":"Pro1","auth_en":false}`),
+		},
+		{
+			name: "success: device with empty name",
+			dev:  &Device{},
+			data: []byte(`{"name":null,"id":"shellypro1-001122334455","mac":"001122334455","model":"SPSW-201XE16EU","gen":2,"fw_id":"20230913-112003/v1.14.0-gcb84623","ver":"1.4.4","app":"Pro1","auth_en":false}`),
+		},
+	}
+
+	shelly2 := &Device{}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+
+			err := shelly2.probeUnmarshal(test.data)
+
+			var (
+				syntaxError *json.SyntaxError
+				addrError   *net.AddrError
+			)
+			switch {
+			case errors.As(test.err, &syntaxError):
+				var se *json.SyntaxError
+				if errors.As(err, &se) {
+					return
+				}
+
+			case errors.As(test.err, &addrError):
+				var ae *net.AddrError
+				if errors.As(err, &ae) {
+					return
+				}
+
+			case errors.Is(err, test.err):
+				return
+
+			default:
+				t.Fatalf("expected %#v, got %#v", test.err, err)
+			}
+		})
+	}
+}
+
 func TestDevice_UnmarshalJSON(t *testing.T) {
 	tests := []struct {
 		name string
@@ -109,25 +237,14 @@ func TestDevice_UnmarshalJSON(t *testing.T) {
 		err  error
 	}{
 		{
-			name: "success: version device logic",
+			name: "success: version unmarshal",
 			dev:  &Device{},
 			data: []byte(`{"src":"shellypro1-001122334455","result":{"stable":{"version":"20241011-114449/1.4.4-g6d2a586"}}}`),
 		},
 		{
-			name: "failure: unexpected IoT device",
-			dev:  &Device{},
-			data: []byte(`{}`),
-			err:  device.ErrUnexpected,
-		},
-		{
-			name: "success: hydrate device logic",
+			name: "success: probe unmarshal",
 			dev:  &Device{},
 			data: []byte(`{"name":"Shelly Pro 1","id":"shellypro1-001122334455","mac":"001122334455","model":"SPSW-201XE16EU","gen":2,"fw_id":"20230913-112003/v1.14.0-gcb84623","ver":"1.4.4","app":"Pro1","auth_en":false}`),
-		},
-		{
-			name: "success: hydrate device logic with empty name",
-			dev:  &Device{},
-			data: []byte(`{"name":null,"id":"shellypro1-001122334455","mac":"001122334455","model":"SPSW-201XE16EU","gen":2,"fw_id":"20230913-112003/v1.14.0-gcb84623","ver":"1.4.4","app":"Pro1","auth_en":false}`),
 		},
 	}
 
