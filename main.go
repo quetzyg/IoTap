@@ -142,14 +142,14 @@ func main() {
 
 	switch cmd.Name() {
 	case command.Dump:
-		err = devices.SortBy(flags.SortField())
-		if err != nil {
-			log.Fatalf("Unable to sort results: %v\n", err)
-		}
-
 		_, err = tapper.Execute(device.Enrich, devices)
 		if err != nil {
 			goto ErrorHandling
+		}
+
+		err = devices.SortBy(flags.SortField())
+		if err != nil {
+			log.Fatalf("Unable to sort results: %v\n", err)
 		}
 
 		err = device.ExecDump(devices, flags.DumpFormat(), flags.File())
