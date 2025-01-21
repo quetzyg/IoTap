@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project uses a date-based versioning system.
 
+## [v25.01.21] - 2025-01-21
+
+### Added
+- Enrich Shelly Gen1 device data [[978a865](https://github.com/quetzyg/IoTap/commit/978a865e869a2920a3949de8a386733bb0ddc40f)].
+
+### Fixed
+- Redefine CSV column order for `dump` command [[f26335e](https://github.com/quetzyg/IoTap/commit/f26335e6c241fe4be00404ea1df66d37ddfb6088)].
+
 ## [v25.01.16] - 2025-01-16
 
 ### Changed
