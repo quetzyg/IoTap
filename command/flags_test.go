@@ -22,6 +22,14 @@ func TestFlags_Driver(t *testing.T) {
 	}
 }
 
+func TestFlags_ProbeTimeout(t *testing.T) {
+	timeout := NewFlags().ProbeTimeout()
+
+	if timeout != device.ProbeTimeout {
+		t.Fatalf("expected %q, got %q", device.ProbeTimeout, timeout)
+	}
+}
+
 func TestFlags_SortField(t *testing.T) {
 	tests := []struct {
 		name      string
@@ -142,7 +150,7 @@ func TestFlags_DumpFormat(t *testing.T) {
 	}
 }
 
-func TestFlags_DumpFile(t *testing.T) {
+func TestFlags_File(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    []string
@@ -151,6 +159,7 @@ func TestFlags_DumpFile(t *testing.T) {
 		err     error
 		file    string
 	}{
+		// Dump
 		{
 			name:    "get empty output file path value",
 			args:    []string{Dump},
@@ -173,44 +182,8 @@ func TestFlags_DumpFile(t *testing.T) {
 			err:     ErrArgumentParse,
 			file:    "",
 		},
-	}
 
-	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			flags := NewFlags()
-
-			cmd, driver, err := flags.Parse(test.args)
-
-			if cmd.Name() != test.command {
-				t.Fatalf("Unexpected command. Got %s, expected %s", cmd.Name(), test.command)
-			}
-
-			if driver != test.driver {
-				t.Fatalf("Unexpected driver. Got %s, expected %s", driver, test.driver)
-			}
-
-			if !errors.Is(err, test.err) {
-				t.Fatalf("expected %#v, got %#v", test.err, err)
-			}
-
-			file := flags.File()
-
-			if file != test.file {
-				t.Fatalf("Unexpected dump file. Got %s, expected %s", file, test.file)
-			}
-		})
-	}
-}
-
-func TestFlags_ConfigFile(t *testing.T) {
-	tests := []struct {
-		name    string
-		args    []string
-		command string
-		driver  string
-		err     error
-		file    string
-	}{
+		// Config
 		{
 			name:    "get empty config file path value",
 			args:    []string{Config},
@@ -233,44 +206,8 @@ func TestFlags_ConfigFile(t *testing.T) {
 			err:     ErrArgumentParse,
 			file:    "",
 		},
-	}
 
-	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			flags := NewFlags()
-
-			cmd, driver, err := flags.Parse(test.args)
-
-			if cmd.Name() != test.command {
-				t.Fatalf("Unexpected command. Got %s, expected %s", cmd.Name(), test.command)
-			}
-
-			if driver != test.driver {
-				t.Fatalf("Unexpected driver. Got %s, expected %s", driver, test.driver)
-			}
-
-			if !errors.Is(err, test.err) {
-				t.Fatalf("expected %#v, got %#v", test.err, err)
-			}
-
-			file := flags.File()
-
-			if file != test.file {
-				t.Fatalf("Unexpected config file. Got %s, expected %s", file, test.file)
-			}
-		})
-	}
-}
-
-func TestFlags_DeployFile(t *testing.T) {
-	tests := []struct {
-		name    string
-		args    []string
-		command string
-		driver  string
-		err     error
-		file    string
-	}{
+		// Deploy
 		{
 			name:    "get empty deploy file path value",
 			args:    []string{Deploy},
