@@ -80,7 +80,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	tapper := device.NewTapper(device.GetProbers(driver))
+	tapper := device.NewTapper(flags.ProbeTimeout(), device.GetProbers(driver))
 
 	val, err := config.LoadValues()
 	switch {

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/quetzyg/IoTap/device"
 	"github.com/quetzyg/IoTap/shellygen1"
@@ -80,8 +81,9 @@ Flags:
 
 // Flags used in the command.
 type Flags struct {
-	driver *StrFlag
-	file   *string
+	driver  *StrFlag
+	file    *string
+	timeout *time.Duration
 
 	dumpCmd       *flag.FlagSet
 	dumpSortField *StrFlag
@@ -104,8 +106,9 @@ type Flags struct {
 // NewFlags creates a new *Flags instance.
 func NewFlags() *Flags {
 	flags := &Flags{
-		driver: NewStrFlag(device.AllDrivers, device.AllDrivers, shellygen1.Driver, shellygen2.Driver),
-		file:   new(string),
+		driver:  NewStrFlag(device.AllDrivers, device.AllDrivers, shellygen1.Driver, shellygen2.Driver),
+		timeout: new(time.Duration),
+		file:    new(string),
 	}
 
 	// Main usage
@@ -120,6 +123,7 @@ func NewFlags() *Flags {
 	// Dump
 	flags.dumpCmd = flag.NewFlagSet(Dump, flag.ContinueOnError)
 	flags.dumpCmd.Var(flags.driver, "d", "Device driver")
+	flags.dumpCmd.DurationVar(flags.timeout, "t", device.ProbeTimeout, "Device probe timeout")
 	flags.dumpCmd.StringVar(flags.file, "o", "", "Scan results output file")
 	flags.dumpSortField = NewStrFlag(
 		device.FieldName,
@@ -141,6 +145,7 @@ func NewFlags() *Flags {
 	// Config
 	flags.configCmd = flag.NewFlagSet(Config, flag.ContinueOnError)
 	flags.configCmd.Var(flags.driver, "d", "Device driver")
+	flags.configCmd.DurationVar(flags.timeout, "t", device.ProbeTimeout, "Device probe timeout")
 	flags.configCmd.StringVar(flags.file, "c", "", "Device configuration file")
 	flags.configCmd.Usage = func() {
 		fmt.Printf(commandUsage, Config, os.Args[0], Config)
@@ -150,6 +155,7 @@ func NewFlags() *Flags {
 	// Secure
 	flags.secureCmd = flag.NewFlagSet(Secure, flag.ContinueOnError)
 	flags.secureCmd.Var(flags.driver, "d", "Device driver")
+	flags.secureCmd.DurationVar(flags.timeout, "t", device.ProbeTimeout, "Device probe timeout")
 	flags.secureCmd.StringVar(flags.file, "c", "", "Auth configuration file (incompatible with --off)")
 	flags.secureOff = flags.secureCmd.Bool("off", false, "Turn device authentication off (incompatible with -c)")
 	flags.secureCmd.Usage = func() {
@@ -160,6 +166,7 @@ func NewFlags() *Flags {
 	// Version
 	flags.versionCmd = flag.NewFlagSet(Version, flag.ContinueOnError)
 	flags.versionCmd.Var(flags.driver, "d", "Device driver")
+	flags.versionCmd.DurationVar(flags.timeout, "t", device.ProbeTimeout, "Device probe timeout")
 	flags.versionCmd.Usage = func() {
 		fmt.Printf(commandUsage, Version, os.Args[0], Version)
 		flags.versionCmd.PrintDefaults()
@@ -168,6 +175,7 @@ func NewFlags() *Flags {
 	// Update
 	flags.updateCmd = flag.NewFlagSet(Update, flag.ContinueOnError)
 	flags.updateCmd.Var(flags.driver, "d", "Device driver")
+	flags.updateCmd.DurationVar(flags.timeout, "t", device.ProbeTimeout, "Device probe timeout")
 	flags.updateCmd.Usage = func() {
 		fmt.Printf(commandUsage, Update, os.Args[0], Update)
 		flags.updateCmd.PrintDefaults()
@@ -176,6 +184,7 @@ func NewFlags() *Flags {
 	// Deploy
 	flags.deployCmd = flag.NewFlagSet(Deploy, flag.ContinueOnError)
 	flags.deployCmd.Var(flags.driver, "d", "Device driver")
+	flags.deployCmd.DurationVar(flags.timeout, "t", device.ProbeTimeout, "Device probe timeout")
 	flags.deployCmd.StringVar(flags.file, "c", "", "Deployment configuration file")
 	flags.deployCmd.Usage = func() {
 		fmt.Printf(commandUsage, Deploy, os.Args[0], Deploy)
@@ -185,6 +194,7 @@ func NewFlags() *Flags {
 	// Reboot
 	flags.rebootCmd = flag.NewFlagSet(Reboot, flag.ContinueOnError)
 	flags.rebootCmd.Var(flags.driver, "d", "Device driver")
+	flags.rebootCmd.DurationVar(flags.timeout, "t", device.ProbeTimeout, "Device probe timeout")
 	flags.rebootCmd.Usage = func() {
 		fmt.Printf(commandUsage, Reboot, os.Args[0], Reboot)
 		flags.rebootCmd.PrintDefaults()
@@ -201,6 +211,11 @@ func (f *Flags) Usage() {
 // Driver returns the driver name value.
 func (f *Flags) Driver() string {
 	return f.driver.String()
+}
+
+// ProbeTimeout returns the user-specified timeout duration for probing.
+func (f *Flags) ProbeTimeout() time.Duration {
+	return *f.timeout
 }
 
 // File returns the file path value.

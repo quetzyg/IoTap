@@ -12,12 +12,15 @@ import (
 )
 
 const (
-	probeTimeout  = time.Second * 8
+	// ProbeTimeout defines the default timeout duration for HTTP probes.
+	ProbeTimeout = time.Second * 2
+
 	channelBuffer = 32
 )
 
 // Tapper knows how to tap into devices and execute tasks on them.
 type Tapper struct {
+	timeout    time.Duration
 	probers    []Prober
 	config     Config
 	cred       *Credentials
@@ -27,8 +30,9 @@ type Tapper struct {
 }
 
 // NewTapper creates a new *Tapper instance.
-func NewTapper(probers []Prober) *Tapper {
+func NewTapper(timeout time.Duration, probers []Prober) *Tapper {
 	return &Tapper{
+		timeout: timeout,
 		probers: probers,
 	}
 }
@@ -118,7 +122,7 @@ func (t *Tapper) Scan(ips []net.IP) (Collection, error) {
 
 	client := &http.Client{
 		Transport: t.transport,
-		Timeout:   probeTimeout,
+		Timeout:   t.timeout,
 	}
 
 	for _, ip := range ips {
