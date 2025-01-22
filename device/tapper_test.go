@@ -9,15 +9,20 @@ import (
 	"reflect"
 	"strings"
 	"testing"
+	"time"
 )
 
 func TestNewTapper(t *testing.T) {
-	tap := NewTapper([]Prober{
+	tap := NewTapper(time.Second, []Prober{
 		&prober{},
 	})
 
 	if len(tap.probers) != 1 {
 		t.Fatal("prober count must be 1")
+	}
+
+	if tap.timeout != time.Second {
+		t.Fatal("timeout must be 1 second")
 	}
 }
 
