@@ -99,6 +99,8 @@ Flags:
         Scan results output file
   -s value
         Sort devices by field (default name)
+  -t duration
+        Device probe timeout (default 2s)
 ```
 </details>
 
@@ -125,6 +127,8 @@ Flags:
         Device configuration file
   -d value
         Device driver (default all)
+  -t duration
+        Device probe timeout (default 2s)
 ```
 </details>
 
@@ -158,6 +162,8 @@ Flags:
         Device driver (default all)
   -off
         Turn device authentication off (incompatible with -c)
+  -t duration
+        Device probe timeout (default 2s)
 ```
 </details>
 
@@ -186,6 +192,8 @@ Usage of version:
 Flags:
   -d value
         Device driver (default all)
+  -t duration
+        Device probe timeout (default 2s)
 ```
 </details>
 
@@ -214,6 +222,8 @@ Usage of update:
 Flags:
   -d value
         Device driver (default all)
+  -t duration
+        Device probe timeout (default 2s)
 ```
 </details>
 
@@ -240,6 +250,8 @@ Flags:
         Deployment configuration file
   -d value
         Device driver (default all)
+  -t duration
+        Device probe timeout (default 2s)
 ```
 </details>
 
@@ -270,6 +282,8 @@ Usage of reboot:
 Flags:
   -d value
         Device driver (default all)
+  -t duration
+        Device probe timeout (default 2s)
 ```
 </details>
 
