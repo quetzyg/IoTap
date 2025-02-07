@@ -39,6 +39,15 @@ Binaries are available for:
 - Windows (AMD64)
 - macOS (Apple Silicon)
 
+### Using `go install`
+Ensure you have Go installed and your `$GOPATH/bin` is added to your system's `$PATH`. Then, execute:
+
+```bash
+go install github.com/quetzyg/IoTap/cmd/iotap@latest
+```
+
+You should now have the `iotap` binary in your `$PATH`.
+
 ### From Source
 Clone the repository and compile the code manually to build the tool from the latest source.
 
