@@ -339,15 +339,19 @@ Certain IoTap commands require a configuration file. These must be in the JSON f
 
 3. **Deployment Configuration:** Used with the `deploy` command to provide paths to scripts for deployment on supported devices.
 
-Each configuration file allows defining a Policy, to enable the inclusion or exclusion of devices based on criteria such as MAC address or device model.
+Each configuration file allows defining a Policy, to enable the inclusion or exclusion of devices based on certain criteria (see below).
 
 ### Policies
 
 Policies are a mechanism to selectively apply configurations to specific devices or groups of devices. By using these, users can:
 
-- **Whitelist:** Include only devices that match specified MAC addresses or device models.
+- Include only (**whitelist**) devices that match:
+  * Exact MAC addresses
+  * RegEx patterns for device models and names
 
-- **Blacklist:** Exclude devices that match specified MAC addresses or device models.
+- Exclude (**blacklist**) devices that match:
+  * Exact MAC addresses
+  * RegEx patterns for device models and names
 
 ### Device Configuration
 
@@ -437,8 +441,7 @@ In this scenario, only devices with models `SNSW-001X16EU` and `SNSW-001X8EU` wi
   "policy": {
     "mode": "whitelist",
     "models": [
-      "SNSW-001X16EU",
-      "SNSW-001X8EU"
+      "SNSW-001X\\d+EU",
     ]
   },
   "sys": {
