@@ -2,7 +2,7 @@ package meta
 
 // Variables holding build-time information.
 var (
-	Version   = "<N/A>"
-	Hash      = "<N/A>"
-	BuildTime = "<N/A>"
+	Version   = "from source"
+	Hash      = "0000000"
+	BuildTime = "Unknown"
 )

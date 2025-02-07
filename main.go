@@ -33,7 +33,7 @@ func banner() {
 	fmt.Println(`                               888`)
 	fmt.Println(`                               888`)
 
-	fmt.Printf("\nVersion %s [%s] (Build time %s)\n\n", meta.Version, meta.Hash, meta.BuildTime)
+	fmt.Printf("\nRelease %s [%s] (Build Time %s)\n\n", meta.Version, meta.Hash, meta.BuildTime)
 }
 
 func main() {
