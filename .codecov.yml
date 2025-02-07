@@ -4,4 +4,4 @@ coverage:
       default:
         threshold: 90%
 ignore:
-  - "main.go"
+  - "cmd/iotap/main.go"
