@@ -45,7 +45,7 @@ Clone the repository and compile the code manually to build the tool from the la
 ```bash
 git clone https://github.com/quetzyg/IoTap.git
 cd IoTap
-go build -o iotap
+go build cmd/iotap/main.go -o iotap
 sudo mv iotap /usr/local/bin/
 ```
 

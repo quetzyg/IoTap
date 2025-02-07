@@ -76,7 +76,7 @@ jobs:
           -X github.com/quetzyg/IoTap/meta.Hash=${{ needs.version.outputs.hash }} \
           -X github.com/quetzyg/IoTap/meta.BuildTime=${{ needs.version.outputs.time }}" \
           -o $BINARY \
-          ./main.go
+          ./cmd/iotap/main.go
 
       - name: Compress binaries
         run: |-
