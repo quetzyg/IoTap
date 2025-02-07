@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net"
+	"regexp"
 )
 
 // PolicyMode to apply when deploying to/configuring IoT devices.
@@ -45,14 +46,21 @@ func (pm *PolicyMode) UnmarshalJSON(data []byte) error {
 // Policy to apply when deploying to/configuring IoT devices.
 type Policy struct {
 	Mode    PolicyMode         `json:"mode"`
+	Names   []string           `json:"names"`
 	Models  []string           `json:"models"`
 	Devices []net.HardwareAddr `json:"devices"`
 }
 
 // Contains checks whether a device model or MAC address exists in the Policy.
 func (p *Policy) Contains(dev Resource) bool {
+	for _, name := range p.Names {
+		if regexp.MustCompile(name).MatchString(dev.Name()) {
+			return true
+		}
+	}
+
 	for _, model := range p.Models {
-		if model == dev.Model() {
+		if regexp.MustCompile(model).MatchString(dev.Model()) {
 			return true
 		}
 	}
@@ -85,6 +93,7 @@ func (p *Policy) IsExcluded(dev Resource) bool {
 func (p *Policy) UnmarshalJSON(data []byte) error {
 	var tmp struct {
 		Type    PolicyMode `json:"mode"`
+		Names   []string   `json:"names"`
 		Models  []string   `json:"models"`
 		Devices []string   `json:"devices"`
 	}
@@ -98,6 +107,7 @@ func (p *Policy) UnmarshalJSON(data []byte) error {
 	}
 
 	p.Mode = tmp.Type
+	p.Names = tmp.Names
 	p.Models = tmp.Models
 
 	// Currently, the MAC address unmarshalling logic has

@@ -144,6 +144,28 @@ func TestPolicy_Contains(t *testing.T) {
 		contained bool
 	}{
 		{
+			name: "device name is not contained",
+			str: &Policy{
+				Mode: PolicyModeWhitelist,
+				Names: []string{
+					"test-device-001",
+				},
+			},
+			dev:       &resource{},
+			contained: false,
+		},
+		{
+			name: "device name is contained",
+			str: &Policy{
+				Mode: PolicyModeWhitelist,
+				Names: []string{
+					`test-(.*)-\d+`,
+				},
+			},
+			dev:       &resource{name: "test-device-001"},
+			contained: true,
+		},
+		{
 			name: "device model is not contained",
 			str: &Policy{
 				Mode: PolicyModeWhitelist,
@@ -159,7 +181,7 @@ func TestPolicy_Contains(t *testing.T) {
 			str: &Policy{
 				Mode: PolicyModeWhitelist,
 				Models: []string{
-					"SNSW-001X16EU",
+					`[A-Z]{4}-\d+X\d+EU`,
 				},
 			},
 			dev:       &resource{model: "SNSW-001X16EU"},
