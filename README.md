@@ -360,7 +360,7 @@ Currently, there are two device configuration types:
 Each generation follows a distinct structure tailored to how the respective devices process and expect the data.
 
 <details>
-<summary><strong>Shelly Gen1 Example</strong></summary>
+<summary><strong>Example (Shelly Gen1)</strong></summary>
 
 In this scenario, devices with MAC addresses `AA:BB:CC:DD:EE:FF` and `11:22:33:44:55:66` will be skipped, while the remaining discovered devices will be configured.
 
@@ -425,7 +425,7 @@ In this scenario, devices with MAC addresses `AA:BB:CC:DD:EE:FF` and `11:22:33:4
 </details>
 
 <details>
-<summary><strong>Shelly Gen2 Example</strong></summary>
+<summary><strong>Example (Shelly Gen2)</strong></summary>
 
 In this scenario, only devices with models `SNSW-001X16EU` and `SNSW-001X8EU` will be configured.
 
@@ -584,7 +584,7 @@ In this scenario, scripts will only be deployed to devices where the model name 
 </details>
 
 > [!IMPORTANT]
-> Ensure the scripts you deploy are valid [Shelly Script Language](https://shelly-api-docs.shelly.cloud/gen2/Scripts/ShellyScriptLanguageFeatures) code.
+> Ensure the scripts you deploy have valid [Shelly Script Language](https://shelly-api-docs.shelly.cloud/gen2/Scripts/ShellyScriptLanguageFeatures) code.
 
 ## Device Support
 The following table outlines the devices that have been successfully tested:
@@ -598,7 +598,7 @@ The following table outlines the devices that have been successfully tested:
 
 ### Broader Device Support
 
-While the above devices have been successfully tested, IoTap is designed with flexibility and broad compatibility in mind, meaning that it should support a greater number of Shelly Gen1 and Gen2 devices.
+While the above devices have been successfully tested, IoTap is designed with flexibility and broad compatibility in mind, meaning that it should already support a greater number of Shelly Gen1 and Gen2 devices.
 
 ### Hardware and Vendor Collaboration
 
