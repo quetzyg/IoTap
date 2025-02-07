@@ -39,6 +39,12 @@ Binaries are available for:
 - Windows (AMD64)
 - macOS (Apple Silicon)
 
+After extracting the contents from the release, you can verify the binary checksum, like so:
+```bash
+sha256sum -c iotap.sha256 # Linux and macOS release
+sha256sum -c iotap.exe.sha256 # Windows release
+```
+
 ### Using `go install`
 Ensure you have Go installed and your `$GOPATH/bin` is added to your system's `$PATH`. Then, execute:
 
