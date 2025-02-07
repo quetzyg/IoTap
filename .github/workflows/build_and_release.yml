@@ -78,13 +78,14 @@ jobs:
           -o $BINARY \
           ./cmd/iotap/main.go
 
-      - name: Compress binaries
+      - name: Checksum & package binaries
         run: |-
           BINARY="iotap"
           if [ "${{ matrix.goos }}" = "windows" ]; then
             BINARY=$BINARY.exe
           fi
-          tar -zcvf iotap-${{ matrix.goos }}-${{ matrix.goarch }}.tar.gz $BINARY LICENSE.md CHANGELOG.md
+          sha256sum $BINARY > $BINARY.sha256
+          tar -zcvf iotap-${{ matrix.goos }}-${{ matrix.goarch }}.tar.gz $BINARY $BINARY.sha256 LICENSE.md CHANGELOG.md
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
