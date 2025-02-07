@@ -72,8 +72,8 @@ iotap <IP|CIDR> <command> [flags]
 ```
 
 #### Explanation:
-- `<IP|CIDR>`: A single IP address (e.g. 192.168.1.1) or a CIDR notation (e.g. 192.168.1.0/24).
-- `<command>`: The command to be executed for each resolved IP.
+- `<IP|CIDR>`: A single IP address (e.g. 192.168.1.1) or a network range in CIDR notation (e.g. 192.168.1.0/24).
+- `<command>`: The command to be executed for each resolved device IP.
 - `[flags]`: Optional parameters to customise the command execution.
 
 ### Available Commands
