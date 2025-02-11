@@ -105,14 +105,6 @@ func TestParseDigest(t *testing.T) {
 	}
 }
 
-func TestCliNonce(t *testing.T) {
-	cnonce := cliNonce()
-
-	if len(cnonce) != 32 {
-		t.Fatalf("expected a 32 character length string, got %d", len(cnonce))
-	}
-}
-
 func TestHA1(t *testing.T) {
 	const expected = "9753485d35600f865fdc7f84ef1b6f63eea3ee664aa5a5227c7b512ad54d207b"
 
@@ -220,7 +212,7 @@ func TestDevice_ChallengeResponse(t *testing.T) {
 
 				r.Header.Set(
 					httpclient.AuthorizationHeader,
-					`^Digest username="admin", realm="shellypro1-001122334455", nonce="12345678", uri="foo", response="[a-f0-9]{64}", algorithm=SHA-256, qop=auth, nc=00000001, cnonce="[a-f0-9]{32}"$`,
+					`^Digest username="admin", realm="shellypro1-001122334455", nonce="12345678", uri="foo", response="[a-f0-9]{64}", algorithm=SHA-256, qop=auth, nc=00000001, cnonce="[A-Z2-7]{26}"$`,
 				)
 
 				return r

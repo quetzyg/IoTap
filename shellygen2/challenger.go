@@ -46,19 +46,6 @@ func parseDigest(resp *http.Response) (map[string]string, error) {
 	return dirs, nil
 }
 
-// cliNonce generates a random 32 alphanumeric character string
-// to be used as the client nonce in HTTP Digest Authentication.
-func cliNonce() string {
-	b := make([]byte, 16)
-
-	_, err := rand.Read(b)
-	if err != nil {
-		panic(err)
-	}
-
-	return hex.EncodeToString(b)
-}
-
 // ha1 computes SHA256(username:realm:password) which forms the
 // credentials portion of the digest access authentication.
 func ha1(realm, password string) string {
@@ -91,7 +78,7 @@ func (d *Device) ChallengeResponse(r *http.Request, resp *http.Response) (*http.
 	// `nc` is always "00000001", since the `nonce` and `cnonce`
 	// are unique per request, making the count unnecessary.
 	const nc = "00000001"
-	cnonce := cliNonce()
+	cnonce := rand.Text()
 
 	response := sha256.Sum256([]byte(fmt.Sprintf(
 		"%s:%s:%s:%s:%s:%s",
