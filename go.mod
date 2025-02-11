@@ -1,3 +1,3 @@
 module github.com/quetzyg/IoTap
 
-go 1.23
+go 1.24
