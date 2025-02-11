@@ -6,6 +6,7 @@ import (
 	"github.com/quetzyg/IoTap/httpclient"
 )
 
+// Enricher defines a method used for resource data enrichment.
 type Enricher interface {
 	EnrichRequest() (*http.Request, error)
 }

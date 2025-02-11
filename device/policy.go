@@ -12,6 +12,7 @@ import (
 // Two modes are supported: blacklist (devices to be excluded) and whitelist (devices to be included).
 type PolicyMode int
 
+// PolicyMode defines the mode for policy enforcement
 const (
 	PolicyModeUndefined PolicyMode = iota
 	PolicyModeBlacklist
