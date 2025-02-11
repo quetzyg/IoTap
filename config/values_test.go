@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io"
 	"io/fs"
+	"path/filepath"
 	"reflect"
 	"strings"
 	"testing"
@@ -111,6 +112,16 @@ func TestLoadFromEnv(t *testing.T) {
 	}
 }
 
+// Resolve the absolute path for the test $HOME value
+var absoluteTestHome = func(t *testing.T) string {
+	path, err := filepath.Abs("../testdata/")
+	if err != nil {
+		t.Fatalf("expected nil, got %#v", err)
+	}
+
+	return path
+}
+
 func TestLoadFromConfigDir(t *testing.T) {
 	tests := []struct {
 		name string
@@ -129,7 +140,7 @@ func TestLoadFromConfigDir(t *testing.T) {
 		},
 		{
 			name: "success",
-			dir:  "../testdata/",
+			dir:  absoluteTestHome(t),
 		},
 	}
 
@@ -170,8 +181,8 @@ func TestLoadValues(t *testing.T) {
 		{
 			name: "load from file",
 			envs: map[string]string{
-				"XDG_CONFIG_HOME": "../testdata/",
-				"HOME":            "../testdata/",
+				"XDG_CONFIG_HOME": absoluteTestHome(t),
+				"HOME":            absoluteTestHome(t),
 			},
 			val: &Values{
 				Credentials: &device.Credentials{
