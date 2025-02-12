@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project uses a date-based versioning system.
 
+## [v25.02.12] - 2025-02-12
+
+### Added
+- Add `-t` flag to override the default probe timeout value [[978a865](https://github.com/quetzyg/IoTap/commit/978a865e869a2920a3949de8a386733bb0ddc40f)].
+- Add regular expression support and allow policies to filter by device name [[d257c43](https://github.com/quetzyg/IoTap/commit/d257c431e096df5f3e8b4d7fe3d517c76ed33aab)].
+
+### Changed
+- Device probe timeout was lowered to 2 seconds [[f26335e](https://github.com/quetzyg/IoTap/commit/f26335e6c241fe4be00404ea1df66d37ddfb6088)].
+
 ## [v25.01.21] - 2025-01-21
 
 ### Added
