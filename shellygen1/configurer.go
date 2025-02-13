@@ -44,7 +44,7 @@ func (d *Device) ConfigureRequests(config device.Config) ([]*http.Request, error
 
 	confVal := reflect.Indirect(reflect.ValueOf(conf))
 
-	for i := 0; i < confVal.Type().NumField(); i++ {
+	for i := range confVal.Type().NumField() {
 		setting := confVal.Field(i)
 
 		// Skip nil setting pointers
