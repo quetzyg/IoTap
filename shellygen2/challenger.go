@@ -31,8 +31,8 @@ func (d *Device) ChallengeAccepted(resp *http.Response) bool {
 
 // parseDigest directives from the WWW-Authenticate response header.
 func parseDigest(resp *http.Response) (map[string]string, error) {
-	prefix, directives, _ := strings.Cut(resp.Header.Get(httpclient.WWWAuthenticateHeader), " ")
-	if prefix != authScheme {
+	scheme, directives, _ := strings.Cut(resp.Header.Get(httpclient.WWWAuthenticateHeader), " ")
+	if scheme != authScheme {
 		return nil, errMissingDigestDirectives
 	}
 
