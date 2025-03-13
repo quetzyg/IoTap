@@ -121,10 +121,9 @@ func TestDevice_versionUnmarshal(t *testing.T) {
 			err:  device.ErrUnexpected,
 		},
 		{
-			name: "failure: empty data",
+			name: "success: skip beta version",
 			dev:  &Device{},
-			data: []byte(`{"result":{"stable":{"version":""}}}`),
-			err:  device.ErrUnexpected,
+			data: []byte(`{"result":{"beta":{"version":"1.5.1-beta2","build_id":"20250310-083328/1.5.1-beta2-g322cd2a"}}}`),
 		},
 		{
 			name: "success",

@@ -94,8 +94,13 @@ func (d *Device) versionUnmarshal(data []byte) error {
 		return err
 	}
 
-	if v.Result != nil && v.Result.Stable.Version != "" {
-		d.VersionNext = v.Result.Stable.Version
+	if v.Result != nil {
+		if v.Result.Stable.Version != "" {
+			d.VersionNext = v.Result.Stable.Version
+		}
+
+		// We ignore other versions (i.e. beta)
+
 		return nil
 	}
 
