@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project uses a date-based versioning system.
 
+## [v25.03.13] - 2025-03-13
+
+### Fixed
+- Handle Shelly Gen2 beta versions properly [[38dfcca](https://github.com/quetzyg/IoTap/commit/38dfccae019aaa1bd227fc6389ce04e0c5346733)].
+
 ## [v25.02.12] - 2025-02-12
 
 ### Added
