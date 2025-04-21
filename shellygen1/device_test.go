@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net"
+	"reflect"
 	"testing"
 
 	"github.com/quetzyg/IoTap/device"
@@ -170,14 +171,21 @@ func TestDevice_enrichUnmarshal(t *testing.T) {
 			err:  &json.SyntaxError{},
 		},
 		{
-			name: "failure: unexpected data",
+			name: "failure: missing MAC",
 			dev:  &Device{},
-			data: []byte(`{"foo":"bar"}`),
+			data: []byte(`{"name":"shelly1"}`),
 			err:  device.ErrUnexpected,
 		},
 		{
-			name: "success",
+			name: "success (null name)",
 			dev:  &Device{},
+			data: []byte(`{"device":{"mac":"001122334455"},"name":null}`),
+		},
+		{
+			name: "success",
+			dev: &Device{
+				name: "shelly1",
+			},
 			data: []byte(`{"device":{"mac":"001122334455"},"name":"shelly1"}`),
 		},
 	}
@@ -188,6 +196,10 @@ func TestDevice_enrichUnmarshal(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 
 			err := shelly1.enrichUnmarshal(test.data)
+
+			if !reflect.DeepEqual(shelly1, test.dev) {
+				t.Fatalf("expected %#v, got %#v", test.dev, shelly1)
+			}
 
 			var syntaxError *json.SyntaxError
 			switch {
