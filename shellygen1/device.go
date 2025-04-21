@@ -109,12 +109,15 @@ func (d *Device) enrichUnmarshal(data []byte) error {
 		return err
 	}
 
-	if v.Device.MAC != nil && v.Name != nil {
-		d.name = *v.Name
-		return nil
+	if v.Device.MAC == nil {
+		return device.ErrUnexpected
 	}
 
-	return device.ErrUnexpected
+	if v.Name != nil {
+		d.name = *v.Name
+	}
+
+	return nil
 }
 
 // probeUnmarshal attempts to extract and parse fundamental device information
