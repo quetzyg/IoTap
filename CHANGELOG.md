@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project uses a date-based versioning system.
 
+## [v25.04.21] - 2025-04-21
+
+### Fixed
+- Properly handle Shelly Gen1 null names [[5769d98](https://github.com/quetzyg/IoTap/commit/5769d98e761360359daf36cc50d9bea510196746)].
+
 ## [v25.03.13] - 2025-03-13
 
 ### Fixed
