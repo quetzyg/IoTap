@@ -598,6 +598,7 @@ The following table outlines the devices that have been successfully tested:
 | Shelly | Gen2 | Shelly Plus 1| [KB](https://kb.shelly.cloud/knowledge-base/shelly-plus-1), [API](https://shelly-api-docs.shelly.cloud/gen2/Devices/Gen2/ShellyPlus1)|
 | Shelly | Gen2 | Shelly Plus 1 (Mini)| [KB](https://kb.shelly.cloud/knowledge-base/shelly-plus-1-mini), [API](https://shelly-api-docs.shelly.cloud/gen2/Devices/Gen2/ShellyPlus1)|
 | Shelly | Gen2 | Shelly Pro 1| [KB](https://kb.shelly.cloud/knowledge-base/shelly-pro-1-v1), [API](https://shelly-api-docs.shelly.cloud/gen2/Devices/Gen2/ShellyPro1)|
+| Shelly | Gen2 | Shelly Pro 3| [KB](https://kb.shelly.cloud/knowledge-base/shelly-pro-3-v1), [API](https://shelly-api-docs.shelly.cloud/gen2/Devices/Gen2/ShellyPro3/)|
 
 ### Broader Device Support
 
