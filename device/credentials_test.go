@@ -12,10 +12,10 @@ import (
 
 func TestNewAuthConfig(t *testing.T) {
 	tests := []struct {
-		name string
 		r    io.Reader
-		auth *AuthConfig
 		err  error
+		auth *AuthConfig
+		name string
 	}{
 		{
 			name: "failure: invalid data",
@@ -79,10 +79,10 @@ func TestNewAuthConfig(t *testing.T) {
 
 func TestLoadAuthConfig(t *testing.T) {
 	tests := []struct {
+		err  error
+		auth *AuthConfig
 		name string
 		fp   string
-		auth *AuthConfig
-		err  error
 	}{
 		{
 			name: "failure: empty file path",

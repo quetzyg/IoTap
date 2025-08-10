@@ -46,10 +46,10 @@ func (pm *PolicyMode) UnmarshalJSON(data []byte) error {
 
 // Policy to apply when deploying to/configuring IoT devices.
 type Policy struct {
-	Mode    PolicyMode         `json:"mode"`
 	Names   []string           `json:"names"`
 	Models  []string           `json:"models"`
 	Devices []net.HardwareAddr `json:"devices"`
+	Mode    PolicyMode         `json:"mode"`
 }
 
 // Contains checks whether a device model or MAC address exists in the Policy.
@@ -93,10 +93,10 @@ func (p *Policy) IsExcluded(dev Resource) bool {
 // UnmarshalJSON implements the Unmarshaler interface.
 func (p *Policy) UnmarshalJSON(data []byte) error {
 	var tmp struct {
-		Type    PolicyMode `json:"mode"`
 		Names   []string   `json:"names"`
 		Models  []string   `json:"models"`
 		Devices []string   `json:"devices"`
+		Type    PolicyMode `json:"mode"`
 	}
 
 	if err := json.Unmarshal(data, &tmp); err != nil {

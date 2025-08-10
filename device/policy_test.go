@@ -10,10 +10,10 @@ import (
 
 func TestPolicy_UnmarshalJSON(t *testing.T) {
 	tests := []struct {
+		err    error
+		policy *Policy
 		name   string
 		data   string
-		policy *Policy
-		err    error
 	}{
 		{
 			name:   "failure: invalid JSON",
@@ -138,9 +138,9 @@ var macAddr = net.HardwareAddr{20, 6, 18, 220, 122, 240}
 
 func TestPolicy_Contains(t *testing.T) {
 	tests := []struct {
-		name      string
-		str       *Policy
 		dev       Resource
+		str       *Policy
+		name      string
 		contained bool
 	}{
 		{
@@ -223,9 +223,9 @@ func TestPolicy_Contains(t *testing.T) {
 
 func TestPolicy_IsExcluded(t *testing.T) {
 	tests := []struct {
-		name     string
-		str      *Policy
 		dev      Resource
+		str      *Policy
+		name     string
 		excluded bool
 		panic    bool
 	}{

@@ -38,9 +38,9 @@ func TestScript(t *testing.T) {
 
 func TestNewScript(t *testing.T) {
 	tests := []struct {
-		name string
 		r    io.Reader
 		err  error
+		name string
 	}{
 		{
 			name: "failure: reader error",
@@ -71,10 +71,10 @@ func TestNewScript(t *testing.T) {
 
 func TestLoadScript(t *testing.T) {
 	tests := []struct {
+		err  error
+		src  *Script
 		name string
 		fp   string
-		src  *Script
-		err  error
 	}{
 		{
 			name: "failure: no file path given",
@@ -129,10 +129,10 @@ func TestLoadScript(t *testing.T) {
 
 func TestLoadScripts(t *testing.T) {
 	tests := []struct {
+		err  error
 		name string
 		fps  []string
 		src  []*Script
-		err  error
 	}{
 		{
 			name: "failure: no file paths given #1",

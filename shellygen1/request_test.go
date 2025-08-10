@@ -55,11 +55,11 @@ func TestBuildURL(t *testing.T) {
 
 func TestRequest(t *testing.T) {
 	tests := []struct {
-		name   string
+		err    error
 		dev    *Device
 		params url.Values
 		r      *http.Request
-		err    error
+		name   string
 	}{
 		{
 			name: "success: request with parameters",
@@ -135,9 +135,9 @@ func TestRequest(t *testing.T) {
 
 func TestSettingsToValues(t *testing.T) {
 	tests := []struct {
-		name     string
 		params   any
 		expected url.Values
+		name     string
 	}{
 		{
 			name:     "success: handle unexpected type",

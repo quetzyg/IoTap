@@ -10,8 +10,8 @@ import (
 )
 
 type securer struct {
-	resource
 	funcError error
+	resource
 }
 
 func (s *securer) SetCredentials(_ *Credentials) {}
@@ -38,10 +38,10 @@ func (sc *secureChallenger) ChallengeResponse(r *http.Request, _ *http.Response)
 
 func TestSecure(t *testing.T) {
 	tests := []struct {
-		name string
 		rt   http.RoundTripper
 		dev  Resource
 		err  error
+		name string
 	}{
 		{
 			name: "failure: unsupported procedure",

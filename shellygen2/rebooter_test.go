@@ -39,7 +39,7 @@ func TestDevice_RebootRequest(t *testing.T) {
 		t.Fatalf("expected nil, got %v", err)
 	}
 
-	expectedBody := `{"id":0,"src":"IoTap","method":"Shelly.Reboot"}`
+	expectedBody := `{"src":"IoTap","method":"Shelly.Reboot","id":0}`
 	if string(body) != expectedBody {
 		t.Fatalf("expected %s, got %s", expectedBody, body)
 	}

@@ -39,7 +39,7 @@ func TestDevice_UpdateRequest(t *testing.T) {
 		t.Fatalf("expected nil, got %v", err)
 	}
 
-	expectedBody := `{"id":0,"src":"IoTap","method":"Shelly.Update","params":{"stage":"stable"}}`
+	expectedBody := `{"params":{"stage":"stable"},"src":"IoTap","method":"Shelly.Update","id":0}`
 	if string(body) != expectedBody {
 		t.Fatalf("expected %s, got %s", expectedBody, body)
 	}

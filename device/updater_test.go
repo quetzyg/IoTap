@@ -10,8 +10,8 @@ import (
 )
 
 type updater struct {
-	resource
 	funcError error
+	resource
 }
 
 func (u *updater) UpdateRequest() (*http.Request, error) {
@@ -36,10 +36,10 @@ func (uc *updateChallenger) ChallengeResponse(r *http.Request, _ *http.Response)
 
 func TestUpdate(t *testing.T) {
 	tests := []struct {
-		name string
 		rt   http.RoundTripper
 		dev  Resource
 		err  error
+		name string
 	}{
 		{
 			name: "failure: unsupported procedure",

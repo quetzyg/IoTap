@@ -14,11 +14,11 @@ import (
 type resource struct {
 	vendor     string
 	driver     string
-	ip         net.IP
-	mac        net.HardwareAddr
 	name       string
 	model      string
 	gen        string
+	ip         net.IP
+	mac        net.HardwareAddr
 	secured    bool
 	unexpected bool
 }
@@ -143,11 +143,11 @@ func TestCollection_Empty(t *testing.T) {
 
 func TestCollection_SortBy(t *testing.T) {
 	tests := []struct {
+		err   error
 		name  string
+		field string
 		col   Collection
 		ord   Collection
-		field string
-		err   error
 	}{
 		{
 			name: "success: collection sorted by vendor",

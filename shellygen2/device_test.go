@@ -103,10 +103,10 @@ func TestDevice_Secured(t *testing.T) {
 
 func TestDevice_versionUnmarshal(t *testing.T) {
 	tests := []struct {
-		name string
-		dev  *Device
-		data []byte
 		err  error
+		dev  *Device
+		name string
+		data []byte
 	}{
 		{
 			name: "failure: syntax error",
@@ -159,10 +159,10 @@ func TestDevice_versionUnmarshal(t *testing.T) {
 
 func TestDevice_probeUnmarshal(t *testing.T) {
 	tests := []struct {
-		name string
-		dev  *Device
-		data []byte
 		err  error
+		dev  *Device
+		name string
+		data []byte
 	}{
 		{
 			name: "failure: syntax error",
@@ -230,10 +230,10 @@ func TestDevice_probeUnmarshal(t *testing.T) {
 
 func TestDevice_UnmarshalJSON(t *testing.T) {
 	tests := []struct {
-		name string
-		dev  *Device
-		data []byte
 		err  error
+		dev  *Device
+		name string
+		data []byte
 	}{
 		{
 			name: "success: version unmarshal",

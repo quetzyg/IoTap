@@ -39,7 +39,7 @@ func TestDevice_VersionRequest(t *testing.T) {
 		t.Fatalf("expected nil, got %v", err)
 	}
 
-	expectedBody := `{"id":0,"src":"IoTap","method":"Shelly.CheckForUpdate"}`
+	expectedBody := `{"src":"IoTap","method":"Shelly.CheckForUpdate","id":0}`
 	if string(body) != expectedBody {
 		t.Fatalf("expected %s, got %s", expectedBody, body)
 	}
@@ -47,8 +47,8 @@ func TestDevice_VersionRequest(t *testing.T) {
 
 func TestDevice_Outdated(t *testing.T) {
 	tests := []struct {
-		name      string
 		dev       *Device
+		name      string
 		available bool
 	}{
 		{

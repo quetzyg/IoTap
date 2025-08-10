@@ -32,12 +32,12 @@ func TestFlags_ProbeTimeout(t *testing.T) {
 
 func TestFlags_SortField(t *testing.T) {
 	tests := []struct {
+		err       error
 		name      string
-		args      []string
 		command   string
 		driver    string
-		err       error
 		sortField string
+		args      []string
 	}{
 		{
 			name:      "get default sort field value",
@@ -92,12 +92,12 @@ func TestFlags_SortField(t *testing.T) {
 
 func TestFlags_DumpFormat(t *testing.T) {
 	tests := []struct {
+		err        error
 		name       string
-		args       []string
 		command    string
 		driver     string
-		err        error
 		dumpFormat string
+		args       []string
 	}{
 		{
 			name:       "get default dump format value",
@@ -152,12 +152,12 @@ func TestFlags_DumpFormat(t *testing.T) {
 
 func TestFlags_File(t *testing.T) {
 	tests := []struct {
+		err     error
 		name    string
-		args    []string
 		command string
 		driver  string
-		err     error
 		file    string
+		args    []string
 	}{
 		// Dump
 		{
@@ -261,11 +261,11 @@ func TestFlags_File(t *testing.T) {
 
 func TestFlags_Parse(t *testing.T) {
 	tests := []struct {
+		err     error
 		name    string
-		args    []string
 		command string
 		driver  string
-		err     error
+		args    []string
 	}{
 		{
 			name: "failure: command not found #1",

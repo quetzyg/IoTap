@@ -10,8 +10,8 @@ import (
 )
 
 type rebooter struct {
-	resource
 	funcError error
+	resource
 }
 
 func (r *rebooter) RebootRequest() (*http.Request, error) {
@@ -36,10 +36,10 @@ func (rc *rebootChallenger) ChallengeResponse(r *http.Request, _ *http.Response)
 
 func TestReboot(t *testing.T) {
 	tests := []struct {
-		name string
 		rt   http.RoundTripper
 		dev  Resource
 		err  error
+		name string
 	}{
 		{
 			name: "failure: unsupported procedure",

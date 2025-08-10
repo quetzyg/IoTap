@@ -44,10 +44,10 @@ func TestDevice_DelimitedRow(t *testing.T) {
 
 func TestDevice_MarshalJSON(t *testing.T) {
 	tests := []struct {
-		name string
-		dev  *Device
-		json string
 		err  error
+		dev  *Device
+		name string
+		json string
 	}{
 		{
 			name: "success",

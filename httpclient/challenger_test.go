@@ -24,9 +24,9 @@ func (badReadCloser) Close() error { return nil }
 
 func TestCloneRequest(t *testing.T) {
 	tests := []struct {
-		name string
-		r    *http.Request
 		err  error
+		r    *http.Request
+		name string
 	}{
 		{
 			name: "failure: bad body",

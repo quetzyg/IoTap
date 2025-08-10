@@ -59,11 +59,11 @@ func TestDispatcher_Dispatch(t *testing.T) {
 	}
 
 	tests := []struct {
-		name string
-		req  *http.Request
 		rt   http.RoundTripper
-		opts []DispatchOption
 		err  error
+		req  *http.Request
+		name string
+		opts []DispatchOption
 	}{
 		{
 			name: "failure: clone request error",

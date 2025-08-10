@@ -12,8 +12,8 @@ func TestConfig_Driver(t *testing.T) {
 
 func TestConfig_Empty(t *testing.T) {
 	tests := []struct {
-		name  string
 		cfg   *Config
+		name  string
 		empty bool
 	}{
 		{

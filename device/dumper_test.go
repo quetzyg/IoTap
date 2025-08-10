@@ -11,11 +11,11 @@ import (
 
 func TestDumpCSV(t *testing.T) {
 	tests := []struct {
+		err  error
 		name string
-		col  Collection
 		out  string
 		sep  string
-		err  error
+		col  Collection
 	}{
 		{
 			name: "success: comma separator",
@@ -69,10 +69,10 @@ func TestDumpCSV(t *testing.T) {
 
 func TestDumpJSON(t *testing.T) {
 	tests := []struct {
-		name string
-		col  Collection
-		out  string
 		err  error
+		name string
+		out  string
+		col  Collection
 	}{
 		{
 			name: "success",
@@ -120,11 +120,11 @@ func TestDumpJSON(t *testing.T) {
 
 func TestExecDump(t *testing.T) {
 	tests := []struct {
+		err    error
 		name   string
-		col    Collection
 		format string
 		file   string
-		err    error
+		col    Collection
 	}{
 		{
 			name:   "failure: invalid format",

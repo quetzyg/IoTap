@@ -15,8 +15,8 @@ import (
 // StrFlag is a custom flag type representing a string,
 // restricted to a predefined set of options.
 type StrFlag struct {
-	options []string
 	value   string
+	options []string
 }
 
 // String implements the Stringer interface.

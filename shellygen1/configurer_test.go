@@ -41,10 +41,10 @@ func compareRequests(t *testing.T, expected, actual *http.Request) {
 
 func TestDevice_ConfigureRequests(t *testing.T) {
 	tests := []struct {
-		name string
 		cfg  device.Config
-		rs   []*http.Request
 		err  error
+		name string
+		rs   []*http.Request
 	}{
 		{
 			name: "failure: driver mismatch",

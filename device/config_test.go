@@ -49,10 +49,10 @@ func TestRegisterConfig(t *testing.T) {
 
 func TestNewConfig(t *testing.T) {
 	tests := []struct {
-		name string
 		r    io.Reader
 		cfg  Config
 		err  error
+		name string
 	}{
 		{
 			name: "failure: syntax error",
@@ -104,11 +104,11 @@ func TestNewConfig(t *testing.T) {
 
 func TestLoadConfig(t *testing.T) {
 	tests := []struct {
+		cfg    Config
+		err    error
 		name   string
 		driver string
 		fp     string
-		cfg    Config
-		err    error
 	}{
 		{
 			name: "failure: unsupported driver",

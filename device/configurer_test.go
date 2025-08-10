@@ -10,8 +10,8 @@ import (
 )
 
 type configurer struct {
-	resource
 	funcError error
+	resource
 }
 
 func (c *configurer) ConfigureRequests(Config) ([]*http.Request, error) {
@@ -41,10 +41,10 @@ func (cc *configChallenger) ChallengeResponse(r *http.Request, _ *http.Response)
 
 func TestConfigure(t *testing.T) {
 	tests := []struct {
-		name string
 		rt   http.RoundTripper
 		dev  Resource
 		err  error
+		name string
 	}{
 		{
 			name: "failure: unsupported procedure",

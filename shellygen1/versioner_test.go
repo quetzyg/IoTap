@@ -40,8 +40,8 @@ func TestDevice_VersionRequest(t *testing.T) {
 
 func TestDevice_Outdated(t *testing.T) {
 	tests := []struct {
-		name      string
 		dev       *Device
+		name      string
 		available bool
 	}{
 		{

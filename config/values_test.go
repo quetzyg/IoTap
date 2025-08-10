@@ -23,9 +23,9 @@ func (badReader) Read(_ []byte) (int, error) {
 
 func TestNewValues(t *testing.T) {
 	tests := []struct {
-		name string
 		r    io.Reader
 		err  error
+		name string
 	}{
 		{
 			name: "failure: reader error",
@@ -67,9 +67,9 @@ func TestNewValues(t *testing.T) {
 
 func TestLoadFromEnv(t *testing.T) {
 	tests := []struct {
-		name string
-		envs map[string]string
 		err  error
+		envs map[string]string
+		name string
 	}{
 		{
 			name: "failure: missing credentials",
@@ -124,9 +124,9 @@ var absoluteTestHome = func(t *testing.T) string {
 
 func TestLoadFromConfigDir(t *testing.T) {
 	tests := []struct {
+		err  error
 		name string
 		dir  string
-		err  error
 	}{
 		{
 			name: "failure: no config directory",
@@ -160,10 +160,10 @@ func TestLoadFromConfigDir(t *testing.T) {
 
 func TestLoadValues(t *testing.T) {
 	tests := []struct {
-		name string
+		err  error
 		envs map[string]string
 		val  *Values
-		err  error
+		name string
 	}{
 		{
 			name: "load from env",

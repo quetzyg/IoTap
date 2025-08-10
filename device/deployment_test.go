@@ -12,9 +12,9 @@ import (
 
 func TestNewDeployment(t *testing.T) {
 	tests := []struct {
-		name string
 		r    io.Reader
 		err  error
+		name string
 	}{
 		{
 			name: "failure: invalid deployment data",
@@ -64,11 +64,11 @@ func TestRegisterDeployer(t *testing.T) {
 
 func TestLoadDeployment(t *testing.T) {
 	tests := []struct {
+		err    error
+		dep    *Deployment
 		name   string
 		driver string
 		fp     string
-		dep    *Deployment
-		err    error
 	}{
 		{
 			name: "failure: unsupported driver",

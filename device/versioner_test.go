@@ -10,8 +10,8 @@ import (
 )
 
 type versioner struct {
-	resource
 	funcError error
+	resource
 }
 
 func (v *versioner) VersionRequest() (*http.Request, error) {
@@ -43,10 +43,10 @@ func (vc *versionChallenger) ChallengeResponse(r *http.Request, _ *http.Response
 
 func TestVersion(t *testing.T) {
 	tests := []struct {
-		name string
 		rt   http.RoundTripper
 		dev  Resource
 		err  error
+		name string
 	}{
 		{
 			name: "failure: unsupported procedure",

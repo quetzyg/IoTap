@@ -57,8 +57,8 @@ var (
 
 // ProbeError for an IP address.
 type ProbeError struct {
-	ip  net.IP
 	err error
+	ip  net.IP
 }
 
 // Error interface implementation.

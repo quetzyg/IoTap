@@ -79,12 +79,12 @@ func TestTapper_SetDeployment(t *testing.T) {
 
 func TestTapper_probe(t *testing.T) {
 	tests := []struct {
-		name   string
 		prober Prober
 		rt     http.RoundTripper
 		dev    Resource
-		failed bool
 		err    error
+		name   string
+		failed bool
 	}{
 		{
 			name: "failure: probe error",
@@ -192,11 +192,11 @@ func (rt *roundTripper) RoundTrip(_ *http.Request) (*http.Response, error) {
 
 func TestProbeIP(t *testing.T) {
 	tests := []struct {
-		name   string
 		prober Prober
 		rt     http.RoundTripper
 		res    Resource
 		err    error
+		name   string
 	}{
 		{
 			name: "failure: bad prober",
@@ -277,11 +277,11 @@ func TestProbeIP(t *testing.T) {
 
 func TestTapper_Scan(t *testing.T) {
 	tests := []struct {
-		name   string
 		prober Prober
 		rt     http.RoundTripper
-		col    Collection
 		err    error
+		name   string
+		col    Collection
 	}{
 		{
 			name: "failure: probe error",
@@ -341,11 +341,11 @@ func TestTapper_Scan(t *testing.T) {
 
 func TestTapper_Execute(t *testing.T) {
 	tests := []struct {
+		err      error
+		proc     procedure
 		name     string
 		col      Collection
-		proc     procedure
 		affected int
-		err      error
 	}{
 		{
 			name:     "success: empty collection",

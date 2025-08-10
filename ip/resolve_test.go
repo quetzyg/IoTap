@@ -38,10 +38,10 @@ func TestNext(t *testing.T) {
 
 func TestResolve(t *testing.T) {
 	tests := []struct {
+		err  error
 		name string
 		cidr string
 		ips  []net.IP
-		err  error
 	}{
 		{
 			name: "failure: invalid CIDR",

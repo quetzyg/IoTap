@@ -18,18 +18,17 @@ const (
 
 // Device implementation for the Shelly Gen2 driver.
 type Device struct {
-	ip      net.IP
-	mac     net.HardwareAddr
-	name    string
-	model   string
-	secured bool
-	cred    *device.Credentials
-
+	cred        *device.Credentials
+	name        string
+	model       string
 	Realm       string
-	Gen         uint8
 	Firmware    string
 	Version     string
 	VersionNext string
+	ip          net.IP
+	mac         net.HardwareAddr
+	secured     bool
+	Gen         uint8
 }
 
 // IP address of the Device.

@@ -10,8 +10,8 @@ import (
 )
 
 type deployer struct {
-	resource
 	funcError error
+	resource
 }
 
 func (d *deployer) DeployRequests(*http.Client, *Deployment) ([]*http.Request, error) {
@@ -41,10 +41,10 @@ func (dc *deployChallenger) ChallengeResponse(r *http.Request, _ *http.Response)
 
 func TestDeploy(t *testing.T) {
 	tests := []struct {
-		name string
 		rt   http.RoundTripper
 		dev  Resource
 		err  error
+		name string
 	}{
 		{
 			name: "failure: unsupported procedure",

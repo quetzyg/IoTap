@@ -16,9 +16,9 @@ import (
 
 func TestDevice_ChallengeAccepted(t *testing.T) {
 	tests := []struct {
-		name     string
 		dev      *Device
 		resp     *http.Response
+		name     string
 		accepted bool
 	}{
 		{
@@ -56,10 +56,10 @@ func TestDevice_ChallengeAccepted(t *testing.T) {
 
 func TestParseDigest(t *testing.T) {
 	tests := []struct {
-		name string
+		err  error
 		resp *http.Response
 		dirs map[string]string
-		err  error
+		name string
 	}{
 		{
 			name: "failure: missing digest directives",
@@ -149,12 +149,12 @@ func compareSecuredRequests(t *testing.T, expected, actual *http.Request) {
 
 func TestDevice_ChallengeResponse(t *testing.T) {
 	tests := []struct {
-		name string
+		err  error
 		dev  *Device
 		r1   *http.Request
 		resp *http.Response
 		r2   *http.Request
-		err  error
+		name string
 	}{
 		{
 			name: "failure: missing credentials",

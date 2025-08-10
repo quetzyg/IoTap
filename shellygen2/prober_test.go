@@ -9,11 +9,11 @@ import (
 
 func TestProber_Request(t *testing.T) {
 	tests := []struct {
-		name string
-		ip   net.IP
-		dev  *Device
-		uri  string
 		err  error
+		dev  *Device
+		name string
+		uri  string
+		ip   net.IP
 	}{
 		{
 			name: "success",

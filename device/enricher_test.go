@@ -10,8 +10,8 @@ import (
 )
 
 type enricher struct {
-	resource
 	funcError error
+	resource
 }
 
 func (e *enricher) EnrichRequest() (*http.Request, error) {
@@ -36,10 +36,10 @@ func (ec *enrichChallenger) ChallengeResponse(r *http.Request, _ *http.Response)
 
 func TestEnrich(t *testing.T) {
 	tests := []struct {
-		name string
 		rt   http.RoundTripper
 		dev  Resource
 		err  error
+		name string
 	}{
 		{
 			name: "success: no enrichment required",

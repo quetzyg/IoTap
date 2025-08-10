@@ -28,10 +28,10 @@ func (rt *roundTripper) RoundTrip(_ *http.Request) (*http.Response, error) {
 
 func TestFetchScripts(t *testing.T) {
 	tests := []struct {
-		name    string
 		rt      http.RoundTripper
-		scripts []*script
 		err     error
+		name    string
+		scripts []*script
 	}{
 		{
 			name: "failure: dispatch failed",
@@ -77,11 +77,11 @@ func TestFetchScripts(t *testing.T) {
 
 func TestDevice_DeployRequests(t *testing.T) {
 	tests := []struct {
-		name string
-		dep  *device.Deployment
 		rt   http.RoundTripper
-		rs   []*http.Request
 		err  error
+		dep  *device.Deployment
+		name string
+		rs   []*http.Request
 	}{
 		{
 			name: "failure: excluded via policy",
@@ -130,7 +130,7 @@ func TestDevice_DeployRequests(t *testing.T) {
 						Path:   rpcPath,
 					},
 					Header: http.Header{},
-					Body:   io.NopCloser(bytes.NewBufferString(`{"id":0,"src":"IoTap","method":"Script.Delete","params":{"id":1}}`)),
+					Body:   io.NopCloser(bytes.NewBufferString(`{"params":{"id":1},"src":"IoTap","method":"Script.Delete","id":0}`)),
 				}
 
 				r1.Header.Set(httpclient.ContentTypeHeader, httpclient.JSONMimeType)
@@ -143,7 +143,7 @@ func TestDevice_DeployRequests(t *testing.T) {
 						Path:   rpcPath,
 					},
 					Header: http.Header{},
-					Body:   io.NopCloser(bytes.NewBufferString(`{"id":0,"src":"IoTap","method":"Script.Create","params":{"name":"script1.js"}}`)),
+					Body:   io.NopCloser(bytes.NewBufferString(`{"params":{"name":"script1.js"},"src":"IoTap","method":"Script.Create","id":0}`)),
 				}
 
 				r2.Header.Set(httpclient.ContentTypeHeader, httpclient.JSONMimeType)
@@ -156,7 +156,7 @@ func TestDevice_DeployRequests(t *testing.T) {
 						Path:   rpcPath,
 					},
 					Header: http.Header{},
-					Body:   io.NopCloser(bytes.NewBufferString(`{"id":0,"src":"IoTap","method":"Script.PutCode","params":{"append":false,"code":"var foo = \"abc\";","id":1}}`)),
+					Body:   io.NopCloser(bytes.NewBufferString(`{"params":{"append":false,"code":"var foo = \"abc\";","id":1},"src":"IoTap","method":"Script.PutCode","id":0}`)),
 				}
 
 				r3.Header.Set(httpclient.ContentTypeHeader, httpclient.JSONMimeType)
@@ -169,7 +169,7 @@ func TestDevice_DeployRequests(t *testing.T) {
 						Path:   rpcPath,
 					},
 					Header: http.Header{},
-					Body:   io.NopCloser(bytes.NewBufferString(`{"id":0,"src":"IoTap","method":"Script.SetConfig","params":{"config":{"enable":true},"id":1}}`)),
+					Body:   io.NopCloser(bytes.NewBufferString(`{"params":{"config":{"enable":true},"id":1},"src":"IoTap","method":"Script.SetConfig","id":0}`)),
 				}
 
 				r4.Header.Set(httpclient.ContentTypeHeader, httpclient.JSONMimeType)
@@ -182,7 +182,7 @@ func TestDevice_DeployRequests(t *testing.T) {
 						Path:   rpcPath,
 					},
 					Header: http.Header{},
-					Body:   io.NopCloser(bytes.NewBufferString(`{"id":0,"src":"IoTap","method":"Script.Start","params":{"id":1}}`)),
+					Body:   io.NopCloser(bytes.NewBufferString(`{"params":{"id":1},"src":"IoTap","method":"Script.Start","id":0}`)),
 				}
 
 				r5.Header.Set(httpclient.ContentTypeHeader, httpclient.JSONMimeType)
@@ -195,7 +195,7 @@ func TestDevice_DeployRequests(t *testing.T) {
 						Path:   rpcPath,
 					},
 					Header: http.Header{},
-					Body:   io.NopCloser(bytes.NewBufferString(`{"id":0,"src":"IoTap","method":"Shelly.Reboot"}`)),
+					Body:   io.NopCloser(bytes.NewBufferString(`{"src":"IoTap","method":"Shelly.Reboot","id":0}`)),
 				}
 
 				r6.Header.Set(httpclient.ContentTypeHeader, httpclient.JSONMimeType)

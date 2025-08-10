@@ -16,10 +16,10 @@ const rpcPath = "rpc"
 // rpcRequest represents a command for an IoT device to execute.
 // See: https://shelly-api-docs.shelly.cloud/gen2/General/RPCProtocol
 type rpcRequest struct {
-	ID         int    `json:"id"`
+	Parameters any    `json:"params,omitempty"`
 	Source     string `json:"src"`
 	Method     string `json:"method"`
-	Parameters any    `json:"params,omitempty"`
+	ID         int    `json:"id"`
 }
 
 // buildURL for Shelly Gen2 requests.

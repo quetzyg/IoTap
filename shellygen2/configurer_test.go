@@ -50,10 +50,10 @@ func compareRequests(t *testing.T, expected, actual *http.Request) {
 
 func TestDevice_ConfigureRequests(t *testing.T) {
 	tests := []struct {
-		name string
 		cfg  device.Config
-		rs   []*http.Request
 		err  error
+		name string
+		rs   []*http.Request
 	}{
 		{
 			name: "failure: driver mismatch",
@@ -87,7 +87,7 @@ func TestDevice_ConfigureRequests(t *testing.T) {
 						Path:   rpcPath,
 					},
 					Header: http.Header{},
-					Body:   io.NopCloser(bytes.NewBufferString(`{"id":0,"src":"IoTap","method":"ble.SetConfig","params":{"config":{"enable":true}}}`)),
+					Body:   io.NopCloser(bytes.NewBufferString(`{"params":{"config":{"enable":true}},"src":"IoTap","method":"ble.SetConfig","id":0}`)),
 				}
 
 				r1.Header.Set(httpclient.ContentTypeHeader, httpclient.JSONMimeType)
@@ -100,7 +100,7 @@ func TestDevice_ConfigureRequests(t *testing.T) {
 						Path:   rpcPath,
 					},
 					Header: http.Header{},
-					Body:   io.NopCloser(bytes.NewBufferString(`{"id":0,"src":"IoTap","method":"Shelly.Reboot"}`)),
+					Body:   io.NopCloser(bytes.NewBufferString(`{"src":"IoTap","method":"Shelly.Reboot","id":0}`)),
 				}
 
 				r2.Header.Set(httpclient.ContentTypeHeader, httpclient.JSONMimeType)
@@ -131,7 +131,7 @@ func TestDevice_ConfigureRequests(t *testing.T) {
 						Path:   rpcPath,
 					},
 					Header: http.Header{},
-					Body:   io.NopCloser(bytes.NewBufferString(`{"id":0,"src":"IoTap","method":"input.SetConfig","params":{"config":{"invert":true,"name":null,"type":"switch"},"id":0}}`)),
+					Body:   io.NopCloser(bytes.NewBufferString(`{"params":{"config":{"invert":true,"name":null,"type":"switch"},"id":0},"src":"IoTap","method":"input.SetConfig","id":0}`)),
 				}
 
 				r1.Header.Set(httpclient.ContentTypeHeader, httpclient.JSONMimeType)
@@ -144,7 +144,7 @@ func TestDevice_ConfigureRequests(t *testing.T) {
 						Path:   rpcPath,
 					},
 					Header: http.Header{},
-					Body:   io.NopCloser(bytes.NewBufferString(`{"id":0,"src":"IoTap","method":"Shelly.Reboot"}`)),
+					Body:   io.NopCloser(bytes.NewBufferString(`{"src":"IoTap","method":"Shelly.Reboot","id":0}`)),
 				}
 
 				r2.Header.Set(httpclient.ContentTypeHeader, httpclient.JSONMimeType)

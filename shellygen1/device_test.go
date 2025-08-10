@@ -102,10 +102,10 @@ func TestDevice_Secured(t *testing.T) {
 
 func TestDevice_versionUnmarshal(t *testing.T) {
 	tests := []struct {
-		name string
-		dev  *Device
-		data []byte
 		err  error
+		dev  *Device
+		name string
+		data []byte
 	}{
 		{
 			name: "failure: syntax error",
@@ -159,10 +159,10 @@ func TestDevice_versionUnmarshal(t *testing.T) {
 
 func TestDevice_enrichUnmarshal(t *testing.T) {
 	tests := []struct {
-		name string
-		dev  *Device
-		data []byte
 		err  error
+		dev  *Device
+		name string
+		data []byte
 	}{
 		{
 			name: "failure: syntax error",
@@ -221,10 +221,10 @@ func TestDevice_enrichUnmarshal(t *testing.T) {
 
 func TestDevice_probeUnmarshal(t *testing.T) {
 	tests := []struct {
-		name string
-		dev  *Device
-		data []byte
 		err  error
+		dev  *Device
+		name string
+		data []byte
 	}{
 		{
 			name: "failure: syntax error",
@@ -247,7 +247,7 @@ func TestDevice_probeUnmarshal(t *testing.T) {
 		{
 			name: "success",
 			dev:  &Device{},
-			data: []byte(`{"type":"SHSW-1","mac":"001122334455","auth":false,"fw":"20230913-112003/v1.14.0-gcb84623"}`),
+			data: []byte(`{"type":"SHSW-1","fw":"20230913-112003/v1.14.0-gcb84623","mac":"001122334455","auth":false}`),
 		},
 	}
 
@@ -287,10 +287,10 @@ func TestDevice_probeUnmarshal(t *testing.T) {
 
 func TestDevice_UnmarshalJSON(t *testing.T) {
 	tests := []struct {
-		name string
-		dev  *Device
-		data []byte
 		err  error
+		dev  *Device
+		name string
+		data []byte
 	}{
 		{
 			name: "success: version unmarshal",
@@ -305,7 +305,7 @@ func TestDevice_UnmarshalJSON(t *testing.T) {
 		{
 			name: "success: probe unmarshal",
 			dev:  &Device{},
-			data: []byte(`{"type":"SHSW-1","mac":"001122334455","auth":false,"fw":"20230913-112003/v1.14.0-gcb84623"}`),
+			data: []byte(`{"type":"SHSW-1","fw":"20230913-112003/v1.14.0-gcb84623","mac":"001122334455","auth":false}`),
 		},
 	}
 

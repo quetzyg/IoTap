@@ -34,10 +34,10 @@ func TestDevice_SetCredentials(t *testing.T) {
 
 func TestDevice_AuthConfigRequest(t *testing.T) {
 	tests := []struct {
-		name string
+		err  error
 		auth *device.AuthConfig
 		r    *http.Request
-		err  error
+		name string
 	}{
 		{
 			name: "success: turn authentication off",

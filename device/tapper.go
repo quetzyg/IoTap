@@ -20,13 +20,13 @@ const (
 
 // Tapper knows how to tap into devices and execute tasks on them.
 type Tapper struct {
-	timeout    time.Duration
-	probers    []Prober
 	config     Config
+	transport  http.RoundTripper
 	cred       *Credentials
 	auth       *AuthConfig
 	deployment *Deployment
-	transport  http.RoundTripper
+	probers    []Prober
+	timeout    time.Duration
 }
 
 // NewTapper creates a new *Tapper instance.
