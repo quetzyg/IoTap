@@ -24,7 +24,7 @@ It is especially effective for performing batch operations and ensuring consiste
 - Easy script deployment across compatible devices.
 
 ## Prerequisites
-- Go (version 1.24 or later)
+- Go (version 1.25 or later)
 - Network access to supported IoT devices
 
 ## Installation
