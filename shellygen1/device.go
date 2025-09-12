@@ -27,7 +27,6 @@ type Device struct {
 	FirmwareNext string
 	ip           net.IP
 	mac          net.HardwareAddr
-	relays       uint8
 	secured      bool
 }
 
@@ -139,7 +138,7 @@ func (d *Device) probeUnmarshal(data []byte) error {
 
 	// Different Shelly generations use different JSON field names,
 	// but a Gen1 device should always have these fields populated.
-	if v.Model == nil || v.MAC == nil || /* v.Relays == nil || */ v.Secured == nil || v.Firmware == nil {
+	if v.Model == nil || v.MAC == nil || v.Secured == nil || v.Firmware == nil {
 		return device.ErrUnexpected
 	}
 
@@ -149,10 +148,9 @@ func (d *Device) probeUnmarshal(data []byte) error {
 	}
 
 	d.model = *v.Model
-	//	d.relays = *v.Relays
 
 	// The /shelly endpoint for Gen1 devices does not provide
-	// a name field, so we default to "N/A" and enrich later
+	// a name field, so we default to "N/A" and enrich later.
 	d.name = "N/A"
 
 	// Assume we're on the latest version, until the device is versioned.
