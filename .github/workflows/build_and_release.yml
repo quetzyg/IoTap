@@ -70,7 +70,7 @@ jobs:
           if [ "${{ matrix.goos }}" = "windows" ]; then
             BINARY=$BINARY.exe
           fi
-          go build -v \
+          GOEXPERIMENT=jsonv2 go build -v \
           -trimpath \
           -ldflags="-s -w -X github.com/quetzyg/IoTap/meta.Version=${{ needs.version.outputs.number }} \
           -X github.com/quetzyg/IoTap/meta.Hash=${{ needs.version.outputs.hash }} \
