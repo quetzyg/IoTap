@@ -2,6 +2,7 @@ package shellygen2
 
 import (
 	"bytes"
+	"encoding/json/v2"
 	"errors"
 	"io"
 	"net"
@@ -40,11 +41,21 @@ func compareRequests(t *testing.T, expected, actual *http.Request) {
 		t.Fatalf("expected %#v, got %#v", expected.Header, actual.Header)
 	}
 
-	body1, _ := io.ReadAll(expected.Body)
-	body2, _ := io.ReadAll(actual.Body)
+	wantBody, _ := io.ReadAll(expected.Body)
+	gotBody, _ := io.ReadAll(actual.Body)
 
-	if !bytes.Equal(body1, body2) {
-		t.Fatalf("expected %q, got %q", body1, body2)
+	var gotVal, wantVal any
+
+	if err := json.Unmarshal(gotBody, &gotVal); err != nil {
+		t.Fatalf("invalid JSON in got: %v\n%s", err, string(gotBody))
+	}
+
+	if err := json.Unmarshal(wantBody, &wantVal); err != nil {
+		t.Fatalf("invalid JSON in want: %v\n%s", err, string(wantBody))
+	}
+
+	if !reflect.DeepEqual(gotVal, wantVal) {
+		t.Errorf("JSON not equal:\n got:  %s\n want: %s", string(gotBody), string(wantBody))
 	}
 }
 
