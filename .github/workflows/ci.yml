@@ -4,6 +4,9 @@ on:
   - push
   - workflow_call
 
+env:
+  GOEXPERIMENT: jsonv2
+
 jobs:
   ci:
     runs-on: ubuntu-latest
