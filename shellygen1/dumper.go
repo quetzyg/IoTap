@@ -1,7 +1,7 @@
 package shellygen1
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"strings"
 )
@@ -23,14 +23,25 @@ func (d *Device) DelimitedRow(sep string) string {
 
 // MarshalJSON implements the Marshaler interface.
 func (d *Device) MarshalJSON() ([]byte, error) {
-	return json.Marshal(map[string]any{
-		"vendor":     d.Vendor(),
-		"mac":        d.mac.String(),
-		"url":        fmt.Sprintf("http://%s", d.ip),
-		"name":       d.name,
-		"model":      d.model,
-		"generation": d.Generation(),
-		"firmware":   d.Firmware,
-		"secured":    d.secured,
+	type v struct {
+		Vendor     string `json:"vendor"`
+		Model      string `json:"model"`
+		Generation string `json:"generation"`
+		Firmware   string `json:"firmware"`
+		MAC        string `json:"mac"`
+		URL        string `json:"url"`
+		Name       string `json:"name"`
+		Secured    bool   `json:"secured"`
+	}
+
+	return json.Marshal(v{
+		Vendor:     d.Vendor(),
+		Model:      d.model,
+		Generation: d.Generation(),
+		Firmware:   d.Firmware,
+		MAC:        d.mac.String(),
+		URL:        fmt.Sprintf("http://%s", d.ip),
+		Name:       d.name,
+		Secured:    d.secured,
 	})
 }

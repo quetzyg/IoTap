@@ -2,7 +2,7 @@ package shellygen1
 
 import (
 	"bytes"
-	"encoding/json"
+	"encoding/json/v2"
 	"errors"
 	"net"
 	"testing"
@@ -58,7 +58,7 @@ func TestDevice_MarshalJSON(t *testing.T) {
 				secured:  false,
 				Firmware: "20230913-112003/v1.14.0-gcb84623",
 			},
-			json: `{"firmware":"20230913-112003/v1.14.0-gcb84623","generation":"1","mac":"00:11:22:33:44:55","model":"SHSW-1","name":"Shelly 1","secured":false,"url":"http://192.168.146.123","vendor":"Shelly"}`,
+			json: `{"vendor":"Shelly","model":"SHSW-1","generation":"1","firmware":"20230913-112003/v1.14.0-gcb84623","mac":"00:11:22:33:44:55","url":"http://192.168.146.123","name":"Shelly 1","secured":false}`,
 		},
 	}
 
