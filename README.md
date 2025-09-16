@@ -49,7 +49,7 @@ sha256sum -c iotap.exe.sha256 # Windows release
 Ensure you have Go installed and your `$GOPATH/bin` is added to your system's `$PATH`. Then, execute:
 
 ```bash
-go install github.com/quetzyg/IoTap/cmd/iotap@latest
+GOEXPERIMENT=jsonv2 go install github.com/quetzyg/IoTap/cmd/iotap@latest
 ```
 
 You should now have the `iotap` binary in your `$PATH`.
@@ -60,9 +60,12 @@ Clone the repository and compile the code manually to build the tool from the la
 ```bash
 git clone https://github.com/quetzyg/IoTap.git
 cd IoTap
-go build cmd/iotap/main.go -o iotap
+GOEXPERIMENT=jsonv2 go build -o iotap cmd/iotap/main.go
 sudo mv iotap /usr/local/bin/
 ```
+
+> [!IMPORTANT]
+> To install or compile this tool, you must set the environment variable `GOEXPERIMENT=jsonv2`, as the new Go 1.25 **JSON** v2 [package](https://pkg.go.dev/encoding/json/v2) is relied upon.
 
 ## Usage
 
