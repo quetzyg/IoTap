@@ -1,7 +1,7 @@
 package config
 
 import (
-	"encoding/json"
+	"encoding/json/jsontext"
 	"errors"
 	"io"
 	"io/fs"
@@ -33,9 +33,9 @@ func TestNewValues(t *testing.T) {
 			err:  io.ErrUnexpectedEOF,
 		},
 		{
-			name: "failure: syntax error",
+			name: "failure: syntactic error",
 			r:    strings.NewReader("}"),
-			err:  &json.SyntaxError{},
+			err:  &jsontext.SyntacticError{},
 		},
 		{
 			name: "success",
@@ -47,10 +47,10 @@ func TestNewValues(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			_, err := NewValues(test.r)
 
-			var syntaxError *json.SyntaxError
+			var syntaxError *jsontext.SyntacticError
 			switch {
 			case errors.As(test.err, &syntaxError):
-				var se *json.SyntaxError
+				var se *jsontext.SyntacticError
 				if errors.As(err, &se) {
 					return
 				}

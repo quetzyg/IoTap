@@ -1,7 +1,7 @@
 package config
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"errors"
 	"io"
 	"io/fs"
@@ -30,7 +30,7 @@ type Values struct {
 // It returns an error if the data is invalid or cannot be parsed.
 func NewValues(r io.Reader) (*Values, error) {
 	var val *Values
-	if err := json.NewDecoder(r).Decode(&val); err != nil {
+	if err := json.UnmarshalRead(r, &val); err != nil {
 		return nil, err
 	}
 
