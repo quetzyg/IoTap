@@ -1,7 +1,7 @@
 package device
 
 import (
-	"encoding/json"
+	"encoding/json/jsontext"
 	"errors"
 	"io"
 	"io/fs"
@@ -19,7 +19,7 @@ func TestNewDeployment(t *testing.T) {
 		{
 			name: "failure: invalid deployment data",
 			r:    strings.NewReader(`}`),
-			err:  &json.SyntaxError{},
+			err:  &jsontext.SyntacticError{},
 		},
 		{
 			name: "success: valid deployment data",
@@ -31,10 +31,10 @@ func TestNewDeployment(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			_, err := NewDeployment(test.r)
 
-			var syntaxError *json.SyntaxError
+			var syntacticError *jsontext.SyntacticError
 			switch {
-			case errors.As(test.err, &syntaxError):
-				var se *json.SyntaxError
+			case errors.As(test.err, &syntacticError):
+				var se *jsontext.SyntacticError
 				if errors.As(err, &se) {
 					return
 				}

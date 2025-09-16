@@ -1,7 +1,8 @@
 package device
 
 import (
-	"encoding/json"
+	"encoding/json/jsontext"
+	"encoding/json/v2"
 	"errors"
 	"net"
 	"reflect"
@@ -18,7 +19,7 @@ func TestPolicy_UnmarshalJSON(t *testing.T) {
 		{
 			name:   "failure: invalid JSON",
 			policy: &Policy{},
-			err:    &json.SyntaxError{},
+			err:    &jsontext.SyntacticError{},
 		},
 		{
 			name:   "failure: undefined policy mode #1",
@@ -109,11 +110,11 @@ func TestPolicy_UnmarshalJSON(t *testing.T) {
 				t.Fatalf("expected %#v, got %#v", test.policy, policy)
 			}
 
-			var syntaxError *json.SyntaxError
+			var syntaxError *jsontext.SyntacticError
 			var addrError *net.AddrError
 			switch {
 			case errors.As(test.err, &syntaxError):
-				var se *json.SyntaxError
+				var se *jsontext.SyntacticError
 				if errors.As(err, &se) {
 					return
 				}

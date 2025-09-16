@@ -1,7 +1,7 @@
 package device
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"io"
 	"log"
@@ -43,7 +43,7 @@ func RegisterDeployer(driver string) {
 // It returns an error if the data is invalid or cannot be parsed.
 func NewDeployment(r io.Reader) (*Deployment, error) {
 	var dep Deployment
-	if err := json.NewDecoder(r).Decode(&dep); err != nil {
+	if err := json.UnmarshalRead(r, &dep); err != nil {
 		return nil, err
 	}
 

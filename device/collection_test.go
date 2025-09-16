@@ -1,7 +1,7 @@
 package device
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"errors"
 	"fmt"
 	"net"
@@ -94,15 +94,26 @@ func (r *resource) DelimitedRow(sep string) string {
 
 // MarshalJSON implements the Marshaler interface.
 func (r *resource) MarshalJSON() ([]byte, error) {
-	return json.Marshal(map[string]any{
-		"vendor":     r.Vendor(),
-		"mac":        r.mac.String(),
-		"url":        fmt.Sprintf("http://%s", r.ip),
-		"name":       r.name,
-		"model":      r.model,
-		"generation": r.Generation(),
-		"firmware":   "v1.2.3",
-		"secured":    r.secured,
+	type v struct {
+		Vendor     string `json:"vendor"`
+		Model      string `json:"model"`
+		Generation string `json:"generation"`
+		Firmware   string `json:"firmware"`
+		MAC        string `json:"mac"`
+		URL        string `json:"url"`
+		Name       string `json:"name"`
+		Secured    bool   `json:"secured"`
+	}
+
+	return json.Marshal(v{
+		Vendor:     r.Vendor(),
+		Model:      r.model,
+		Generation: r.Generation(),
+		Firmware:   "v1.2.3",
+		MAC:        r.mac.String(),
+		URL:        fmt.Sprintf("http://%s", r.ip),
+		Name:       r.name,
+		Secured:    r.secured,
 	})
 }
 

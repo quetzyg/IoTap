@@ -1,7 +1,7 @@
 package device
 
 import (
-	"encoding/json"
+	"encoding/json/jsontext"
 	"errors"
 	"io"
 	"io/fs"
@@ -55,9 +55,9 @@ func TestNewConfig(t *testing.T) {
 		name string
 	}{
 		{
-			name: "failure: syntax error",
+			name: "failure: syntactic error",
 			r:    strings.NewReader(`!`),
-			err:  &json.SyntaxError{},
+			err:  &jsontext.SyntacticError{},
 		},
 		{
 			name: "failure: configuration empty",
@@ -83,10 +83,10 @@ func TestNewConfig(t *testing.T) {
 				t.Fatalf("expected %#v, got %#v", test.cfg, cfg)
 			}
 
-			var syntaxError *json.SyntaxError
+			var syntacticError *jsontext.SyntacticError
 			switch {
-			case errors.As(test.err, &syntaxError):
-				var se *json.SyntaxError
+			case errors.As(test.err, &syntacticError):
+				var se *jsontext.SyntacticError
 				if errors.As(err, &se) {
 					return
 				}

@@ -1,7 +1,7 @@
 package device
 
 import (
-	"encoding/json"
+	"encoding/json/jsontext"
 	"errors"
 	"io"
 	"io/fs"
@@ -20,7 +20,7 @@ func TestNewAuthConfig(t *testing.T) {
 		{
 			name: "failure: invalid data",
 			r:    strings.NewReader(`}`),
-			err:  &json.SyntaxError{},
+			err:  &jsontext.SyntacticError{},
 		},
 		{
 			name: "failure: wrong JSON structure",
@@ -58,10 +58,10 @@ func TestNewAuthConfig(t *testing.T) {
 				t.Fatalf("expected %#v, got %#v", test.auth, auth)
 			}
 
-			var syntaxError *json.SyntaxError
+			var syntacticError *jsontext.SyntacticError
 			switch {
-			case errors.As(test.err, &syntaxError):
-				var se *json.SyntaxError
+			case errors.As(test.err, &syntacticError):
+				var se *jsontext.SyntacticError
 				if errors.As(err, &se) {
 					return
 				}

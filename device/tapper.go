@@ -1,7 +1,7 @@
 package device
 
 import (
-	"encoding/json"
+	"encoding/json/jsontext"
 	"errors"
 	"net"
 	"net/http"
@@ -79,8 +79,8 @@ func probeIP(prober Prober, client *http.Client, ip net.IP) (Resource, error) {
 		return nil, nil
 	}
 
-	var je *json.SyntaxError
-	if errors.As(err, &je) {
+	var se *jsontext.SyntacticError
+	if errors.As(err, &se) {
 		// We found something, but it's not outputting valid JSON
 		return nil, nil
 	}

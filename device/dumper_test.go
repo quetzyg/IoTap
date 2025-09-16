@@ -89,14 +89,14 @@ func TestDumpJSON(t *testing.T) {
 			},
 			out: `[
   {
-    "firmware": "v1.2.3",
-    "generation": "1",
-    "mac": "00:11:22:33:44:55",
+    "vendor": "Shelly",
     "model": "SHSW-1",
-    "name": "Storage",
-    "secured": false,
+    "generation": "1",
+    "firmware": "v1.2.3",
+    "mac": "00:11:22:33:44:55",
     "url": "http://192.168.146.123",
-    "vendor": "Shelly"
+    "name": "Storage",
+    "secured": false
   }
 ]`,
 		},

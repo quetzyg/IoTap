@@ -1,7 +1,8 @@
 package device
 
 import (
-	"encoding/json"
+	"encoding/json/jsontext"
+	"encoding/json/v2"
 	"fmt"
 	"io"
 	"log"
@@ -63,14 +64,7 @@ func dumpCSV(devices Collection, w io.Writer, sep string) error {
 // dumpJSON writes the given Collection of devices to the provided io.Writer in JSON format.
 // Each device's data is serialized using the MarshalJSON() method.
 func dumpJSON(devices Collection, w io.Writer) error {
-	b, err := json.MarshalIndent(devices, "", "  ")
-	if err != nil {
-		return err
-	}
-
-	_, err = w.Write(b)
-
-	return err
+	return json.MarshalWrite(w, devices, jsontext.WithIndentPrefix(""), jsontext.WithIndent("  "))
 }
 
 // ExecDump is a wrapper function to easily dump device scan results to multiple formats and outputs.

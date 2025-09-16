@@ -1,7 +1,7 @@
 package device
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"io"
 	"log"
 	"os"
@@ -23,7 +23,7 @@ type AuthConfig struct {
 // It returns an error if the data is invalid or cannot be parsed.
 func NewAuthConfig(r io.Reader) (*AuthConfig, error) {
 	var auth *AuthConfig
-	if err := json.NewDecoder(r).Decode(&auth); err != nil {
+	if err := json.UnmarshalRead(r, &auth); err != nil {
 		return nil, err
 	}
 

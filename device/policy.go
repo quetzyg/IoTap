@@ -2,7 +2,7 @@ package device
 
 import (
 	"bytes"
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"net"
 	"regexp"

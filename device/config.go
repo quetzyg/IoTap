@@ -1,7 +1,7 @@
 package device
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"io"
 	"log"
@@ -29,7 +29,7 @@ func RegisterConfig(driver string, prov ConfigProvider) {
 func NewConfig(r io.Reader, factory ConfigProvider) (Config, error) {
 	cfg := factory()
 
-	if err := json.NewDecoder(r).Decode(&cfg); err != nil {
+	if err := json.UnmarshalRead(r, &cfg); err != nil {
 		return nil, err
 	}
 
