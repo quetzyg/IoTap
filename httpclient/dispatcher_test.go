@@ -1,6 +1,7 @@
 package httpclient
 
 import (
+	"encoding/json/v2"
 	"errors"
 	"io"
 	"net"
@@ -144,7 +145,7 @@ func TestDispatcher_Dispatch(t *testing.T) {
 			err: io.ErrUnexpectedEOF,
 		},
 		{
-			name: "success: unmarshal body",
+			name: "success: unmarshal body #1",
 			req: &http.Request{
 				Method: http.MethodGet,
 				URL:    uri,
@@ -157,6 +158,25 @@ func TestDispatcher_Dispatch(t *testing.T) {
 			},
 			opts: []DispatchOption{
 				WithBinding(make(map[string]any)),
+			},
+		},
+		{
+			name: "success: unmarshal body #2",
+			req: &http.Request{
+				Method: http.MethodGet,
+				URL:    uri,
+			},
+			rt: &roundTripper{
+				response: &http.Response{
+					StatusCode: http.StatusOK,
+					Body:       io.NopCloser(strings.NewReader("{}")),
+				},
+			},
+			opts: []DispatchOption{
+				WithBinding(make(map[string]any)),
+				WithUnmarshaler(json.UnmarshalFunc(func(data []byte, v any) error {
+					return json.Unmarshal(data, v)
+				})),
 			},
 		}, {
 			name: "failure: bad request",

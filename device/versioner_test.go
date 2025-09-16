@@ -1,6 +1,7 @@
 package device
 
 import (
+	"encoding/json/v2"
 	"errors"
 	"io"
 	"net/http"
@@ -20,6 +21,12 @@ func (v *versioner) VersionRequest() (*http.Request, error) {
 	}
 
 	return http.NewRequest(http.MethodGet, "", nil)
+}
+
+func (v *versioner) VersionUnmarshaler() *json.Unmarshalers {
+	return json.UnmarshalFunc(func(data []byte, dev *resource) error {
+		return json.Unmarshal(data, dev)
+	})
 }
 
 func (v *versioner) Outdated() bool {

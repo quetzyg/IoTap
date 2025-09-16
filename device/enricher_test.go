@@ -1,6 +1,7 @@
 package device
 
 import (
+	"encoding/json/v2"
 	"errors"
 	"io"
 	"net/http"
@@ -20,6 +21,12 @@ func (e *enricher) EnrichRequest() (*http.Request, error) {
 	}
 
 	return http.NewRequest(http.MethodGet, "", nil)
+}
+
+func (e *enricher) EnrichUnmarshaler() *json.Unmarshalers {
+	return json.UnmarshalFunc(func(data []byte, dev *enricher) error {
+		return json.Unmarshal(data, dev)
+	})
 }
 
 type enrichChallenger struct {

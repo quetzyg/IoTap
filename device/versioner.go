@@ -1,6 +1,7 @@
 package device
 
 import (
+	"encoding/json/v2"
 	"fmt"
 	"net/http"
 
@@ -10,6 +11,7 @@ import (
 // Versioner is an interface that provides a set of methods to aid in IoT device versioning.
 type Versioner interface {
 	VersionRequest() (*http.Request, error)
+	VersionUnmarshaler() *json.Unmarshalers
 	Outdated() bool
 	UpdateDetails() string
 }
@@ -43,6 +45,7 @@ var Version = func(tap *Tapper, res Resource, ch chan<- *ProcedureResult) {
 
 	opts := []httpclient.DispatchOption{
 		httpclient.WithBinding(dev),
+		httpclient.WithUnmarshaler(dev.VersionUnmarshaler()),
 	}
 
 	if challenger, ok := res.(httpclient.Challenger); ok {

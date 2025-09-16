@@ -1,11 +1,16 @@
 package shellygen2
 
 import (
+	"encoding/json/jsontext"
+	"encoding/json/v2"
+	"errors"
 	"io"
 	"net"
 	"net/http"
 	"reflect"
 	"testing"
+
+	"github.com/quetzyg/IoTap/device"
 )
 
 func TestDevice_VersionRequest(t *testing.T) {
@@ -105,6 +110,62 @@ func TestDevice_UpdateDetails(t *testing.T) {
 			details := test.dev.UpdateDetails()
 			if details != test.details {
 				t.Fatalf("expected %s, got %s", test.details, details)
+			}
+		})
+	}
+}
+
+func TestDevice_VersionUnmarshaler(t *testing.T) {
+	tests := []struct {
+		err  error
+		dev  *Device
+		name string
+		data []byte
+	}{
+		{
+			name: "failure: syntactic error",
+			dev:  &Device{},
+			data: []byte(`}`),
+			err:  &jsontext.SyntacticError{},
+		},
+		{
+			name: "failure: unexpected data",
+			dev:  &Device{},
+			data: []byte(`{"foo":"bar"}`),
+			err:  device.ErrUnexpected,
+		},
+		{
+			name: "success: skip beta version",
+			dev:  &Device{},
+			data: []byte(`{"result":{"beta":{"version":"1.5.1-beta2","build_id":"20250310-083328/1.5.1-beta2-g322cd2a"}}}`),
+		},
+		{
+			name: "success",
+			dev:  &Device{},
+			data: []byte(`{"result":{"stable":{"version":"20241011-114449/1.4.4-g6d2a586"}}}`),
+		},
+	}
+
+	shelly2 := &Device{}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+
+			err := json.Unmarshal(test.data, shelly2, json.WithUnmarshalers(shelly2.VersionUnmarshaler()))
+
+			var syntacticError *jsontext.SyntacticError
+			switch {
+			case errors.As(test.err, &syntacticError):
+				var se *jsontext.SyntacticError
+				if errors.As(err, &se) {
+					return
+				}
+
+			case errors.Is(err, test.err):
+				return
+
+			default:
+				t.Fatalf("expected %#v, got %#v", test.err, err)
 			}
 		})
 	}

@@ -1,7 +1,7 @@
 package httpclient
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"io"
 	"log"
@@ -10,20 +10,29 @@ import (
 
 // Dispatcher handles HTTP request dispatching with support for functional options.
 type Dispatcher struct {
-	client     *http.Client
-	challenger Challenger
-	bind       any
+	client      *http.Client
+	challenger  Challenger
+	bind        any
+	unmarshaler *json.Unmarshalers
 }
 
 // DispatchOption is a function that modifies dispatch behavior.
 type DispatchOption func(*Dispatcher)
 
-// WithBinding returns a DispatchOption that configures response binding to the
+// WithBinding returns a DispatchOption that configures a response bind to the
 // provided target. The target must be a pointer to a type that can receive the
 // response data.
 func WithBinding(bind any) DispatchOption {
 	return func(d *Dispatcher) {
 		d.bind = bind
+	}
+}
+
+// WithUnmarshaler returns a DispatchOption that configures a JSON unmarshaler
+// for the provided bind target.
+func WithUnmarshaler(u *json.Unmarshalers) DispatchOption {
+	return func(d *Dispatcher) {
+		d.unmarshaler = u
 	}
 }
 
@@ -91,6 +100,10 @@ func (d *Dispatcher) Dispatch(r *http.Request, opts ...DispatchOption) error {
 	}
 
 	if d.bind != nil {
+		if d.unmarshaler != nil {
+			return json.Unmarshal(b, &d.bind, json.WithUnmarshalers(d.unmarshaler))
+		}
+
 		return json.Unmarshal(b, &d.bind)
 	}
 

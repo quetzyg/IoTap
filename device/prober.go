@@ -1,6 +1,7 @@
 package device
 
 import (
+	"encoding/json/v2"
 	"net"
 	"net/http"
 )
@@ -10,6 +11,7 @@ import (
 // network scanning phase.
 type Prober interface {
 	Request(ip net.IP) (*http.Request, Resource, error)
+	Unmarshaler() *json.Unmarshalers
 }
 
 // ProberProvider is a function type that returns a Prober instance.

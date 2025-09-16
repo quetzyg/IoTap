@@ -1,6 +1,7 @@
 package device
 
 import (
+	"encoding/json/v2"
 	"errors"
 	"io"
 	"net"
@@ -177,6 +178,13 @@ func (p *prober) Request(_ net.IP) (*http.Request, Resource, error) {
 	r, err := http.NewRequest(http.MethodGet, "", nil)
 
 	return r, p.resource, err
+}
+
+// Unmarshaler implementation for testing purposes.
+func (p *prober) Unmarshaler() *json.Unmarshalers {
+	return json.UnmarshalFunc(func(data []byte, dev *resource) error {
+		return json.Unmarshal(data, dev)
+	})
 }
 
 // roundTripper is a custom type used for mocking HTTP responses.

@@ -1,10 +1,15 @@
 package shellygen1
 
 import (
+	"encoding/json/jsontext"
+	"encoding/json/v2"
+	"errors"
 	"net"
 	"net/http"
 	"reflect"
 	"testing"
+
+	"github.com/quetzyg/IoTap/device"
 )
 
 func TestDevice_VersionRequest(t *testing.T) {
@@ -98,6 +103,63 @@ func TestDevice_UpdateDetails(t *testing.T) {
 			details := test.dev.UpdateDetails()
 			if details != test.details {
 				t.Fatalf("expected %s, got %s", test.details, details)
+			}
+		})
+	}
+}
+
+func TestDevice_VersionUnmarshaler(t *testing.T) {
+	tests := []struct {
+		err  error
+		dev  *Device
+		name string
+		data []byte
+	}{
+		{
+			name: "failure: syntactic error",
+			dev:  &Device{},
+			data: []byte(`}`),
+			err:  &jsontext.SyntacticError{},
+		},
+		{
+			name: "failure: unexpected data",
+			dev:  &Device{},
+			data: []byte(`{"foo":"bar"}`),
+			err:  device.ErrUnexpected,
+		},
+		{
+			name: "failure: empty data",
+			dev:  &Device{},
+			data: []byte(`{"new_version":""}`),
+			err:  device.ErrUnexpected,
+		},
+		{
+			name: "success",
+			dev:  &Device{},
+			data: []byte(`{"new_version":"20230913-112003/v1.14.0-gcb84623"}`),
+		},
+	}
+
+	shelly1 := &Device{}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+
+			err := json.Unmarshal(test.data, shelly1, json.WithUnmarshalers(shelly1.VersionUnmarshaler()))
+
+			var syntacticError *jsontext.SyntacticError
+			switch {
+			case errors.As(test.err, &syntacticError):
+				var se *jsontext.SyntacticError
+				if errors.As(err, &se) {
+					return
+				}
+
+			case errors.Is(err, test.err):
+				return
+
+			default:
+				t.Fatalf("expected %#v, got %#v", test.err, err)
 			}
 		})
 	}
