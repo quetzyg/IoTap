@@ -65,7 +65,7 @@ sudo mv iotap /usr/local/bin/
 ```
 
 > [!IMPORTANT]
-> To install or compile this tool, you must set the environment variable `GOEXPERIMENT=jsonv2`, as the new Go 1.25 **JSON** v2 [package](https://pkg.go.dev/encoding/json/v2) is relied upon.
+> To install or compile this tool, you must set the `GOEXPERIMENT=jsonv2` environment variable, as the new Go 1.25 **JSON** v2 [package](https://pkg.go.dev/encoding/json/v2) is relied upon.
 
 ## Usage
 
